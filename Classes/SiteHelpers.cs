@@ -160,15 +160,15 @@ namespace JDP {
 			foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
 				t => HTMLParser.ClassAttributeValueHas(t, "post")), t => _htmlParser.CreateTagRange(t)), r => r != null))
 			{
-				HTMLTagRange fileTextSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-					_htmlParser.FindStartTags(postTagRange, "div"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
-				if (fileTextSpanTagRange == null) continue;
+				HTMLTagRange fileTextDivTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "div"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
+				if (fileTextDivTagRange == null) continue;
 
 				HTMLTagRange fileThumbLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
 					_htmlParser.FindStartTags(postTagRange, "a"), t => HTMLParser.ClassAttributeValueHas(t, "fileThumb"))));
 				if (fileThumbLinkTagRange == null) continue;
 
-				HTMLTag fileTextLinkStartTag = _htmlParser.FindStartTag(fileTextSpanTagRange, "a");
+				HTMLTag fileTextLinkStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "a");
 				if (fileTextLinkStartTag == null) continue;
 
 				HTMLTag fileThumbImageTag = _htmlParser.FindStartTag(fileThumbLinkTagRange, "img");
@@ -184,12 +184,12 @@ namespace JDP {
 
 				string originalFileName;
 				if (isSpoiler) {
-					originalFileName = fileTextSpanTagRange.StartTag.GetAttributeValue("title");
+                    originalFileName = fileTextDivTagRange.StartTag.GetAttributeValue("title");
 				}
 				else {
-					HTMLTag fileNameSpanStartTag = _htmlParser.FindStartTag(fileTextSpanTagRange, "span");
+					HTMLTag fileNameSpanStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "span");
 					if (fileNameSpanStartTag == null) continue;
-					originalFileName = fileNameSpanStartTag.GetAttributeValue("title");
+                    originalFileName = fileNameSpanStartTag.GetAttribute("title") == null ? _htmlParser.GetInnerHTML(fileNameSpanStartTag, fileThumbImageTag).Split(new[] { "</span>" }, StringSplitOptions.None)[0] : fileNameSpanStartTag.GetAttributeValue("title");
 				}
 				if (originalFileName == null) continue;
 
@@ -197,7 +197,7 @@ namespace JDP {
 				if (imageMD5 == null) continue;
 
 				ImageInfo image = new ImageInfo {
-					URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
+                    URL = "http:" + HttpUtility.HtmlDecode(imageURL),
 					Referer = _url,
 					OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName)),
 					HashType = HashType.MD5,
@@ -206,7 +206,7 @@ namespace JDP {
 				if (image.URL.Length == 0 || image.FileName.Length == 0 || image.Hash == null) continue;
 
 				ThumbnailInfo thumb = new ThumbnailInfo {
-					URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
+					URL = "http:" + HttpUtility.HtmlDecode(thumbURL),
 					Referer = _url
 				};
 				if (thumb.URL == null || thumb.FileName.Length == 0) continue;
