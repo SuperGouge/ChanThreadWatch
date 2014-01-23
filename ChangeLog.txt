@@ -1,3 +1,6 @@
+1.7.5 (2014-Jan-23):
+  * Original project forked
+  * Fix for 4chan.org images retrieval.
 1.7.4 (2012-Sep-30):
   * Fix spoiler images not being downloaded.
 1.7.3 (2012-May-13):
