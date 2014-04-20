@@ -5,6 +5,10 @@
 This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.
 You can find the official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
+### 1.8.1 (2014-Apr-21):
+- Fix for "/thread/" URLs without slugs giving wrong folder name.
+- Minor UI fixes.
+
 ### 1.8.0 (2014-Apr-20):
 - Supports 4chan's new HTML.
 - Supports 4chan's new URLs.

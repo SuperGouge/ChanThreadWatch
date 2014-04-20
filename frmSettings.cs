@@ -19,6 +19,7 @@ namespace JDP {
 			chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
             chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
             chkUseSlug.Checked = Settings.UseSlug ?? false;
+		    pnlSlug.Enabled = chkUseSlug.Checked;
             rbSlugFirst.Checked = Settings.SlugType == SlugType.First;
             rbSlugLast.Checked = Settings.SlugType == SlugType.Last;
             rbSlugOnly.Checked = Settings.SlugType == SlugType.Only;

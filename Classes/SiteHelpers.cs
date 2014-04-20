@@ -66,6 +66,10 @@ namespace JDP {
             return GetThreadName();
         }
 
+        public virtual bool HasSlug() {
+            return false;
+        }
+
 		public virtual bool IsBoardHighTurnover() {
 			return false;
 		}
@@ -159,7 +163,7 @@ namespace JDP {
 	public class SiteHelper_4chan_org : SiteHelper {
         public override string GetThreadName() {
 			string[] urlSplit = SplitURL();
-            if (_url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1) {
+            if (HasSlug()) {
                 if (Settings.UseSlug == true) {
                     switch (Settings.SlugType) {
                         case SlugType.First:
@@ -177,7 +181,11 @@ namespace JDP {
 
         public override string GetThreadID() {
             string[] urlSplit = SplitURL();
-            return _url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1 ? urlSplit[urlSplit.Length - 2] : base.GetThreadID();
+            return HasSlug() ? urlSplit[urlSplit.Length - 2] : base.GetThreadID();
+        }
+
+        public override bool HasSlug() {
+            return _url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1 && SplitURL().Length == 5;
         }
 
 		public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList) {
