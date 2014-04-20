@@ -17,7 +17,11 @@ namespace JDP {
 			chkSaveThumbnails.Checked = Settings.SaveThumbnails ?? true;
 			chkRenameDownloadFolderWithDescription.Checked = Settings.RenameDownloadFolderWithDescription ?? false;
 			chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
-			chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
+            chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
+            chkUseSlug.Checked = Settings.UseSlug ?? false;
+            rbSlugFirst.Checked = Settings.SlugType == SlugType.First;
+            rbSlugLast.Checked = Settings.SlugType == SlugType.Last;
+            rbSlugOnly.Checked = Settings.SlugType == SlugType.Only;
 			chkCheckForUpdates.Checked = Settings.CheckForUpdates ?? false;
 			if (Settings.UseExeDirectoryForSettings == true) {
 				rbSettingsInExeFolder.Checked = true;
@@ -78,6 +82,16 @@ namespace JDP {
 				Settings.RenameDownloadFolderWithDescription = chkRenameDownloadFolderWithDescription.Checked;
 				Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
 				Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
+			    Settings.UseSlug = chkUseSlug.Checked;
+			    if (rbSlugFirst.Checked) {
+			        Settings.SlugType = SlugType.First;
+			    }
+                else if (rbSlugOnly.Checked) {
+                    Settings.SlugType = SlugType.Only;
+                }
+                else {
+                    Settings.SlugType = SlugType.Last;
+                }
 				Settings.CheckForUpdates = chkCheckForUpdates.Checked;
 				Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
@@ -116,6 +130,10 @@ namespace JDP {
 		private void chkCustomUserAgent_CheckedChanged(object sender, EventArgs e) {
 			txtCustomUserAgent.Enabled = chkCustomUserAgent.Checked;
 		}
+
+        private void chkUseSlug_CheckedChanged(object sender, EventArgs e) {
+            pnlSlug.Enabled = chkUseSlug.Checked;
+        }
 
 		private void SetDownloadFolderTextBox(string path) {
 			txtDownloadFolder.Text = chkRelativePath.Checked ?

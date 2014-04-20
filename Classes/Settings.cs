@@ -5,6 +5,13 @@ using System.IO;
 using System.Reflection;
 
 namespace JDP {
+    public enum SlugType
+    {
+        First,
+        Last,
+        Only
+    }
+
 	public static class Settings {
 		private const string _appName = "Chan Thread Watch";
 
@@ -79,6 +86,17 @@ namespace JDP {
 			get { return GetBool("VerifyImageHashes"); }
 			set { SetBool("VerifyImageHashes", value); }
 		}
+
+        public static bool? UseSlug {
+            get { return GetBool("UseSlug"); }
+            set { SetBool("UseSlug", value); }
+        }
+
+        public static SlugType SlugType
+        {
+            get { return GetSlugType("SlugType"); }
+            set { SetSlugType("SlugType", value); }
+        }
 
 		public static bool? CheckForUpdates {
 			get { return GetBool("CheckForUpdates"); }
@@ -186,6 +204,19 @@ namespace JDP {
 				DateTimeStyles.None, out x) ? x : (DateTime?)null;
 		}
 
+        private static SlugType GetSlugType(string name) {
+            string value = Get(name);
+            if (value == null) return SlugType.Last;
+            SlugType valueSlug;
+            try {
+                valueSlug = (SlugType)Enum.Parse(typeof(SlugType), value);
+            }
+            catch (ArgumentException) {
+                valueSlug = SlugType.Last;
+            }
+            return valueSlug;
+        }
+
 		private static void Set(string name, string value) {
 			lock (_settings) {
 				if (value == null) {
@@ -208,6 +239,10 @@ namespace JDP {
 		private static void SetDate(string name, DateTime? value) {
 			Set(name, value.HasValue ? value.Value.ToString("yyyyMMdd") : null);
 		}
+
+        private static void SetSlugType(string name, SlugType value) {
+            Set(name, value.ToString());
+        }
 
 		public static void Load() {
 			string path = Path.Combine(GetSettingsDirectory(), SettingsFileName);

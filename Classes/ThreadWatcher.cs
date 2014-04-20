@@ -52,7 +52,7 @@ namespace JDP {
 			get { return _pageURL; }
 		}
 
-		private string PageHost {
+		public string PageHost {
 			get { return (new Uri(PageURL)).Host; }
 		}
 

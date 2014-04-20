@@ -20,13 +20,13 @@ namespace JDP {
 
 		public static string ReleaseDate {
 			get {
-				return "2012-Sep-30";
+				return "2014-Apr-20";
 			}
 		}
 
 		public static string ProgramURL {
 			get {
-				return "http://sites.google.com/site/chanthreadwatch/";
+                return "http://sites.google.com/site/chanthreadwatch/" + Environment.NewLine + "https://github.com/SuperGouge/ChanThreadWatch";
 			}
 		}
 

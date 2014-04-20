@@ -62,6 +62,10 @@ namespace JDP {
 			return String.Empty;
 		}
 
+        public virtual string GetThreadID() {
+            return GetThreadName();
+        }
+
 		public virtual bool IsBoardHighTurnover() {
 			return false;
 		}
@@ -153,6 +157,29 @@ namespace JDP {
 	}
 
 	public class SiteHelper_4chan_org : SiteHelper {
+        public override string GetThreadName() {
+			string[] urlSplit = SplitURL();
+            if (_url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1) {
+                if (Settings.UseSlug == true) {
+                    switch (Settings.SlugType) {
+                        case SlugType.First:
+                            return urlSplit[urlSplit.Length - 1] + "_" + urlSplit[urlSplit.Length - 2];
+                        case SlugType.Last:
+                            return urlSplit[urlSplit.Length - 2] + "_" + urlSplit[urlSplit.Length - 1];
+                        case SlugType.Only:
+                            return urlSplit[urlSplit.Length - 1];
+                    }
+                }
+                return urlSplit[urlSplit.Length - 2];
+            }
+            return base.GetThreadName();
+        }
+
+        public override string GetThreadID() {
+            string[] urlSplit = SplitURL();
+            return _url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1 ? urlSplit[urlSplit.Length - 2] : base.GetThreadID();
+        }
+
 		public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList) {
 			List<ImageInfo> imageList = new List<ImageInfo>();
 			bool seenSpoiler = false;
@@ -182,16 +209,10 @@ namespace JDP {
 
 				bool isSpoiler = HTMLParser.ClassAttributeValueHas(fileThumbLinkTagRange.StartTag, "imgspoiler");
 
-				string originalFileName;
-				if (isSpoiler) {
-                    originalFileName = fileTextDivTagRange.StartTag.GetAttributeValue("title");
-				}
-				else {
-					HTMLTag fileNameSpanStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "span");
-					if (fileNameSpanStartTag == null) continue;
-                    originalFileName = fileNameSpanStartTag.GetAttribute("title") == null ? _htmlParser.GetInnerHTML(fileNameSpanStartTag, fileThumbImageTag).Split(new[] { "</span>" }, StringSplitOptions.None)[0] : fileNameSpanStartTag.GetAttributeValue("title");
-				}
-				if (originalFileName == null) continue;
+				string originalFileName = null;
+                if (!isSpoiler) {
+                    originalFileName = fileTextLinkStartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(fileTextLinkStartTag));
+                }
 
 				string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
 				if (imageMD5 == null) continue;
@@ -199,7 +220,7 @@ namespace JDP {
 				ImageInfo image = new ImageInfo {
                     URL = "http:" + HttpUtility.HtmlDecode(imageURL),
 					Referer = _url,
-					OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName)),
+					OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
 					HashType = HashType.MD5,
 					Hash = General.TryBase64Decode(imageMD5)
 				};

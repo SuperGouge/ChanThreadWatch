@@ -343,7 +343,7 @@ namespace JDP {
 		}
 
 		private void btnAbout_Click(object sender, EventArgs e) {
-			MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}Author: JDP (jart1126@yahoo.com){0}{3}",
+            MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}Original Author: JDP (jart1126@yahoo.com){0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
 				Environment.NewLine, General.Version, General.ReleaseDate, General.ProgramURL), "About",
 				MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
@@ -549,11 +549,16 @@ namespace JDP {
 		private bool AddThread(string pageURL, string pageAuth, string imageAuth, int checkInterval, bool oneTime, string saveDir, string description, StopReason? stopReason, WatcherExtraData extraData) {
 			ThreadWatcher watcher = null;
 			ListViewItem newListViewItem = null;
+            SiteHelper addedSiteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
+            addedSiteHelper.SetURL(pageURL);
 
 			foreach (ThreadWatcher existingWatcher in ThreadWatchers) {
-				if (String.Equals(existingWatcher.PageURL, pageURL, StringComparison.OrdinalIgnoreCase)) {
+			    SiteHelper existingSiteHelper = SiteHelper.GetInstance(existingWatcher.PageHost);
+                existingSiteHelper.SetURL(existingWatcher.PageURL);
+                if (existingSiteHelper.GetSiteName() == addedSiteHelper.GetSiteName() && existingSiteHelper.GetBoardName() == addedSiteHelper.GetBoardName() && existingSiteHelper.GetThreadID() == addedSiteHelper.GetThreadID()) {
 					if (existingWatcher.IsRunning) return false;
 					watcher = existingWatcher;
+                    extraData.ListViewItem = ((WatcherExtraData)watcher.Tag).ListViewItem;
 					break;
 				}
 			}

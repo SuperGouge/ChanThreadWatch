@@ -5,6 +5,13 @@
 This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.
 You can find the official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
+### 1.8.0 (2014-Apr-20):
+- Supports 4chan's new HTML.
+- Supports 4chan's new URLs.
+- Ability to include "slugs" in threads folder naming.
+- Fix for duplicate watchers not being detected when URL is different but corresponds to same thread.
+- Updated About window.
+
 ### 1.7.5 (2014-Jan-23):
 - **Original project forked**
 - Fix for 4chan.org images retrieval.
