@@ -17,8 +17,9 @@ namespace JDP {
 		private bool _saveThreadList;
 		private int _itemAreaY;
 		private int[] _columnWidths;
+	    private object _cboCheckEveryLastValue;
 
-		// ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
+	    // ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
 
 		public frmChanThreadWatch() {
 			InitializeComponent();
@@ -54,8 +55,17 @@ namespace JDP {
 			chkImageAuth.Checked = Settings.UseImageAuth ?? false;
 			txtImageAuth.Text = Settings.ImageAuth ?? String.Empty;
 			chkOneTime.Checked = Settings.OneTimeDownload ?? false;
-			cboCheckEvery.SelectedValue = Settings.CheckEvery ?? 3;
-			if (cboCheckEvery.SelectedIndex == -1) cboCheckEvery.SelectedValue = 3;
+		    if (Settings.CheckEvery != null) {
+		        foreach (ListItemInt32 item in cboCheckEvery.Items) {
+		            if (item.Value != Settings.CheckEvery) continue;
+		            cboCheckEvery.SelectedValue = Settings.CheckEvery;
+		            break;
+		        }
+                if ((int)cboCheckEvery.SelectedValue != Settings.CheckEvery) txtCheckEvery.Text = Settings.CheckEvery.ToString();
+		    }
+		    else {
+		        cboCheckEvery.SelectedValue = 3;
+		    }
 			OnThreadDoubleClick = Settings.OnThreadDoubleClick ?? ThreadDoubleClickAction.OpenFolder;
 
 			if ((Settings.CheckForUpdates == true) && (Settings.LastUpdateCheck ?? DateTime.MinValue) < DateTime.Now.Date) {
@@ -100,7 +110,7 @@ namespace JDP {
 			Settings.UseImageAuth = chkImageAuth.Checked;
 			Settings.ImageAuth = txtImageAuth.Text;
 			Settings.OneTimeDownload = chkOneTime.Checked;
-			Settings.CheckEvery = (int)cboCheckEvery.SelectedValue;
+			Settings.CheckEvery = cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue : Int32.Parse(txtCheckEvery.Text);
 			Settings.OnThreadDoubleClick = OnThreadDoubleClick;
 			try {
 				Settings.Save();
@@ -177,6 +187,7 @@ namespace JDP {
 					"Duplicate Thread", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
+            lvThreads.Sort();
 			txtPageURL.Clear();
 			txtPageURL.Focus();
 			_saveThreadList = true;
@@ -416,8 +427,8 @@ namespace JDP {
 			lvThreads.Sort();
 		}
 
-		private void chkOneTime_CheckedChanged(object sender, EventArgs e) {
-			cboCheckEvery.Enabled = !chkOneTime.Checked;
+        private void chkOneTime_CheckedChanged(object sender, EventArgs e) {
+            pnlCheckEvery.Enabled = !chkOneTime.Checked;
 		}
 
 		private void chkPageAuth_CheckedChanged(object sender, EventArgs e) {
@@ -426,7 +437,30 @@ namespace JDP {
 
 		private void chkImageAuth_CheckedChanged(object sender, EventArgs e) {
 			txtImageAuth.Enabled = chkImageAuth.Checked;
-		}
+        }
+
+        private void txtCheckEvery_TextChanged(object sender, EventArgs e) {
+            int checkEvery;
+            if (Int32.TryParse(txtCheckEvery.Text, out checkEvery)) {
+                cboCheckEvery.SelectedIndex = -1;
+                cboCheckEvery.Enabled = false;
+            }
+            else {
+                if (cboCheckEvery.SelectedIndex == -1) cboCheckEvery.SelectedValue = _cboCheckEveryLastValue;
+                cboCheckEvery.Enabled = true;
+            }
+        }
+
+        private void cboCheckEvery_SelectedIndexChanged(object sender, EventArgs e) {
+            if (cboCheckEvery.SelectedIndex == -1) return;
+            if (cboCheckEvery.Focused) txtCheckEvery.Clear();
+            if (_cboCheckEveryLastValue == null && (int)cboCheckEvery.SelectedValue == 0 && (int)cboCheckEvery.SelectedValue != Settings.CheckEvery) {
+                _cboCheckEveryLastValue = 3;
+            }
+            else {
+                _cboCheckEveryLastValue = cboCheckEvery.SelectedValue;
+            }
+        }
 
 		private void tmrSaveThreadList_Tick(object sender, EventArgs e) {
 			if (_saveThreadList && !_isExiting) {
@@ -543,7 +577,7 @@ namespace JDP {
 		private bool AddThread(string pageURL) {
 			string pageAuth = (chkPageAuth.Checked && (txtPageAuth.Text.IndexOf(':') != -1)) ? txtPageAuth.Text : String.Empty;
 			string imageAuth = (chkImageAuth.Checked && (txtImageAuth.Text.IndexOf(':') != -1)) ? txtImageAuth.Text : String.Empty;
-			int checkInterval = (int)cboCheckEvery.SelectedValue * 60;
+            int checkInterval = cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue * 60 : Int32.Parse(txtCheckEvery.Text) * 60; 
 			return AddThread(pageURL, pageAuth, imageAuth, checkInterval, chkOneTime.Checked, null, String.Empty, null, null);
 		}
 
