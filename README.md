@@ -5,6 +5,18 @@
 This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.
 You can find the official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
+## Planned features
+- Auto-watch cross-thread links
+- Custom time interval between checks
+- Keep deleted posts
+- Post highlighting by poster ID
+- Organize images by poster name/ID
+- Custom categories
+- Custom automatic description (thread title, creation date, etc.)
+- 4chan X compatible post-processed HTML
+- Support for more imageboards
+
+## Changelog
 ### 1.8.1 (2014-Apr-21):
 - Fix for "/thread/" URLs without slugs giving wrong folder name.
 - Minor UI fixes.
