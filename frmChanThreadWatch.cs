@@ -343,7 +343,8 @@ namespace JDP {
 		}
 
 		private void btnAbout_Click(object sender, EventArgs e) {
-            MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}Original Author: JDP (jart1126@yahoo.com){0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
+            MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}Original Author: JDP (jart1126@yahoo.com){0}http://sites.google.com/site/chanthreadwatch/" +
+                                                "{0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
 				Environment.NewLine, General.Version, General.ReleaseDate, General.ProgramURL), "About",
 				MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
@@ -891,14 +892,12 @@ namespace JDP {
 				return;
 			}
 			Settings.LastUpdateCheck = DateTime.Now.Date;
-			string openTag = "[LatestVersion]";
-			string closeTag = "[/LatestVersion]";
-			int start = html.IndexOf(openTag, StringComparison.OrdinalIgnoreCase);
-			if (start == -1) return;
-			start += openTag.Length;
-			int end = html.IndexOf(closeTag, start, StringComparison.OrdinalIgnoreCase);
-			if (end == -1) return;
-			string latestStr = html.Substring(start, end - start).Trim();
+            var htmlParser = new HTMLParser(html);
+            HTMLTagRange labelLatestDivTagRange = htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    htmlParser.FindStartTags("div"), t => HTMLParser.ClassAttributeValueHas(t, "label-latest"))));
+            HTMLTagRange versionSpanTagRange = htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    htmlParser.FindStartTags(labelLatestDivTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "css-truncate-target"))));
+		    string latestStr = htmlParser.GetInnerHTML(versionSpanTagRange).Substring(1);
 			int latest = ParseVersionNumber(latestStr);
 			if (latest == -1) return;
 			int current = ParseVersionNumber(General.Version);

@@ -762,4 +762,10 @@ namespace JDP {
 		UTF16LE = 2,
 		UTF16BE = 3
 	}
+
+    public enum SlugType {
+        First = 0,
+        Last = 1,
+        Only = 2
+    }
 }

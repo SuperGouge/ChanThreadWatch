@@ -26,7 +26,7 @@ namespace JDP {
 
 		public static string ProgramURL {
 			get {
-                return "http://sites.google.com/site/chanthreadwatch/" + Environment.NewLine + "https://github.com/SuperGouge/ChanThreadWatch";
+                return "https://github.com/SuperGouge/ChanThreadWatch/releases/";
 			}
 		}
 

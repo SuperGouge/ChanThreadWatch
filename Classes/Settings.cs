@@ -5,13 +5,6 @@ using System.IO;
 using System.Reflection;
 
 namespace JDP {
-    public enum SlugType
-    {
-        First,
-        Last,
-        Only
-    }
-
 	public static class Settings {
 		private const string _appName = "Chan Thread Watch";
 
