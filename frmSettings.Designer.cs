@@ -41,9 +41,11 @@
             this.chkRenameDownloadFolderWithDescription = new System.Windows.Forms.CheckBox();
             this.chkUseSlug = new System.Windows.Forms.CheckBox();
             this.pnlSlug = new System.Windows.Forms.Panel();
-            this.rbSlugFirst = new System.Windows.Forms.RadioButton();
-            this.rbSlugLast = new System.Windows.Forms.RadioButton();
             this.rbSlugOnly = new System.Windows.Forms.RadioButton();
+            this.rbSlugLast = new System.Windows.Forms.RadioButton();
+            this.rbSlugFirst = new System.Windows.Forms.RadioButton();
+            this.chkRenameDownloadFolderWithCategory = new System.Windows.Forms.CheckBox();
+            this.lblRenameDownloadFolderWith = new System.Windows.Forms.Label();
             this.pnlSlug.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -197,11 +199,11 @@
             // chkRenameDownloadFolderWithDescription
             // 
             this.chkRenameDownloadFolderWithDescription.AutoSize = true;
-            this.chkRenameDownloadFolderWithDescription.Location = new System.Drawing.Point(10, 96);
+            this.chkRenameDownloadFolderWithDescription.Location = new System.Drawing.Point(190, 96);
             this.chkRenameDownloadFolderWithDescription.Name = "chkRenameDownloadFolderWithDescription";
-            this.chkRenameDownloadFolderWithDescription.Size = new System.Drawing.Size(253, 17);
+            this.chkRenameDownloadFolderWithDescription.Size = new System.Drawing.Size(79, 17);
             this.chkRenameDownloadFolderWithDescription.TabIndex = 7;
-            this.chkRenameDownloadFolderWithDescription.Text = "Use description as thread download folder name";
+            this.chkRenameDownloadFolderWithDescription.Text = "Description";
             this.chkRenameDownloadFolderWithDescription.UseVisualStyleBackColor = true;
             // 
             // chkUseSlug
@@ -225,16 +227,16 @@
             this.pnlSlug.Size = new System.Drawing.Size(237, 17);
             this.pnlSlug.TabIndex = 17;
             // 
-            // rbSlugFirst
+            // rbSlugOnly
             // 
-            this.rbSlugFirst.AutoSize = true;
-            this.rbSlugFirst.Location = new System.Drawing.Point(0, 0);
-            this.rbSlugFirst.Name = "rbSlugFirst";
-            this.rbSlugFirst.Size = new System.Drawing.Size(65, 17);
-            this.rbSlugFirst.TabIndex = 18;
-            this.rbSlugFirst.TabStop = true;
-            this.rbSlugFirst.Text = "Slug first";
-            this.rbSlugFirst.UseVisualStyleBackColor = true;
+            this.rbSlugOnly.AutoSize = true;
+            this.rbSlugOnly.Location = new System.Drawing.Point(169, 0);
+            this.rbSlugOnly.Name = "rbSlugOnly";
+            this.rbSlugOnly.Size = new System.Drawing.Size(68, 17);
+            this.rbSlugOnly.TabIndex = 20;
+            this.rbSlugOnly.TabStop = true;
+            this.rbSlugOnly.Text = "Slug only";
+            this.rbSlugOnly.UseVisualStyleBackColor = true;
             // 
             // rbSlugLast
             // 
@@ -247,16 +249,35 @@
             this.rbSlugLast.Text = "Thread ID first";
             this.rbSlugLast.UseVisualStyleBackColor = true;
             // 
-            // rbSlugOnly
+            // rbSlugFirst
             // 
-            this.rbSlugOnly.AutoSize = true;
-            this.rbSlugOnly.Location = new System.Drawing.Point(169, 0);
-            this.rbSlugOnly.Name = "rbSlugOnly";
-            this.rbSlugOnly.Size = new System.Drawing.Size(68, 17);
-            this.rbSlugOnly.TabIndex = 20;
-            this.rbSlugOnly.TabStop = true;
-            this.rbSlugOnly.Text = "Slug only";
-            this.rbSlugOnly.UseVisualStyleBackColor = true;
+            this.rbSlugFirst.AutoSize = true;
+            this.rbSlugFirst.Location = new System.Drawing.Point(0, 0);
+            this.rbSlugFirst.Name = "rbSlugFirst";
+            this.rbSlugFirst.Size = new System.Drawing.Size(65, 17);
+            this.rbSlugFirst.TabIndex = 18;
+            this.rbSlugFirst.TabStop = true;
+            this.rbSlugFirst.Text = "Slug first";
+            this.rbSlugFirst.UseVisualStyleBackColor = true;
+            // 
+            // chkRenameDownloadFolderWithCategory
+            // 
+            this.chkRenameDownloadFolderWithCategory.AutoSize = true;
+            this.chkRenameDownloadFolderWithCategory.Location = new System.Drawing.Point(275, 96);
+            this.chkRenameDownloadFolderWithCategory.Name = "chkRenameDownloadFolderWithCategory";
+            this.chkRenameDownloadFolderWithCategory.Size = new System.Drawing.Size(68, 17);
+            this.chkRenameDownloadFolderWithCategory.TabIndex = 18;
+            this.chkRenameDownloadFolderWithCategory.Text = "Category";
+            this.chkRenameDownloadFolderWithCategory.UseVisualStyleBackColor = true;
+            // 
+            // lblRenameDownloadFolderWith
+            // 
+            this.lblRenameDownloadFolderWith.AutoSize = true;
+            this.lblRenameDownloadFolderWith.Location = new System.Drawing.Point(7, 97);
+            this.lblRenameDownloadFolderWith.Name = "lblRenameDownloadFolderWith";
+            this.lblRenameDownloadFolderWith.Size = new System.Drawing.Size(177, 13);
+            this.lblRenameDownloadFolderWith.TabIndex = 19;
+            this.lblRenameDownloadFolderWith.Text = "Name thread download folder using:";
             // 
             // frmSettings
             // 
@@ -264,6 +285,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(714, 249);
+            this.Controls.Add(this.lblRenameDownloadFolderWith);
+            this.Controls.Add(this.chkRenameDownloadFolderWithCategory);
             this.Controls.Add(this.pnlSlug);
             this.Controls.Add(this.chkUseSlug);
             this.Controls.Add(this.chkRenameDownloadFolderWithDescription);
@@ -321,5 +344,7 @@
         private System.Windows.Forms.RadioButton rbSlugOnly;
         private System.Windows.Forms.RadioButton rbSlugLast;
         private System.Windows.Forms.RadioButton rbSlugFirst;
+        private System.Windows.Forms.CheckBox chkRenameDownloadFolderWithCategory;
+        private System.Windows.Forms.Label lblRenameDownloadFolderWith;
 	}
 }

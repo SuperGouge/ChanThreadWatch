@@ -66,6 +66,10 @@ namespace JDP {
             return GetThreadName();
         }
 
+	    public virtual string GetPageID() {
+            return String.Join("/", new[] { GetSiteName(), GetBoardName(), GetThreadID() });
+	    }
+
         public virtual bool HasSlug() {
             return false;
         }
@@ -154,6 +158,10 @@ namespace JDP {
 
 			return imageList;
 		}
+
+	    public virtual List<CrossLinkInfo> GetCrossLinks() {
+	        return new List<CrossLinkInfo>();
+	    }
 
 		public virtual string GetNextPageURL() {
 			return null;
@@ -287,6 +295,28 @@ namespace JDP {
 
 			return imageList;
 		}
+
+        public override List<CrossLinkInfo> GetCrossLinks() {
+            List<CrossLinkInfo> crossLinkList = new List<CrossLinkInfo>();
+
+            foreach (HTMLTagRange postMessageTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("blockquote"),
+                t => HTMLParser.ClassAttributeValueHas(t, "postMessage")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                foreach (HTMLTag quoteLinkTag in Enumerable.Where(_htmlParser.FindStartTags(postMessageTagRange, "a"),
+                    t => HTMLParser.ClassAttributeValueHas(t, "quotelink")))
+                {
+                    string href = quoteLinkTag.GetAttributeValueOrEmpty("href");
+                    if (!href.StartsWith("/") || !href.Contains("/thread/")) continue;
+                    Uri uri = new Uri(_url);
+                    CrossLinkInfo crossLink = new CrossLinkInfo {
+                        URL = General.CleanPageURL(uri.Scheme + "://" + uri.Host + href)
+                    };
+                    if (crossLinkList.Exists(c => c.URL == crossLink.URL)) continue;
+                    crossLinkList.Add(crossLink);
+                }
+            }
+            return crossLinkList;
+        }
 
 		public override bool IsBoardHighTurnover() {
 			return String.Equals(GetBoardName(), "b", StringComparison.OrdinalIgnoreCase);

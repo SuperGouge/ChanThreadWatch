@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -45,6 +46,11 @@ namespace JDP {
 			set { SetBool("OneTimeDownload", value); }
 		}
 
+        public static bool? AutoFollow {
+            get { return GetBool("AutoFollow"); }
+            set { SetBool("AutoFollow", value); }
+        }
+
 		public static int? CheckEvery {
 			get { return GetInt("CheckEvery"); }
 			set { SetInt("CheckEvery", value); }
@@ -63,6 +69,11 @@ namespace JDP {
 		public static bool? RenameDownloadFolderWithDescription {
 			get { return GetBool("RenameDownloadFolderWithDescription"); }
 			set { SetBool("RenameDownloadFolderWithDescription", value); }
+		}
+
+        public static bool? RenameDownloadFolderWithCategory {
+            get { return GetBool("RenameDownloadFolderWithCategory"); }
+            set { SetBool("RenameDownloadFolderWithCategory", value); }
 		}
 
 		public static bool? SaveThumbnails {
@@ -85,10 +96,20 @@ namespace JDP {
             set { SetBool("UseSlug", value); }
         }
 
-        public static SlugType SlugType
-        {
-            get { return GetSlugType("SlugType"); }
-            set { SetSlugType("SlugType", value); }
+        public static SlugType SlugType {
+            get {
+                string value = Get("SlugType") ?? String.Empty;
+                if (String.IsNullOrEmpty(value)) return SlugType.Last;
+				SlugType valueSlug;
+                try {
+                    valueSlug = (SlugType)Enum.Parse(typeof(SlugType), value);
+                }
+                catch (ArgumentException) {
+                    valueSlug = SlugType.Last;
+                }
+                return valueSlug;
+            }
+            set { Set("SlugType", value.ToString()); }
         }
 
 		public static bool? CheckForUpdates {
@@ -169,6 +190,36 @@ namespace JDP {
 			}
 		}
 
+	    public static Size? ClientSize {
+            get {
+                string value = Get("ClientSize") ?? String.Empty;
+                string[] size = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                int width, height;
+                if (size.Length != 2 || !Int32.TryParse(size[0], out width) || !Int32.TryParse(size[1], out height)) return null;
+                return new Size(width, height);
+            }
+            set { Set("ClientSize", value.HasValue ? value.Value.Width + "," + value.Value.Height : null); }
+	    }
+
+        public static int[] ColumnWidths {
+            get {
+                string value = Get("ColumnWidths") ?? String.Empty;
+                string[] widths = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                int[] val = new int[widths.Length];
+                for (int iWidth = 0; iWidth < widths.Length; iWidth++) {
+                    int width;
+                    Int32.TryParse(widths[iWidth], out width);
+                    val[iWidth] = width >= 0 ? width : 0;
+                }
+                return val;
+            }
+            set { Set("ColumnWidths", value.Length > 0 ? String.Join(",", Array.ConvertAll(value, Convert.ToString)) : null); }
+        }
+
+        public static int[] DefaultColumnWidths {
+            get { return new[] { 110, 150, 115, 115, 110, 75 }; }
+        }
+
 		private static string Get(string name) {
 			lock (_settings) {
 				string value;
@@ -197,19 +248,6 @@ namespace JDP {
 				DateTimeStyles.None, out x) ? x : (DateTime?)null;
 		}
 
-        private static SlugType GetSlugType(string name) {
-            string value = Get(name);
-            if (value == null) return SlugType.Last;
-            SlugType valueSlug;
-            try {
-                valueSlug = (SlugType)Enum.Parse(typeof(SlugType), value);
-            }
-            catch (ArgumentException) {
-                valueSlug = SlugType.Last;
-            }
-            return valueSlug;
-        }
-
 		private static void Set(string name, string value) {
 			lock (_settings) {
 				if (value == null) {
@@ -232,10 +270,6 @@ namespace JDP {
 		private static void SetDate(string name, DateTime? value) {
 			Set(name, value.HasValue ? value.Value.ToString("yyyyMMdd") : null);
 		}
-
-        private static void SetSlugType(string name, SlugType value) {
-            Set(name, value.ToString());
-        }
 
 		public static void Load() {
 			string path = Path.Combine(GetSettingsDirectory(), SettingsFileName);

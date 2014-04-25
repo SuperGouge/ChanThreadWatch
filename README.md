@@ -3,20 +3,30 @@
 ## Fork of the original ChanThreadWatch.
 
 This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.
+You can DOWNLOAD this program here: [https://github.com/SuperGouge/ChanThreadWatch/releases](https://github.com/SuperGouge/ChanThreadWatch/releases)
 You can find the official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
 ## Planned features
-- Auto-watch cross-thread links
-- Custom time interval between checks
+- Rename folder when renaming category
+- Rename folder when renaming description of a thread in auto-follow mode
+- Replace cross-links in post-processed HTML for threads in auto-follow mode
 - Keep deleted posts
 - Post highlighting by poster ID
 - Organize images by poster name/ID
-- Custom categories
 - Custom automatic description (thread title, creation date, etc.)
 - 4chan X compatible post-processed HTML
 - Support for more imageboards
 
 ## Changelog
+### 1.9.0 (2014-Apr-25):
+- Added auto-follow feature.
+- Added categories.
+- Added custom time interval.
+- Program now remembers window size and columns widths across runs.
+- Improved clarity when adding existing thread.
+- Fixed thread sorting when adding new thread.
+- Fixed auto-update to account for new project home.
+
 ### 1.8.1 (2014-Apr-21):
 - Fix for "/thread/" URLs without slugs giving wrong folder name.
 - Minor UI fixes.

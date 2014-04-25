@@ -55,6 +55,25 @@ namespace JDP {
 		}
 	}
 
+    public class ThreadInfo {
+        public string URL { get; set; }
+        public string PageAuth { get; set; }
+        public string ImageAuth { get; set; }
+        public int CheckIntervalSeconds { get; set; }
+        public bool OneTimeDownload { get; set; }
+        public string SaveDir { get; set; }
+        public string Description { get; set; }
+        public StopReason? StopReason { get; set; }
+        public WatcherExtraData ExtraData { get; set; }
+        public string Category { get; set; }
+        public bool AutoFollow { get; set; }
+    }
+
+    public class CrossLinkInfo {
+        public string URL { get; set; }
+        public ThreadWatcher Referer { get; set; }
+    }
+
 	public class HTTP404Exception : Exception {
 	}
 
@@ -767,5 +786,10 @@ namespace JDP {
         First = 0,
         Last = 1,
         Only = 2
+    }
+
+    public enum ThreadEditType {
+        Description = 1,
+        Category = 2
     }
 }

@@ -15,7 +15,8 @@ namespace JDP {
 			chkCustomUserAgent.Checked = Settings.UseCustomUserAgent ?? false;
 			txtCustomUserAgent.Text = Settings.CustomUserAgent ?? String.Empty;
 			chkSaveThumbnails.Checked = Settings.SaveThumbnails ?? true;
-			chkRenameDownloadFolderWithDescription.Checked = Settings.RenameDownloadFolderWithDescription ?? false;
+            chkRenameDownloadFolderWithDescription.Checked = Settings.RenameDownloadFolderWithDescription ?? false;
+            chkRenameDownloadFolderWithCategory.Checked = Settings.RenameDownloadFolderWithCategory ?? false;
 			chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
             chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
             chkUseSlug.Checked = Settings.UseSlug ?? false;
@@ -80,7 +81,8 @@ namespace JDP {
 				Settings.UseCustomUserAgent = chkCustomUserAgent.Checked;
 				Settings.CustomUserAgent = txtCustomUserAgent.Text;
 				Settings.SaveThumbnails = chkSaveThumbnails.Checked;
-				Settings.RenameDownloadFolderWithDescription = chkRenameDownloadFolderWithDescription.Checked;
+                Settings.RenameDownloadFolderWithDescription = chkRenameDownloadFolderWithDescription.Checked;
+                Settings.RenameDownloadFolderWithCategory = chkRenameDownloadFolderWithCategory.Checked;
 				Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
 				Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
 			    Settings.UseSlug = chkUseSlug.Checked;

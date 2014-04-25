@@ -11,6 +11,7 @@ namespace JDP {
 		public DateTime? LastImageOn { get; set; }
 		public bool HasDownloadedPage { get; set; }
 		public bool PreviousDownloadWasPage { get; set; }
+        public string AddedFrom { get; set; }
 	}
 
 	public struct DownloadProgressInfo {
