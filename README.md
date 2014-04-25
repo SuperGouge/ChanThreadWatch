@@ -10,6 +10,8 @@ You can find the official site here: [https://sites.google.com/site/chanthreadwa
 - Rename folder when renaming category
 - Rename folder when renaming description of a thread in auto-follow mode
 - Replace cross-links in post-processed HTML for threads in auto-follow mode
+- Chose default auto-follow behaviour of child threads in settings
+- Edit auto-follow property after adding a thread
 - Keep deleted posts
 - Post highlighting by poster ID
 - Organize images by poster name/ID
