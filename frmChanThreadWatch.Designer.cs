@@ -32,6 +32,7 @@
             this.chAddedFrom = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chCategory = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.grpAddThread = new System.Windows.Forms.GroupBox();
+            this.chkAutoFollow = new System.Windows.Forms.CheckBox();
             this.lblCategory = new System.Windows.Forms.Label();
             this.cboCategory = new System.Windows.Forms.ComboBox();
             this.pnlCheckEvery = new System.Windows.Forms.Panel();
@@ -69,7 +70,6 @@
             this.tmrSaveThreadList = new System.Windows.Forms.Timer(this.components);
             this.btnDownloads = new System.Windows.Forms.Button();
             this.tmrMaintenance = new System.Windows.Forms.Timer(this.components);
-            this.chkAutoFollow = new System.Windows.Forms.CheckBox();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -154,6 +154,16 @@
             this.grpAddThread.TabIndex = 1;
             this.grpAddThread.TabStop = false;
             this.grpAddThread.Text = "Add Thread";
+            // 
+            // chkAutoFollow
+            // 
+            this.chkAutoFollow.AutoSize = true;
+            this.chkAutoFollow.Location = new System.Drawing.Point(12, 126);
+            this.chkAutoFollow.Name = "chkAutoFollow";
+            this.chkAutoFollow.Size = new System.Drawing.Size(113, 17);
+            this.chkAutoFollow.TabIndex = 14;
+            this.chkAutoFollow.Text = "Follow Cross-Links";
+            this.chkAutoFollow.UseVisualStyleBackColor = true;
             // 
             // lblCategory
             // 
@@ -471,16 +481,6 @@
             this.tmrMaintenance.Enabled = true;
             this.tmrMaintenance.Interval = 1000;
             this.tmrMaintenance.Tick += new System.EventHandler(this.tmrMaintenance_Tick);
-            // 
-            // chkAutoFollow
-            // 
-            this.chkAutoFollow.AutoSize = true;
-            this.chkAutoFollow.Location = new System.Drawing.Point(12, 126);
-            this.chkAutoFollow.Name = "chkAutoFollow";
-            this.chkAutoFollow.Size = new System.Drawing.Size(113, 17);
-            this.chkAutoFollow.TabIndex = 14;
-            this.chkAutoFollow.Text = "Follow Cross-Links";
-            this.chkAutoFollow.UseVisualStyleBackColor = true;
             // 
             // frmChanThreadWatch
             // 

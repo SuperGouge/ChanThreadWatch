@@ -102,11 +102,30 @@ namespace JDP {
 		}
 
 		private void frmChanThreadWatch_Shown(object sender, EventArgs e) {
+		    UseWaitCursor = true;
+		    btnAdd.Enabled = false;
+            btnAddFromClipboard.Enabled = false;
+            btnRemoveCompleted.Enabled = false;
+            btnDownloads.Enabled = false;
+            btnSettings.Enabled = false;
+		    btnAbout.Enabled = false;
+            lvThreads.Enabled = false;
+            Application.DoEvents();
+
 			lvThreads.Items.Add(new ListViewItem());
 			_itemAreaY = lvThreads.GetItemRect(0).Y;
 			lvThreads.Items.RemoveAt(0);
-
-			LoadThreadList();
+            
+            LoadThreadList();
+            Application.DoEvents();
+            UseWaitCursor = false;
+            btnAdd.Enabled = true;
+            btnAddFromClipboard.Enabled = true;
+            btnRemoveCompleted.Enabled = true;
+            btnDownloads.Enabled = true;
+            btnSettings.Enabled = true;
+            btnAbout.Enabled = true;
+            lvThreads.Enabled = true;
 		}
 
 		private void frmChanThreadWatch_FormClosed(object sender, FormClosedEventArgs e) {
@@ -1145,6 +1164,7 @@ namespace JDP {
         }
 
 	    private static void UpdateCategories(string key, frmChanThreadWatch instance, bool remove = false) {
+	        key = key ?? String.Empty;
             if (remove && (_categories.ContainsKey(key) && (--_categories[key] < 1 && !String.IsNullOrEmpty(key)))) {
                 _categories.Remove(key);
                 instance.cboCategory.Items.Remove(key);
