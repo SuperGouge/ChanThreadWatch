@@ -127,6 +127,7 @@ namespace JDP {
             btnSettings.Enabled = true;
             btnAbout.Enabled = true;
             lvThreads.Enabled = true;
+            lvThreads.EnsureVisible(lvThreads.Items.Count - 1);
         }
 
         private void frmChanThreadWatch_FormClosed(object sender, FormClosedEventArgs e) {
@@ -910,7 +911,7 @@ namespace JDP {
 
         private void DisplayAddedFrom(ThreadWatcher watcher) {
             ThreadWatcher fromWatcher;
-            _watchers.TryGetValue(((WatcherExtraData)watcher.Tag).AddedFrom, out fromWatcher);
+            _watchers.TryGetValue(((WatcherExtraData)watcher.Tag).AddedFrom ?? String.Empty, out fromWatcher);
             SetSubItemText(watcher, ColumnIndex.AddedFrom, fromWatcher != null ? fromWatcher.Description : String.Empty);
         }
 
