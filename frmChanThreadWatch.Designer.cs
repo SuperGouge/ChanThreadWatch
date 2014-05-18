@@ -1,28 +1,28 @@
 ﻿namespace JDP {
-	partial class frmChanThreadWatch {
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class frmChanThreadWatch {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing) {
-			if (disposing && (components != null)) {
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent() {
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.lvThreads = new System.Windows.Forms.ListView();
             this.chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -78,16 +78,17 @@
             // lvThreads
             // 
             this.lvThreads.AllowColumnReorder = true;
-            this.lvThreads.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvThreads.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                                                                           | System.Windows.Forms.AnchorStyles.Left)
+                                                                          | System.Windows.Forms.AnchorStyles.Right)));
             this.lvThreads.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chDescription,
-            this.chStatus,
-            this.chLastImageOn,
-            this.chAddedOn,
-            this.chAddedFrom,
-            this.chCategory});
+                this.chDescription,
+                this.chStatus,
+                this.chLastImageOn,
+                this.chAddedOn,
+                this.chAddedFrom,
+                this.chCategory
+            });
             this.lvThreads.FullRowSelect = true;
             this.lvThreads.HideSelection = false;
             this.lvThreads.Location = new System.Drawing.Point(8, 8);
@@ -330,16 +331,17 @@
             // cmThreads
             // 
             this.cmThreads.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.miEditDescription,
-            this.miOpenFolder,
-            this.miOpenURL,
-            this.miStop,
-            this.miStart,
-            this.miCopyURL,
-            this.miRemove,
-            this.miRemoveAndDeleteFolder,
-            this.miCheckNow,
-            this.miCheckEvery});
+                this.miEditDescription,
+                this.miOpenFolder,
+                this.miOpenURL,
+                this.miStop,
+                this.miStart,
+                this.miCopyURL,
+                this.miRemove,
+                this.miRemoveAndDeleteFolder,
+                this.miCheckNow,
+                this.miCheckEvery
+            });
             // 
             // miEditDescription
             // 
@@ -510,50 +512,49 @@
             this.pnlCheckEvery.PerformLayout();
             this.grpDoubleClick.ResumeLayout(false);
             this.ResumeLayout(false);
+        }
 
-		}
+        #endregion
 
-		#endregion
-
-		private System.Windows.Forms.ListView lvThreads;
-		private System.Windows.Forms.ColumnHeader chStatus;
-		private System.Windows.Forms.GroupBox grpAddThread;
-		private System.Windows.Forms.CheckBox chkOneTime;
-		private System.Windows.Forms.Label lblURL;
-		private System.Windows.Forms.TextBox txtPageURL;
-		private System.Windows.Forms.Button btnAdd;
-		private System.Windows.Forms.Button btnRemoveCompleted;
-		private System.Windows.Forms.Button btnAbout;
-		private System.Windows.Forms.TextBox txtPageAuth;
-		private System.Windows.Forms.CheckBox chkImageAuth;
-		private System.Windows.Forms.CheckBox chkPageAuth;
-		private System.Windows.Forms.ComboBox cboCheckEvery;
-		private System.Windows.Forms.TextBox txtImageAuth;
-		private System.Windows.Forms.Label lblCheckEvery;
-		private System.Windows.Forms.Button btnSettings;
-		private System.Windows.Forms.ContextMenu cmThreads;
-		private System.Windows.Forms.MenuItem miOpenFolder;
-		private System.Windows.Forms.MenuItem miOpenURL;
-		private System.Windows.Forms.MenuItem miCheckNow;
-		private System.Windows.Forms.MenuItem miStop;
-		private System.Windows.Forms.MenuItem miCopyURL;
-		private System.Windows.Forms.MenuItem miCheckEvery;
-		private System.Windows.Forms.GroupBox grpDoubleClick;
-		private System.Windows.Forms.RadioButton rbOpenURL;
-		private System.Windows.Forms.RadioButton rbOpenFolder;
-		private System.Windows.Forms.MenuItem miStart;
-		private System.Windows.Forms.Timer tmrUpdateWaitStatus;
-		private System.Windows.Forms.Button btnAddFromClipboard;
-		private System.Windows.Forms.MenuItem miRemove;
-		private System.Windows.Forms.MenuItem miRemoveAndDeleteFolder;
-		private System.Windows.Forms.ColumnHeader chAddedOn;
-		private System.Windows.Forms.ColumnHeader chLastImageOn;
-		private System.Windows.Forms.ColumnHeader chDescription;
-		private System.Windows.Forms.MenuItem miEditDescription;
-		private System.Windows.Forms.RadioButton rbEditDescription;
-		private System.Windows.Forms.Timer tmrSaveThreadList;
-		private System.Windows.Forms.Button btnDownloads;
-		private System.Windows.Forms.Timer tmrMaintenance;
+        private System.Windows.Forms.ListView lvThreads;
+        private System.Windows.Forms.ColumnHeader chStatus;
+        private System.Windows.Forms.GroupBox grpAddThread;
+        private System.Windows.Forms.CheckBox chkOneTime;
+        private System.Windows.Forms.Label lblURL;
+        private System.Windows.Forms.TextBox txtPageURL;
+        private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.Button btnRemoveCompleted;
+        private System.Windows.Forms.Button btnAbout;
+        private System.Windows.Forms.TextBox txtPageAuth;
+        private System.Windows.Forms.CheckBox chkImageAuth;
+        private System.Windows.Forms.CheckBox chkPageAuth;
+        private System.Windows.Forms.ComboBox cboCheckEvery;
+        private System.Windows.Forms.TextBox txtImageAuth;
+        private System.Windows.Forms.Label lblCheckEvery;
+        private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.ContextMenu cmThreads;
+        private System.Windows.Forms.MenuItem miOpenFolder;
+        private System.Windows.Forms.MenuItem miOpenURL;
+        private System.Windows.Forms.MenuItem miCheckNow;
+        private System.Windows.Forms.MenuItem miStop;
+        private System.Windows.Forms.MenuItem miCopyURL;
+        private System.Windows.Forms.MenuItem miCheckEvery;
+        private System.Windows.Forms.GroupBox grpDoubleClick;
+        private System.Windows.Forms.RadioButton rbOpenURL;
+        private System.Windows.Forms.RadioButton rbOpenFolder;
+        private System.Windows.Forms.MenuItem miStart;
+        private System.Windows.Forms.Timer tmrUpdateWaitStatus;
+        private System.Windows.Forms.Button btnAddFromClipboard;
+        private System.Windows.Forms.MenuItem miRemove;
+        private System.Windows.Forms.MenuItem miRemoveAndDeleteFolder;
+        private System.Windows.Forms.ColumnHeader chAddedOn;
+        private System.Windows.Forms.ColumnHeader chLastImageOn;
+        private System.Windows.Forms.ColumnHeader chDescription;
+        private System.Windows.Forms.MenuItem miEditDescription;
+        private System.Windows.Forms.RadioButton rbEditDescription;
+        private System.Windows.Forms.Timer tmrSaveThreadList;
+        private System.Windows.Forms.Button btnDownloads;
+        private System.Windows.Forms.Timer tmrMaintenance;
         private System.Windows.Forms.TextBox txtCheckEvery;
         private System.Windows.Forms.Panel pnlCheckEvery;
         private System.Windows.Forms.ColumnHeader chAddedFrom;
@@ -562,6 +563,5 @@
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.CheckBox chkAutoFollow;
         //private System.Windows.Forms.MenuItem miEditCategory;
-	}
+    }
 }
-
