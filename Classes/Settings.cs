@@ -86,6 +86,11 @@ namespace JDP {
             set { Set("ParentThreadDescriptionFormat", value); }
         }
 
+        public static bool? ChildThreadsAreNewFormat {
+            get { return GetBool("ChildThreadsAreNewFormat"); }
+            set { SetBool("ChildThreadsAreNewFormat", value); }
+        }
+
         public static bool? SaveThumbnails {
             get { return GetBool("SaveThumbnails"); }
             set { SetBool("SaveThumbnails", value); }
@@ -234,7 +239,7 @@ namespace JDP {
         private static bool? GetBool(string name) {
             string value = Get(name);
             if (value == null) return null;
-            return value == "1";
+            return value != "0";
         }
 
         private static int? GetInt(string name) {

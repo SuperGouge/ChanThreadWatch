@@ -525,11 +525,9 @@ namespace JDP {
         public bool Add(T item) {
             if (!_dict.ContainsKey(item)) {
                 _dict[item] = 0;
-                return false;
-            }
-            else {
                 return true;
             }
+            return false;
         }
 
         private void AddRange(IEnumerable<T> collection) {
@@ -703,6 +701,14 @@ namespace JDP {
             DownloadID = downloadID;
             DownloadedSize = downloadedSize;
             IsSuccessful = isSuccessful;
+        }
+    }
+
+    public class AddThreadEventArgs : EventArgs {
+        public string PageURL { get; private set; }
+
+        public AddThreadEventArgs(string pageURL) {
+            PageURL = pageURL;
         }
     }
 

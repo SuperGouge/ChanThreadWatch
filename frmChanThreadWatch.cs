@@ -18,7 +18,6 @@ namespace JDP {
         private int _itemAreaY;
         private int[] _columnWidths;
         private object _cboCheckEveryLastValue;
-        private static frmChanThreadWatch _instance;
         private bool _isLoadingThreadsFromFile;
         private static Dictionary<string, int> _categories = new Dictionary<string, int>();
         private static Dictionary<string, ThreadWatcher> _watchers = new Dictionary<string, ThreadWatcher>();
@@ -26,7 +25,6 @@ namespace JDP {
         // ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
 
         public frmChanThreadWatch() {
-            _instance = this;
             InitializeComponent();
             Icon = Resources.ChanThreadWatchIcon;
             Settings.Load();
@@ -224,7 +222,7 @@ namespace JDP {
                 }
                 return;
             }
-            UpdateCategories(cboCategory.Text, this);
+            UpdateCategories(cboCategory.Text);
             lvThreads.Sort();
             txtPageURL.Clear();
             txtPageURL.Focus();
@@ -380,10 +378,10 @@ namespace JDP {
                 (watcher) => {
                     try {
                         if (Directory.Exists(watcher.ThreadDownloadDirectory)) Directory.Delete(watcher.ThreadDownloadDirectory, true);
-                        string category = General.GetLastDirectory(General.RemoveLastDirectory(watcher.RootThread.ThreadDownloadDirectory));
+                        string category = General.GetLastDirectory(General.RemoveLastDirectory(watcher.ThreadDownloadDirectory));
                         if (category == watcher.MainDownloadDirectory) category = String.Empty;
                         string categoryPath = Path.Combine(watcher.MainDownloadDirectory, category);
-                        if (!String.IsNullOrEmpty(category) && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
+                        if (categoryPath != watcher.MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
                             Directory.Delete(categoryPath);
                         }
                     }
@@ -648,36 +646,30 @@ namespace JDP {
             }
         }
 
-        public delegate ThreadWatcher AddThreadDelegate(string pageURL, ThreadWatcher parentThread);
-
-        public static ThreadWatcher AddThread(string pageURL, ThreadWatcher parentThread) {
-            if (_instance.InvokeRequired) {
-                _instance.Invoke(new AddThreadDelegate(AddThread), new object[] { pageURL, parentThread });
+        private void ThreadWatcher_AddThread(ThreadWatcher watcher, AddThreadEventArgs args) {
+            ThreadInfo thread = new ThreadInfo {
+                URL = args.PageURL,
+                PageAuth = watcher.PageAuth,
+                ImageAuth = watcher.ImageAuth,
+                CheckIntervalSeconds = watcher.CheckIntervalSeconds,
+                OneTimeDownload = watcher.OneTimeDownload,
+                SaveDir = null,
+                Description = String.Empty,
+                StopReason = null,
+                ExtraData = new WatcherExtraData {
+                    AddedOn = DateTime.Now,
+                    AddedFrom = watcher.PageID
+                },
+                Category = watcher.Category,
+                AutoFollow = watcher.AutoFollow
+            };
+            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
+            siteHelper.SetURL(thread.URL);
+            if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
+            if (AddThread(thread)) {
+                UpdateCategories(thread.Category);
+                _saveThreadList = true;
             }
-            else {
-                ThreadInfo thread = new ThreadInfo {
-                    URL = pageURL,
-                    PageAuth = parentThread.PageAuth,
-                    ImageAuth = parentThread.ImageAuth,
-                    CheckIntervalSeconds = parentThread.CheckIntervalSeconds,
-                    OneTimeDownload = parentThread.OneTimeDownload,
-                    SaveDir = null,
-                    Description = String.Empty,
-                    StopReason = null,
-                    ExtraData = new WatcherExtraData {
-                        AddedOn = DateTime.Now,
-                        AddedFrom = parentThread.PageID
-                    },
-                    Category = parentThread.Category,
-                    AutoFollow = parentThread.AutoFollow
-                };
-                if (_instance.AddThread(thread)) {
-                    UpdateCategories(thread.Category, _instance);
-                    _instance._saveThreadList = true;
-                    return (ThreadWatcher)_instance.lvThreads.Items[_instance.lvThreads.Items.Count - 1].Tag;
-                }
-            }
-            return null;
         }
 
         private bool AddThread(string pageURL) {
@@ -728,6 +720,7 @@ namespace JDP {
                 watcher.DownloadStart += ThreadWatcher_DownloadStart;
                 watcher.DownloadProgress += ThreadWatcher_DownloadProgress;
                 watcher.DownloadEnd += ThreadWatcher_DownloadEnd;
+                watcher.AddThread += ThreadWatcher_AddThread;
 
                 newListViewItem = new ListViewItem(String.Empty);
                 for (int i = 1; i < lvThreads.Columns.Count; i++) {
@@ -751,7 +744,7 @@ namespace JDP {
             }
             watcher.Tag = thread.ExtraData;
 
-            if (parentThread != null) parentThread.RootThread.CrossLinks.Add(watcher);
+            if (parentThread != null) parentThread.ChildThreads.Add(watcher.PageID, watcher);
 
             DisplayDescription(watcher);
             DisplayAddedOn(watcher);
@@ -783,7 +776,7 @@ namespace JDP {
                         try { preRemoveAction(watcher); }
                         catch { }
                     }
-                    UpdateCategories(watcher.Category, this, true);
+                    UpdateCategories(watcher.Category, true);
                     lvThreads.Items.RemoveAt(i);
                 }
                 else {
@@ -1012,7 +1005,7 @@ namespace JDP {
                 }
                 if (lines.Length < (1 + linesPerThread)) return;
                 _isLoadingThreadsFromFile = true;
-                UpdateCategories(String.Empty, this);
+                UpdateCategories(String.Empty);
                 int i = 1;
                 while (i <= lines.Length - linesPerThread) {
                     ThreadInfo thread = new ThreadInfo { ExtraData = new WatcherExtraData() };
@@ -1050,16 +1043,41 @@ namespace JDP {
                         thread.ExtraData.AddedFrom = String.Empty;
                         thread.Category = String.Empty;
                     }
-                    UpdateCategories(thread.Category, this);
+                    UpdateCategories(thread.Category);
                     AddThread(thread);
                 }
                 foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                     ThreadWatcher parentThread;
                     _watchers.TryGetValue(((WatcherExtraData)threadWatcher.Tag).AddedFrom, out parentThread);
                     threadWatcher.ParentThread = parentThread;
-                    if (parentThread != null) threadWatcher.RootThread.CrossLinks.Add(threadWatcher);
+                    if (parentThread != null) parentThread.ChildThreads.Add(threadWatcher.PageID, threadWatcher);
                     DisplayAddedFrom(threadWatcher);
                     if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
+                }
+                if (Settings.ChildThreadsAreNewFormat != true) {
+                    foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
+                        if (threadWatcher.ChildThreads.Count == 0 || threadWatcher.ParentThread != null) continue;
+                        foreach (ThreadWatcher descendantThread in threadWatcher.DescendentThreads.Values) {
+                            descendantThread.DoNotRename = true;
+                            string sourceDir = Path.Combine(descendantThread.ParentThread.ThreadDownloadDirectory, General.GetLastDirectory(descendantThread.ThreadDownloadDirectory));
+                            string destDir = Path.Combine(General.RemoveLastDirectory(threadWatcher.ThreadDownloadDirectory),
+                                General.GetRelativeDirectoryPath(descendantThread.ThreadDownloadDirectory, threadWatcher.ThreadDownloadDirectory));
+                            if (String.Equals(destDir, sourceDir, StringComparison.Ordinal)) return;
+                            if (String.Equals(destDir, sourceDir, StringComparison.OrdinalIgnoreCase)) {
+                                Directory.Move(sourceDir, destDir + " Temp");
+                                sourceDir = destDir + " Temp";
+                            }
+                            if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
+                            Directory.Move(sourceDir, destDir);
+                            descendantThread.ThreadDownloadDirectory = destDir;
+                            descendantThread.DoNotRename = false;
+                        }
+                    }
+                    Settings.ChildThreadsAreNewFormat = true;
+                    try {
+                        Settings.Save();
+                    }
+                    catch { }
                 }
                 _isLoadingThreadsFromFile = false;
             }
@@ -1163,11 +1181,11 @@ namespace JDP {
             Settings.ColumnWidths = columnWidths;
         }
 
-        private static void UpdateCategories(string key, frmChanThreadWatch instance, bool remove = false) {
+        private void UpdateCategories(string key, bool remove = false) {
             key = key ?? String.Empty;
             if (remove && (_categories.ContainsKey(key) && (--_categories[key] < 1 && !String.IsNullOrEmpty(key)))) {
                 _categories.Remove(key);
-                instance.cboCategory.Items.Remove(key);
+                cboCategory.Items.Remove(key);
             }
             else {
                 if (_categories.ContainsKey(key)) {
@@ -1175,7 +1193,7 @@ namespace JDP {
                 }
                 else {
                     _categories.Add(key, 1);
-                    instance.cboCategory.Items.Add(key);
+                    cboCategory.Items.Add(key);
                 }
             }
         }

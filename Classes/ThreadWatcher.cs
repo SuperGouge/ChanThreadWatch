@@ -33,7 +33,7 @@ namespace JDP {
         private string _description = String.Empty;
         private object _tag;
         private SiteHelper _siteHelper;
-        private HashSet<ThreadWatcher> _crossLinks = new HashSet<ThreadWatcher>();
+        private Dictionary<string, ThreadWatcher> _childThreads = new Dictionary<string, ThreadWatcher>();
         private string _pageID;
         private string _category = String.Empty;
         private bool _autoFollow;
@@ -169,8 +169,8 @@ namespace JDP {
                     TryRenameThreadDownloadDirectory(false);
                 }
                 if (Settings.RenameDownloadFolderWithParentThreadDescription == true) {
-                    foreach (ThreadWatcher crossLink in RootThread.CrossLinks) {
-                        crossLink.TryRenameThreadDownloadDirectory(false);
+                    foreach (ThreadWatcher descendantThread in RootThread.DescendentThreads.Values) {
+                        descendantThread.TryRenameThreadDownloadDirectory(false);
                     }
                 }
             }
@@ -192,8 +192,23 @@ namespace JDP {
             set { lock (_settingsSync) { _tag = value; } }
         }
 
-        public HashSet<ThreadWatcher> CrossLinks {
-            get { return _crossLinks; }
+        public Dictionary<string, ThreadWatcher> ChildThreads {
+            get { lock (_settingsSync) { return _childThreads; } }
+        }
+
+        public Dictionary<string, ThreadWatcher> DescendentThreads {
+            get {
+                Dictionary<string, ThreadWatcher> dictionary = new Dictionary<string, ThreadWatcher>();
+                foreach (ThreadWatcher childThread in ChildThreads.Values) {
+                    if (!dictionary.ContainsKey(childThread.PageID)) dictionary.Add(childThread.PageID, childThread);
+                }
+                foreach (ThreadWatcher childThread in ChildThreads.Values) {
+                    foreach (ThreadWatcher descendantThread in childThread.DescendentThreads.Values) {
+                        if (!dictionary.ContainsKey(descendantThread.PageID)) dictionary.Add(descendantThread.PageID, descendantThread);
+                    }
+                }
+                return dictionary;
+            }
         }
 
         public ThreadWatcher ParentThread { get; set; }
@@ -328,6 +343,8 @@ namespace JDP {
 
         public event EventHandler<ThreadWatcher, DownloadEndEventArgs> DownloadEnd;
 
+        public event EventHandler<ThreadWatcher, AddThreadEventArgs> AddThread;
+
         private void OnDownloadStatus(DownloadStatusEventArgs e) {
             var evt = DownloadStatus;
             if (evt != null)
@@ -372,6 +389,13 @@ namespace JDP {
 
         private void OnDownloadEnd(DownloadEndEventArgs e) {
             var evt = DownloadEnd;
+            if (evt != null)
+                try { evt(this, e); }
+                catch { }
+        }
+
+        private void OnAddThread(AddThreadEventArgs e) {
+            var evt = AddThread;
             if (evt != null)
                 try { evt(this, e); }
                 catch { }
@@ -475,18 +499,10 @@ namespace JDP {
                         siteHelper.SetHTMLParser(pageParser);
 
                         if (AutoFollow) {
-                            foreach (CrossLinkInfo crossLink in siteHelper.GetCrossLinks()) {
-                                SiteHelper crossLinkSiteHelper = SiteHelper.GetInstance((new Uri(crossLink.URL)).Host);
-                                crossLinkSiteHelper.SetURL(crossLink.URL);
-                                bool exists = false;
-                                foreach (ThreadWatcher threadWatcher in RootThread.CrossLinks) {
-                                    if (crossLinkSiteHelper.GetPageID() != threadWatcher.PageID) continue;
-                                    exists = true;
-                                    break;
-                                }
-                                if (exists) continue;
-                                crossLink.Referer = this;
-                                frmChanThreadWatch.AddThread(crossLink.URL, crossLink.Referer); // Somehow only return null now
+                            foreach (string crossLink in siteHelper.GetCrossLinks()) {
+                                SiteHelper crossLinkSiteHelper = SiteHelper.GetInstance((new Uri(crossLink)).Host);
+                                crossLinkSiteHelper.SetURL(crossLink);
+                                if (!RootThread.DescendentThreads.ContainsKey(crossLinkSiteHelper.GetPageID())) OnAddThread(new AddThreadEventArgs(crossLink));
                             }
                         }
 

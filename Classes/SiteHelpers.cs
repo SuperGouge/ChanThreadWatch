@@ -159,8 +159,8 @@ namespace JDP {
             return imageList;
         }
 
-        public virtual List<CrossLinkInfo> GetCrossLinks() {
-            return new List<CrossLinkInfo>();
+        public virtual HashSet<string> GetCrossLinks() {
+            return new HashSet<string>();
         }
 
         public virtual string GetNextPageURL() {
@@ -296,8 +296,8 @@ namespace JDP {
             return imageList;
         }
 
-        public override List<CrossLinkInfo> GetCrossLinks() {
-            List<CrossLinkInfo> crossLinkList = new List<CrossLinkInfo>();
+        public override HashSet<string> GetCrossLinks() {
+            HashSet<string> crossLinks = new HashSet<string>();
 
             foreach (HTMLTagRange postMessageTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("blockquote"),
                 t => HTMLParser.ClassAttributeValueHas(t, "postMessage")), t => _htmlParser.CreateTagRange(t)), r => r != null))
@@ -308,14 +308,10 @@ namespace JDP {
                     string href = quoteLinkTag.GetAttributeValueOrEmpty("href");
                     if (!href.StartsWith("/") || !href.Contains("/thread/")) continue;
                     Uri uri = new Uri(_url);
-                    CrossLinkInfo crossLink = new CrossLinkInfo {
-                        URL = General.CleanPageURL(uri.Scheme + "://" + uri.Host + href)
-                    };
-                    if (crossLinkList.Exists(c => c.URL == crossLink.URL)) continue;
-                    crossLinkList.Add(crossLink);
+                    crossLinks.Add(General.CleanPageURL(uri.Scheme + "://" + uri.Host + href));
                 }
             }
-            return crossLinkList;
+            return crossLinks;
         }
 
         public override bool IsBoardHighTurnover() {
