@@ -46,6 +46,9 @@
             this.rbSlugFirst = new System.Windows.Forms.RadioButton();
             this.chkRenameDownloadFolderWithCategory = new System.Windows.Forms.CheckBox();
             this.lblRenameDownloadFolderWith = new System.Windows.Forms.Label();
+            this.chkRenameDownloadFolderWithParentThreadDescription = new System.Windows.Forms.CheckBox();
+            this.lblParentThreadDescriptionFormat = new System.Windows.Forms.Label();
+            this.txtParentThreadDescriptionFormat = new System.Windows.Forms.TextBox();
             this.pnlSlug.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,7 +80,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(568, 216);
+            this.btnOK.Location = new System.Drawing.Point(568, 238);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(60, 23);
             this.btnOK.TabIndex = 14;
@@ -88,7 +91,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(636, 216);
+            this.btnCancel.Location = new System.Drawing.Point(636, 238);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(68, 23);
             this.btnCancel.TabIndex = 15;
@@ -128,7 +131,7 @@
             // lblSettingsLocation
             // 
             this.lblSettingsLocation.AutoSize = true;
-            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 224);
+            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 246);
             this.lblSettingsLocation.Name = "lblSettingsLocation";
             this.lblSettingsLocation.Size = new System.Drawing.Size(85, 13);
             this.lblSettingsLocation.TabIndex = 11;
@@ -137,7 +140,7 @@
             // rbSettingsInAppDataFolder
             // 
             this.rbSettingsInAppDataFolder.AutoSize = true;
-            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 222);
+            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 244);
             this.rbSettingsInAppDataFolder.Name = "rbSettingsInAppDataFolder";
             this.rbSettingsInAppDataFolder.Size = new System.Drawing.Size(130, 17);
             this.rbSettingsInAppDataFolder.TabIndex = 12;
@@ -148,7 +151,7 @@
             // rbSettingsInExeFolder
             // 
             this.rbSettingsInExeFolder.AutoSize = true;
-            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 222);
+            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 244);
             this.rbSettingsInExeFolder.Name = "rbSettingsInExeFolder";
             this.rbSettingsInExeFolder.Size = new System.Drawing.Size(107, 17);
             this.rbSettingsInExeFolder.TabIndex = 13;
@@ -159,7 +162,7 @@
             // chkUseOriginalFileNames
             // 
             this.chkUseOriginalFileNames.AutoSize = true;
-            this.chkUseOriginalFileNames.Location = new System.Drawing.Point(10, 120);
+            this.chkUseOriginalFileNames.Location = new System.Drawing.Point(10, 145);
             this.chkUseOriginalFileNames.Name = "chkUseOriginalFileNames";
             this.chkUseOriginalFileNames.Size = new System.Drawing.Size(273, 17);
             this.chkUseOriginalFileNames.TabIndex = 8;
@@ -169,7 +172,7 @@
             // chkVerifyImageHashes
             // 
             this.chkVerifyImageHashes.AutoSize = true;
-            this.chkVerifyImageHashes.Location = new System.Drawing.Point(10, 144);
+            this.chkVerifyImageHashes.Location = new System.Drawing.Point(10, 168);
             this.chkVerifyImageHashes.Name = "chkVerifyImageHashes";
             this.chkVerifyImageHashes.Size = new System.Drawing.Size(265, 17);
             this.chkVerifyImageHashes.TabIndex = 9;
@@ -179,7 +182,7 @@
             // chkCheckForUpdates
             // 
             this.chkCheckForUpdates.AutoSize = true;
-            this.chkCheckForUpdates.Location = new System.Drawing.Point(10, 192);
+            this.chkCheckForUpdates.Location = new System.Drawing.Point(10, 214);
             this.chkCheckForUpdates.Name = "chkCheckForUpdates";
             this.chkCheckForUpdates.Size = new System.Drawing.Size(353, 17);
             this.chkCheckForUpdates.TabIndex = 10;
@@ -209,7 +212,7 @@
             // chkUseSlug
             // 
             this.chkUseSlug.AutoSize = true;
-            this.chkUseSlug.Location = new System.Drawing.Point(10, 169);
+            this.chkUseSlug.Location = new System.Drawing.Point(10, 191);
             this.chkUseSlug.Name = "chkUseSlug";
             this.chkUseSlug.Size = new System.Drawing.Size(285, 17);
             this.chkUseSlug.TabIndex = 16;
@@ -222,7 +225,7 @@
             this.pnlSlug.Controls.Add(this.rbSlugOnly);
             this.pnlSlug.Controls.Add(this.rbSlugLast);
             this.pnlSlug.Controls.Add(this.rbSlugFirst);
-            this.pnlSlug.Location = new System.Drawing.Point(311, 169);
+            this.pnlSlug.Location = new System.Drawing.Point(311, 191);
             this.pnlSlug.Name = "pnlSlug";
             this.pnlSlug.Size = new System.Drawing.Size(237, 17);
             this.pnlSlug.TabIndex = 17;
@@ -273,18 +276,47 @@
             // lblRenameDownloadFolderWith
             // 
             this.lblRenameDownloadFolderWith.AutoSize = true;
-            this.lblRenameDownloadFolderWith.Location = new System.Drawing.Point(7, 97);
+            this.lblRenameDownloadFolderWith.Location = new System.Drawing.Point(7, 108);
             this.lblRenameDownloadFolderWith.Name = "lblRenameDownloadFolderWith";
             this.lblRenameDownloadFolderWith.Size = new System.Drawing.Size(177, 13);
             this.lblRenameDownloadFolderWith.TabIndex = 19;
             this.lblRenameDownloadFolderWith.Text = "Name thread download folder using:";
+            // 
+            // chkRenameDownloadFolderWithParentThreadDescription
+            // 
+            this.chkRenameDownloadFolderWithParentThreadDescription.AutoSize = true;
+            this.chkRenameDownloadFolderWithParentThreadDescription.Location = new System.Drawing.Point(190, 122);
+            this.chkRenameDownloadFolderWithParentThreadDescription.Name = "chkRenameDownloadFolderWithParentThreadDescription";
+            this.chkRenameDownloadFolderWithParentThreadDescription.Size = new System.Drawing.Size(144, 17);
+            this.chkRenameDownloadFolderWithParentThreadDescription.TabIndex = 20;
+            this.chkRenameDownloadFolderWithParentThreadDescription.Text = "Parent thread description";
+            this.chkRenameDownloadFolderWithParentThreadDescription.UseVisualStyleBackColor = true;
+            // 
+            // lblParentThreadDescriptionFormat
+            // 
+            this.lblParentThreadDescriptionFormat.AutoSize = true;
+            this.lblParentThreadDescriptionFormat.Location = new System.Drawing.Point(340, 123);
+            this.lblParentThreadDescriptionFormat.Name = "lblParentThreadDescriptionFormat";
+            this.lblParentThreadDescriptionFormat.Size = new System.Drawing.Size(103, 13);
+            this.lblParentThreadDescriptionFormat.TabIndex = 21;
+            this.lblParentThreadDescriptionFormat.Text = "Specify format used:";
+            // 
+            // txtParentThreadDescriptionFormat
+            // 
+            this.txtParentThreadDescriptionFormat.Location = new System.Drawing.Point(449, 120);
+            this.txtParentThreadDescriptionFormat.Name = "txtParentThreadDescriptionFormat";
+            this.txtParentThreadDescriptionFormat.Size = new System.Drawing.Size(150, 20);
+            this.txtParentThreadDescriptionFormat.TabIndex = 22;
             // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(714, 249);
+            this.ClientSize = new System.Drawing.Size(714, 271);
+            this.Controls.Add(this.txtParentThreadDescriptionFormat);
+            this.Controls.Add(this.lblParentThreadDescriptionFormat);
+            this.Controls.Add(this.chkRenameDownloadFolderWithParentThreadDescription);
             this.Controls.Add(this.lblRenameDownloadFolderWith);
             this.Controls.Add(this.chkRenameDownloadFolderWithCategory);
             this.Controls.Add(this.pnlSlug);
@@ -318,6 +350,7 @@
             this.pnlSlug.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -345,5 +378,8 @@
         private System.Windows.Forms.RadioButton rbSlugFirst;
         private System.Windows.Forms.CheckBox chkRenameDownloadFolderWithCategory;
         private System.Windows.Forms.Label lblRenameDownloadFolderWith;
+        private System.Windows.Forms.CheckBox chkRenameDownloadFolderWithParentThreadDescription;
+        private System.Windows.Forms.Label lblParentThreadDescriptionFormat;
+        private System.Windows.Forms.TextBox txtParentThreadDescriptionFormat;
     }
 }

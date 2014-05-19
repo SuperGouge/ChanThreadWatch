@@ -651,10 +651,6 @@ namespace JDP {
         public delegate ThreadWatcher AddThreadDelegate(string pageURL, ThreadWatcher parentThread);
 
         public static ThreadWatcher AddThread(string pageURL, ThreadWatcher parentThread) {
-            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
-            siteHelper.SetURL(pageURL);
-            string threadDownloadDirectory = Path.Combine(parentThread.ThreadDownloadDirectory, General.CleanFileName(String.Format(
-                "{0}_{1}_{2}", siteHelper.GetSiteName(), siteHelper.GetBoardName(), siteHelper.GetThreadName())));
             if (_instance.InvokeRequired) {
                 _instance.Invoke(new AddThreadDelegate(AddThread), new object[] { pageURL, parentThread });
             }
@@ -665,7 +661,7 @@ namespace JDP {
                     ImageAuth = parentThread.ImageAuth,
                     CheckIntervalSeconds = parentThread.CheckIntervalSeconds,
                     OneTimeDownload = parentThread.OneTimeDownload,
-                    SaveDir = threadDownloadDirectory,
+                    SaveDir = null,
                     Description = String.Empty,
                     StopReason = null,
                     ExtraData = new WatcherExtraData {
@@ -1048,9 +1044,13 @@ namespace JDP {
                     if (fileVersion >= 4) {
                         thread.ExtraData.AddedFrom = lines[i++];
                         thread.Category = lines[i++];
-                        UpdateCategories(thread.Category, this);
                         thread.AutoFollow = lines[i++] == "1";
                     }
+                    else {
+                        thread.ExtraData.AddedFrom = String.Empty;
+                        thread.Category = String.Empty;
+                    }
+                    UpdateCategories(thread.Category, this);
                     AddThread(thread);
                 }
                 foreach (ThreadWatcher threadWatcher in ThreadWatchers) {

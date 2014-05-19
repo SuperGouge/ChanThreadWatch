@@ -34,6 +34,7 @@ namespace JDP {
         private object _tag;
         private SiteHelper _siteHelper;
         private HashSet<ThreadWatcher> _crossLinks = new HashSet<ThreadWatcher>();
+        private string _pageID;
         private string _category = String.Empty;
         private bool _autoFollow;
 
@@ -52,6 +53,7 @@ namespace JDP {
             _pageURL = pageURL;
             _siteHelper = SiteHelper.GetInstance(PageHost);
             _siteHelper.SetURL(PageURL);
+            _pageID = _siteHelper.GetPageID();
         }
 
         public string PageURL {
@@ -63,7 +65,7 @@ namespace JDP {
         }
 
         public string PageID {
-            get { return _siteHelper.GetPageID(); }
+            get { return _pageID; }
         }
 
         public SiteHelper SiteHelper {
@@ -115,11 +117,7 @@ namespace JDP {
         }
 
         private bool ThreadDownloadDirectoryPendingRename {
-            get {
-                lock (_settingsSync) {
-                    return ThreadDownloadDirectoryPendingDescriptionRename || ThreadDownloadDirectoryPendingCategoryRename;
-                }
-            }
+            get { return ThreadDownloadDirectoryPendingDescriptionRename || ThreadDownloadDirectoryPendingCategoryRename; }
         }
 
         private bool ThreadDownloadDirectoryPendingDescriptionRename {
@@ -128,8 +126,7 @@ namespace JDP {
                     return !String.IsNullOrEmpty(_threadDownloadDirectory) &&
                            Settings.RenameDownloadFolderWithDescription == true &&
                            !String.IsNullOrEmpty(_description) &&
-                           !String.Equals(General.GetLastDirectory(_threadDownloadDirectory), General.CleanFileName(_description), StringComparison.Ordinal) &&
-                           !IsCrossLink && CrossLinks.Count < 1;
+                           !String.Equals(General.GetLastDirectory(_threadDownloadDirectory), General.CleanFileName(_description), StringComparison.Ordinal);
                 }
             }
         }
@@ -171,6 +168,22 @@ namespace JDP {
                 if (ThreadDownloadDirectoryPendingDescriptionRename) {
                     TryRenameThreadDownloadDirectory(false);
                 }
+                if (Settings.RenameDownloadFolderWithParentThreadDescription == true) {
+                    foreach (ThreadWatcher crossLink in RootThread.CrossLinks) {
+                        crossLink.TryRenameThreadDownloadDirectory(false);
+                    }
+                }
+            }
+        }
+
+        public string ParentThreadFormattedDescription {
+            get {
+                if (ParentThread == null || Settings.RenameDownloadFolderWithParentThreadDescription != true ||
+                    (!String.IsNullOrEmpty(Settings.ParentThreadDescriptionFormat) && _description.EndsWith(Settings.ParentThreadDescriptionFormat.Replace("{Parent}", ParentThread.Description))))
+                {
+                    return String.Empty;
+                }
+                return Settings.ParentThreadDescriptionFormat.Replace("{Parent}", ParentThread.Description);
             }
         }
 
@@ -396,8 +409,9 @@ namespace JDP {
                             _threadName = siteHelper.GetThreadName();
 
                             if (String.IsNullOrEmpty(_threadDownloadDirectory)) {
-                                _threadDownloadDirectory = Path.Combine(Path.Combine(_mainDownloadDirectory, Settings.RenameDownloadFolderWithCategory == true ? General.CleanFileName(_category) : String.Empty), General.CleanFileName(String.Format(
-                                    "{0}_{1}_{2}", siteHelper.GetSiteName(), siteHelper.GetBoardName(), _threadName)));
+                                _threadDownloadDirectory = Path.Combine(
+                                    Path.Combine(_mainDownloadDirectory, Settings.RenameDownloadFolderWithCategory == true ? General.CleanFileName(_category) : String.Empty),
+                                    General.CleanFileName(String.Format("{0}_{1}_{2}{3}", siteHelper.GetSiteName(), siteHelper.GetBoardName(), _threadName, ParentThreadFormattedDescription)));
                             }
                             if (!Directory.Exists(_threadDownloadDirectory)) {
                                 Directory.CreateDirectory(_threadDownloadDirectory);
@@ -739,23 +753,16 @@ namespace JDP {
                 }
                 try {
                     if (DoNotRename) return;
-                    string destDir = _threadDownloadDirectory;
-                    if (ThreadDownloadDirectoryPendingDescriptionRename) {
-                        destDir = Path.Combine(General.RemoveLastDirectory(_threadDownloadDirectory), General.CleanFileName(_description));
-                    }
-                    /*if (ThreadDownloadDirectoryPendingCategoryRename) {
-                        string rootThreadBaseDir = General.RemoveLastDirectory(RootThread.ThreadDownloadDirectory);
-                        string category = rootThreadBaseDir != MainDownloadDirectory ? General.GetLastDirectory(rootThreadBaseDir) : String.Empty;
-                        string relativeDestDir = General.GetRelativeDirectoryPath(destDir, Path.Combine(MainDownloadDirectory, category));
-                        destDir = Path.Combine(Path.Combine(_mainDownloadDirectory, General.CleanFileName(_category)), relativeDestDir);
-                    }*/
+                    string destDir = Path.Combine(
+                        Path.Combine(_mainDownloadDirectory, Settings.RenameDownloadFolderWithCategory == true ? General.CleanFileName(_category) : String.Empty),
+                        General.CleanFileName(_description + ParentThreadFormattedDescription));
                     if (String.Equals(destDir, _threadDownloadDirectory, StringComparison.Ordinal)) return;
                     if (String.Equals(destDir, _threadDownloadDirectory, StringComparison.OrdinalIgnoreCase)) {
                         Directory.Move(_threadDownloadDirectory, destDir + " Temp");
                         _threadDownloadDirectory = destDir + " Temp";
                         renamedDir = true;
                     }
-                    if (!Directory.Exists(destDir)) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
+                    if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
                     Directory.Move(_threadDownloadDirectory, destDir);
                     _threadDownloadDirectory = destDir;
                     renamedDir = true;

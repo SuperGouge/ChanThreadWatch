@@ -17,6 +17,8 @@ namespace JDP {
             chkSaveThumbnails.Checked = Settings.SaveThumbnails ?? true;
             chkRenameDownloadFolderWithDescription.Checked = Settings.RenameDownloadFolderWithDescription ?? false;
             chkRenameDownloadFolderWithCategory.Checked = Settings.RenameDownloadFolderWithCategory ?? false;
+            chkRenameDownloadFolderWithParentThreadDescription.Checked = Settings.RenameDownloadFolderWithParentThreadDescription ?? false;
+            txtParentThreadDescriptionFormat.Text = Settings.ParentThreadDescriptionFormat ?? " ({Parent})";
             chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
             chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
             chkUseSlug.Checked = Settings.UseSlug ?? false;
@@ -84,6 +86,8 @@ namespace JDP {
                 Settings.SaveThumbnails = chkSaveThumbnails.Checked;
                 Settings.RenameDownloadFolderWithDescription = chkRenameDownloadFolderWithDescription.Checked;
                 Settings.RenameDownloadFolderWithCategory = chkRenameDownloadFolderWithCategory.Checked;
+                Settings.RenameDownloadFolderWithParentThreadDescription = chkRenameDownloadFolderWithParentThreadDescription.Checked;
+                Settings.ParentThreadDescriptionFormat = txtParentThreadDescriptionFormat.Text;
                 Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
                 Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
                 Settings.UseSlug = chkUseSlug.Checked;

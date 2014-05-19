@@ -76,6 +76,16 @@ namespace JDP {
             set { SetBool("RenameDownloadFolderWithCategory", value); }
         }
 
+        public static bool? RenameDownloadFolderWithParentThreadDescription {
+            get { return GetBool("RenameDownloadFolderWithParentThreadDescription"); }
+            set { SetBool("RenameDownloadFolderWithParentThreadDescription", value); }
+        }
+
+        public static string ParentThreadDescriptionFormat {
+            get { return Get("ParentThreadDescriptionFormat"); }
+            set { Set("ParentThreadDescriptionFormat", value); }
+        }
+
         public static bool? SaveThumbnails {
             get { return GetBool("SaveThumbnails"); }
             set { SetBool("SaveThumbnails", value); }
