@@ -406,6 +406,7 @@ namespace JDP {
         private Dictionary<string, DownloadInfo> _completedImages;
         private Dictionary<string, DownloadInfo> _completedThumbs;
         private int _maxFileNameLength;
+        private int _maxFileNameLengthBaseDir;
         private string _threadName;
 
         private void Check() {
@@ -429,7 +430,7 @@ namespace JDP {
                             _imageDiskFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                             _completedImages = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
                             _completedThumbs = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
-                            _maxFileNameLength = 0;
+                            _maxFileNameLengthBaseDir = 0;
                             _threadName = siteHelper.GetThreadName();
 
                             if (String.IsNullOrEmpty(_threadDownloadDirectory)) {
@@ -521,10 +522,11 @@ namespace JDP {
                                             ("_" + iSuffix)) + baseExtension;
                                         iSuffix++;
                                     } while (_imageDiskFileNames.Contains(fileName));
-                                    string path = Path.Combine(imageDir, fileName);
+                                    string path = Path.Combine(Path.Combine(imageDir, Settings.SortImagesByPoster == true ? image.Poster : String.Empty), fileName);
                                     if (File.Exists(path)) {
                                         _imageDiskFileNames.Add(fileName);
                                         _completedImages[image.FileName] = new DownloadInfo {
+                                            Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
                                             FileName = fileName,
                                             Skipped = false
                                         };
@@ -577,8 +579,8 @@ namespace JDP {
                 MillisecondsUntilNextCheck = CheckIntervalSeconds * 1000;
 
                 if (pendingImages.Count != 0 && !IsStopping) {
-                    if (_maxFileNameLength == 0) {
-                        _maxFileNameLength = General.GetMaximumFileNameLength(imageDir);
+                    if (_maxFileNameLengthBaseDir == 0) {
+                        _maxFileNameLengthBaseDir = General.GetMaximumFileNameLength(imageDir);
                     }
 
                     List<ManualResetEvent> downloadEndEvents = new List<ManualResetEvent>();
@@ -595,6 +597,19 @@ namespace JDP {
                         ImageInfo image = pendingImages.Dequeue();
                         bool pathTooLong = false;
 
+                        if (Settings.SortImagesByPoster == true && !String.IsNullOrEmpty(image.Poster)) {
+                            try {
+                                Directory.CreateDirectory(Path.Combine(imageDir, image.Poster));
+                            }
+                            catch {
+                                Stop(StopReason.IOError);
+                            }
+                            _maxFileNameLength = General.GetMaximumFileNameLength(Path.Combine(imageDir, image.Poster));
+                        }
+                        else {
+                            _maxFileNameLength = _maxFileNameLengthBaseDir;
+                        }
+
                         MakeImagePath:
                         if ((Settings.UseOriginalFileNames == true) && !String.IsNullOrEmpty(image.OriginalFileName) && !pathTooLong) {
                             saveFileNameNoExtension = Path.GetFileNameWithoutExtension(image.OriginalFileName);
@@ -609,7 +624,7 @@ namespace JDP {
                         bool fileNameTaken;
                         string saveFileName;
                         do {
-                            savePath = Path.Combine(imageDir, saveFileNameNoExtension + ((iSuffix == 1) ?
+                            savePath = Path.Combine(Path.Combine(imageDir, Settings.SortImagesByPoster == true ? image.Poster : String.Empty), saveFileNameNoExtension + ((iSuffix == 1) ?
                                 String.Empty : ("_" + iSuffix)) + saveExtension);
                             saveFileName = Path.GetFileName(savePath);
                             fileNameTaken = _imageDiskFileNames.Contains(saveFileName);
@@ -628,6 +643,7 @@ namespace JDP {
                             if (result == DownloadResult.Completed || result == DownloadResult.Skipped) {
                                 lock (_completedImages) {
                                     _completedImages[image.FileName] = new DownloadInfo {
+                                        Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
                                         FileName = saveFileName,
                                         Skipped = (result == DownloadResult.Skipped)
                                     };
@@ -709,7 +725,7 @@ namespace JDP {
                                 ReplaceInfo replace = pageInfo.ReplaceList[i];
                                 DownloadInfo downloadInfo = null;
                                 Func<string, string> getRelativeDownloadPath = (fileDownloadDir) => {
-                                    return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.FileName),
+                                    return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.Path),
                                         threadDir).Replace(Path.DirectorySeparatorChar, '/');
                                 };
                                 if (replace.Type == ReplaceType.ImageLinkHref && _completedImages.TryGetValue(replace.Tag, out downloadInfo)) {

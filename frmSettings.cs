@@ -19,6 +19,8 @@ namespace JDP {
             chkRenameDownloadFolderWithCategory.Checked = Settings.RenameDownloadFolderWithCategory ?? false;
             chkRenameDownloadFolderWithParentThreadDescription.Checked = Settings.RenameDownloadFolderWithParentThreadDescription ?? false;
             txtParentThreadDescriptionFormat.Text = Settings.ParentThreadDescriptionFormat ?? " ({Parent})";
+            chkSortImagesByPoster.Checked = Settings.SortImagesByPoster ?? false;
+            chkRecursiveAutoFollow.Checked = Settings.RecursiveAutoFollow ?? true;
             chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
             chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
             chkUseSlug.Checked = Settings.UseSlug ?? false;
@@ -88,6 +90,8 @@ namespace JDP {
                 Settings.RenameDownloadFolderWithCategory = chkRenameDownloadFolderWithCategory.Checked;
                 Settings.RenameDownloadFolderWithParentThreadDescription = chkRenameDownloadFolderWithParentThreadDescription.Checked;
                 Settings.ParentThreadDescriptionFormat = txtParentThreadDescriptionFormat.Text;
+                Settings.SortImagesByPoster = chkSortImagesByPoster.Checked;
+                Settings.RecursiveAutoFollow = chkRecursiveAutoFollow.Checked;
                 Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
                 Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
                 Settings.UseSlug = chkUseSlug.Checked;

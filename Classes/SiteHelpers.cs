@@ -99,7 +99,7 @@ namespace JDP {
                 HTMLTag linkEndTag = _htmlParser.FindCorrespondingEndTag(linkTag);
                 if (linkEndTag == null) continue;
 
-                ImageInfo image = new ImageInfo();
+                ImageInfo image = new ImageInfo { Poster = String.Empty };
                 ThumbnailInfo thumb = null;
 
                 image.URL = url;
@@ -233,12 +233,41 @@ namespace JDP {
                 string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
                 if (imageMD5 == null) continue;
 
+                string poster = String.Empty;
+                HTMLTagRange nameBlockSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "nameBlock"))));
+
+                if (nameBlockSpanTagRange != null) {
+                    HTMLTagRange nameSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "name"))));
+
+                    HTMLTagRange posterTripSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "postertrip"))));
+
+                    HTMLTagRange idSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "hand"))));
+                    
+                    if (idSpanTagRange != null) {
+                        poster = _htmlParser.GetInnerHTML(idSpanTagRange);
+                    }
+                    else if (nameSpanTagRange != null) {
+                        string name = _htmlParser.GetInnerHTML(nameSpanTagRange);
+                        if (posterTripSpanTagRange != null) {
+                            poster = name + _htmlParser.GetInnerHTML(posterTripSpanTagRange);
+                        }
+                        else if (name != "Anonymous") {
+                            poster = name;
+                        }
+                    }
+                }
+                
                 ImageInfo image = new ImageInfo {
                     URL = "http:" + HttpUtility.HtmlDecode(imageURL),
                     Referer = _url,
                     OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
                     HashType = HashType.MD5,
-                    Hash = General.TryBase64Decode(imageMD5)
+                    Hash = General.TryBase64Decode(imageMD5),
+                    Poster = General.CleanFileName(poster)
                 };
                 if (image.URL.Length == 0 || image.FileName.Length == 0 || image.Hash == null) continue;
 

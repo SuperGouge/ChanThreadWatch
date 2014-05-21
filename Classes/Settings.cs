@@ -91,6 +91,16 @@ namespace JDP {
             set { SetBool("ChildThreadsAreNewFormat", value); }
         }
 
+        public static bool? SortImagesByPoster {
+            get { return GetBool("SortImagesByPoster"); }
+            set { SetBool("SortImagesByPoster", value); }
+        }
+
+        public static bool? RecursiveAutoFollow {
+            get { return GetBool("RecursiveAutoFollow"); }
+            set { SetBool("RecursiveAutoFollow", value); }
+        }
+
         public static bool? SaveThumbnails {
             get { return GetBool("SaveThumbnails"); }
             set { SetBool("SaveThumbnails", value); }

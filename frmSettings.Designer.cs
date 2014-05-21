@@ -45,18 +45,27 @@
             this.rbSlugLast = new System.Windows.Forms.RadioButton();
             this.rbSlugFirst = new System.Windows.Forms.RadioButton();
             this.chkRenameDownloadFolderWithCategory = new System.Windows.Forms.CheckBox();
-            this.lblRenameDownloadFolderWith = new System.Windows.Forms.Label();
             this.chkRenameDownloadFolderWithParentThreadDescription = new System.Windows.Forms.CheckBox();
             this.lblParentThreadDescriptionFormat = new System.Windows.Forms.Label();
             this.txtParentThreadDescriptionFormat = new System.Windows.Forms.TextBox();
+            this.chkSortImagesByPoster = new System.Windows.Forms.CheckBox();
+            this.grpThreadFolderNaming = new System.Windows.Forms.GroupBox();
+            this.grpNamingStructure = new System.Windows.Forms.GroupBox();
+            this.grpGeneral = new System.Windows.Forms.GroupBox();
+            this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
+            this.grpThreadFolderNaming.SuspendLayout();
+            this.grpNamingStructure.SuspendLayout();
+            this.grpGeneral.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
             // 
+            this.txtDownloadFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDownloadFolder.Location = new System.Drawing.Point(108, 8);
             this.txtDownloadFolder.Name = "txtDownloadFolder";
-            this.txtDownloadFolder.Size = new System.Drawing.Size(412, 20);
+            this.txtDownloadFolder.Size = new System.Drawing.Size(636, 20);
             this.txtDownloadFolder.TabIndex = 1;
             // 
             // lblDownloadFolder
@@ -70,7 +79,8 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(528, 8);
+            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowse.Location = new System.Drawing.Point(752, 8);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(80, 23);
             this.btnBrowse.TabIndex = 2;
@@ -80,7 +90,8 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(568, 238);
+            this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.Location = new System.Drawing.Point(792, 231);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(60, 23);
             this.btnOK.TabIndex = 14;
@@ -90,8 +101,9 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(636, 238);
+            this.btnCancel.Location = new System.Drawing.Point(860, 231);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(68, 23);
             this.btnCancel.TabIndex = 15;
@@ -111,16 +123,19 @@
             // 
             // txtCustomUserAgent
             // 
+            this.txtCustomUserAgent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCustomUserAgent.Enabled = false;
             this.txtCustomUserAgent.Location = new System.Drawing.Point(140, 40);
             this.txtCustomUserAgent.Name = "txtCustomUserAgent";
-            this.txtCustomUserAgent.Size = new System.Drawing.Size(564, 20);
+            this.txtCustomUserAgent.Size = new System.Drawing.Size(788, 20);
             this.txtCustomUserAgent.TabIndex = 5;
             // 
             // chkRelativePath
             // 
+            this.chkRelativePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkRelativePath.AutoSize = true;
-            this.chkRelativePath.Location = new System.Drawing.Point(616, 12);
+            this.chkRelativePath.Location = new System.Drawing.Point(840, 12);
             this.chkRelativePath.Name = "chkRelativePath";
             this.chkRelativePath.Size = new System.Drawing.Size(89, 17);
             this.chkRelativePath.TabIndex = 3;
@@ -130,8 +145,9 @@
             // 
             // lblSettingsLocation
             // 
+            this.lblSettingsLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSettingsLocation.AutoSize = true;
-            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 246);
+            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 239);
             this.lblSettingsLocation.Name = "lblSettingsLocation";
             this.lblSettingsLocation.Size = new System.Drawing.Size(85, 13);
             this.lblSettingsLocation.TabIndex = 11;
@@ -139,8 +155,9 @@
             // 
             // rbSettingsInAppDataFolder
             // 
+            this.rbSettingsInAppDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInAppDataFolder.AutoSize = true;
-            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 244);
+            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 237);
             this.rbSettingsInAppDataFolder.Name = "rbSettingsInAppDataFolder";
             this.rbSettingsInAppDataFolder.Size = new System.Drawing.Size(130, 17);
             this.rbSettingsInAppDataFolder.TabIndex = 12;
@@ -150,8 +167,9 @@
             // 
             // rbSettingsInExeFolder
             // 
+            this.rbSettingsInExeFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInExeFolder.AutoSize = true;
-            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 244);
+            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 237);
             this.rbSettingsInExeFolder.Name = "rbSettingsInExeFolder";
             this.rbSettingsInExeFolder.Size = new System.Drawing.Size(107, 17);
             this.rbSettingsInExeFolder.TabIndex = 13;
@@ -162,7 +180,7 @@
             // chkUseOriginalFileNames
             // 
             this.chkUseOriginalFileNames.AutoSize = true;
-            this.chkUseOriginalFileNames.Location = new System.Drawing.Point(10, 145);
+            this.chkUseOriginalFileNames.Location = new System.Drawing.Point(6, 115);
             this.chkUseOriginalFileNames.Name = "chkUseOriginalFileNames";
             this.chkUseOriginalFileNames.Size = new System.Drawing.Size(273, 17);
             this.chkUseOriginalFileNames.TabIndex = 8;
@@ -172,7 +190,7 @@
             // chkVerifyImageHashes
             // 
             this.chkVerifyImageHashes.AutoSize = true;
-            this.chkVerifyImageHashes.Location = new System.Drawing.Point(10, 168);
+            this.chkVerifyImageHashes.Location = new System.Drawing.Point(6, 42);
             this.chkVerifyImageHashes.Name = "chkVerifyImageHashes";
             this.chkVerifyImageHashes.Size = new System.Drawing.Size(265, 17);
             this.chkVerifyImageHashes.TabIndex = 9;
@@ -182,7 +200,7 @@
             // chkCheckForUpdates
             // 
             this.chkCheckForUpdates.AutoSize = true;
-            this.chkCheckForUpdates.Location = new System.Drawing.Point(10, 214);
+            this.chkCheckForUpdates.Location = new System.Drawing.Point(6, 88);
             this.chkCheckForUpdates.Name = "chkCheckForUpdates";
             this.chkCheckForUpdates.Size = new System.Drawing.Size(353, 17);
             this.chkCheckForUpdates.TabIndex = 10;
@@ -192,7 +210,7 @@
             // chkSaveThumbnails
             // 
             this.chkSaveThumbnails.AutoSize = true;
-            this.chkSaveThumbnails.Location = new System.Drawing.Point(10, 72);
+            this.chkSaveThumbnails.Location = new System.Drawing.Point(6, 19);
             this.chkSaveThumbnails.Name = "chkSaveThumbnails";
             this.chkSaveThumbnails.Size = new System.Drawing.Size(221, 17);
             this.chkSaveThumbnails.TabIndex = 6;
@@ -202,7 +220,7 @@
             // chkRenameDownloadFolderWithDescription
             // 
             this.chkRenameDownloadFolderWithDescription.AutoSize = true;
-            this.chkRenameDownloadFolderWithDescription.Location = new System.Drawing.Point(190, 96);
+            this.chkRenameDownloadFolderWithDescription.Location = new System.Drawing.Point(6, 19);
             this.chkRenameDownloadFolderWithDescription.Name = "chkRenameDownloadFolderWithDescription";
             this.chkRenameDownloadFolderWithDescription.Size = new System.Drawing.Size(79, 17);
             this.chkRenameDownloadFolderWithDescription.TabIndex = 7;
@@ -212,7 +230,7 @@
             // chkUseSlug
             // 
             this.chkUseSlug.AutoSize = true;
-            this.chkUseSlug.Location = new System.Drawing.Point(10, 191);
+            this.chkUseSlug.Location = new System.Drawing.Point(6, 138);
             this.chkUseSlug.Name = "chkUseSlug";
             this.chkUseSlug.Size = new System.Drawing.Size(285, 17);
             this.chkUseSlug.TabIndex = 16;
@@ -225,7 +243,7 @@
             this.pnlSlug.Controls.Add(this.rbSlugOnly);
             this.pnlSlug.Controls.Add(this.rbSlugLast);
             this.pnlSlug.Controls.Add(this.rbSlugFirst);
-            this.pnlSlug.Location = new System.Drawing.Point(311, 191);
+            this.pnlSlug.Location = new System.Drawing.Point(297, 138);
             this.pnlSlug.Name = "pnlSlug";
             this.pnlSlug.Size = new System.Drawing.Size(237, 17);
             this.pnlSlug.TabIndex = 17;
@@ -266,26 +284,17 @@
             // chkRenameDownloadFolderWithCategory
             // 
             this.chkRenameDownloadFolderWithCategory.AutoSize = true;
-            this.chkRenameDownloadFolderWithCategory.Location = new System.Drawing.Point(275, 96);
+            this.chkRenameDownloadFolderWithCategory.Location = new System.Drawing.Point(91, 19);
             this.chkRenameDownloadFolderWithCategory.Name = "chkRenameDownloadFolderWithCategory";
             this.chkRenameDownloadFolderWithCategory.Size = new System.Drawing.Size(68, 17);
             this.chkRenameDownloadFolderWithCategory.TabIndex = 18;
             this.chkRenameDownloadFolderWithCategory.Text = "Category";
             this.chkRenameDownloadFolderWithCategory.UseVisualStyleBackColor = true;
             // 
-            // lblRenameDownloadFolderWith
-            // 
-            this.lblRenameDownloadFolderWith.AutoSize = true;
-            this.lblRenameDownloadFolderWith.Location = new System.Drawing.Point(7, 108);
-            this.lblRenameDownloadFolderWith.Name = "lblRenameDownloadFolderWith";
-            this.lblRenameDownloadFolderWith.Size = new System.Drawing.Size(177, 13);
-            this.lblRenameDownloadFolderWith.TabIndex = 19;
-            this.lblRenameDownloadFolderWith.Text = "Name thread download folder using:";
-            // 
             // chkRenameDownloadFolderWithParentThreadDescription
             // 
             this.chkRenameDownloadFolderWithParentThreadDescription.AutoSize = true;
-            this.chkRenameDownloadFolderWithParentThreadDescription.Location = new System.Drawing.Point(190, 122);
+            this.chkRenameDownloadFolderWithParentThreadDescription.Location = new System.Drawing.Point(6, 42);
             this.chkRenameDownloadFolderWithParentThreadDescription.Name = "chkRenameDownloadFolderWithParentThreadDescription";
             this.chkRenameDownloadFolderWithParentThreadDescription.Size = new System.Drawing.Size(144, 17);
             this.chkRenameDownloadFolderWithParentThreadDescription.TabIndex = 20;
@@ -295,7 +304,7 @@
             // lblParentThreadDescriptionFormat
             // 
             this.lblParentThreadDescriptionFormat.AutoSize = true;
-            this.lblParentThreadDescriptionFormat.Location = new System.Drawing.Point(340, 123);
+            this.lblParentThreadDescriptionFormat.Location = new System.Drawing.Point(156, 43);
             this.lblParentThreadDescriptionFormat.Name = "lblParentThreadDescriptionFormat";
             this.lblParentThreadDescriptionFormat.Size = new System.Drawing.Size(103, 13);
             this.lblParentThreadDescriptionFormat.TabIndex = 21;
@@ -303,29 +312,80 @@
             // 
             // txtParentThreadDescriptionFormat
             // 
-            this.txtParentThreadDescriptionFormat.Location = new System.Drawing.Point(449, 120);
+            this.txtParentThreadDescriptionFormat.Location = new System.Drawing.Point(265, 40);
             this.txtParentThreadDescriptionFormat.Name = "txtParentThreadDescriptionFormat";
             this.txtParentThreadDescriptionFormat.Size = new System.Drawing.Size(150, 20);
             this.txtParentThreadDescriptionFormat.TabIndex = 22;
+            // 
+            // chkSortImagesByPoster
+            // 
+            this.chkSortImagesByPoster.AutoSize = true;
+            this.chkSortImagesByPoster.Location = new System.Drawing.Point(6, 92);
+            this.chkSortImagesByPoster.Name = "chkSortImagesByPoster";
+            this.chkSortImagesByPoster.Size = new System.Drawing.Size(272, 17);
+            this.chkSortImagesByPoster.TabIndex = 23;
+            this.chkSortImagesByPoster.Text = "Sort images by poster (only supported for some sites)";
+            this.chkSortImagesByPoster.UseVisualStyleBackColor = true;
+            // 
+            // grpThreadFolderNaming
+            // 
+            this.grpThreadFolderNaming.Controls.Add(this.chkRenameDownloadFolderWithDescription);
+            this.grpThreadFolderNaming.Controls.Add(this.chkRenameDownloadFolderWithCategory);
+            this.grpThreadFolderNaming.Controls.Add(this.txtParentThreadDescriptionFormat);
+            this.grpThreadFolderNaming.Controls.Add(this.chkRenameDownloadFolderWithParentThreadDescription);
+            this.grpThreadFolderNaming.Controls.Add(this.lblParentThreadDescriptionFormat);
+            this.grpThreadFolderNaming.Location = new System.Drawing.Point(6, 19);
+            this.grpThreadFolderNaming.Name = "grpThreadFolderNaming";
+            this.grpThreadFolderNaming.Size = new System.Drawing.Size(424, 67);
+            this.grpThreadFolderNaming.TabIndex = 24;
+            this.grpThreadFolderNaming.TabStop = false;
+            this.grpThreadFolderNaming.Text = "Thread Folder Naming";
+            // 
+            // grpNamingStructure
+            // 
+            this.grpNamingStructure.Controls.Add(this.grpThreadFolderNaming);
+            this.grpNamingStructure.Controls.Add(this.pnlSlug);
+            this.grpNamingStructure.Controls.Add(this.chkSortImagesByPoster);
+            this.grpNamingStructure.Controls.Add(this.chkUseSlug);
+            this.grpNamingStructure.Controls.Add(this.chkUseOriginalFileNames);
+            this.grpNamingStructure.Location = new System.Drawing.Point(12, 66);
+            this.grpNamingStructure.Name = "grpNamingStructure";
+            this.grpNamingStructure.Size = new System.Drawing.Size(540, 161);
+            this.grpNamingStructure.TabIndex = 25;
+            this.grpNamingStructure.TabStop = false;
+            this.grpNamingStructure.Text = "Naming and Structure";
+            // 
+            // grpGeneral
+            // 
+            this.grpGeneral.Controls.Add(this.chkRecursiveAutoFollow);
+            this.grpGeneral.Controls.Add(this.chkSaveThumbnails);
+            this.grpGeneral.Controls.Add(this.chkVerifyImageHashes);
+            this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
+            this.grpGeneral.Location = new System.Drawing.Point(558, 66);
+            this.grpGeneral.Name = "grpGeneral";
+            this.grpGeneral.Size = new System.Drawing.Size(373, 109);
+            this.grpGeneral.TabIndex = 26;
+            this.grpGeneral.TabStop = false;
+            this.grpGeneral.Text = "General";
+            // 
+            // chkRecursiveAutoFollow
+            // 
+            this.chkRecursiveAutoFollow.AutoSize = true;
+            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 65);
+            this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
+            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(343, 17);
+            this.chkRecursiveAutoFollow.TabIndex = 11;
+            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
+            this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(714, 271);
-            this.Controls.Add(this.txtParentThreadDescriptionFormat);
-            this.Controls.Add(this.lblParentThreadDescriptionFormat);
-            this.Controls.Add(this.chkRenameDownloadFolderWithParentThreadDescription);
-            this.Controls.Add(this.lblRenameDownloadFolderWith);
-            this.Controls.Add(this.chkRenameDownloadFolderWithCategory);
-            this.Controls.Add(this.pnlSlug);
-            this.Controls.Add(this.chkUseSlug);
-            this.Controls.Add(this.chkRenameDownloadFolderWithDescription);
-            this.Controls.Add(this.chkSaveThumbnails);
-            this.Controls.Add(this.chkCheckForUpdates);
-            this.Controls.Add(this.chkVerifyImageHashes);
-            this.Controls.Add(this.chkUseOriginalFileNames);
+            this.ClientSize = new System.Drawing.Size(938, 264);
+            this.Controls.Add(this.grpGeneral);
+            this.Controls.Add(this.grpNamingStructure);
             this.Controls.Add(this.rbSettingsInExeFolder);
             this.Controls.Add(this.rbSettingsInAppDataFolder);
             this.Controls.Add(this.lblSettingsLocation);
@@ -348,6 +408,12 @@
             this.Load += new System.EventHandler(this.frmSettings_Load);
             this.pnlSlug.ResumeLayout(false);
             this.pnlSlug.PerformLayout();
+            this.grpThreadFolderNaming.ResumeLayout(false);
+            this.grpThreadFolderNaming.PerformLayout();
+            this.grpNamingStructure.ResumeLayout(false);
+            this.grpNamingStructure.PerformLayout();
+            this.grpGeneral.ResumeLayout(false);
+            this.grpGeneral.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -377,9 +443,13 @@
         private System.Windows.Forms.RadioButton rbSlugLast;
         private System.Windows.Forms.RadioButton rbSlugFirst;
         private System.Windows.Forms.CheckBox chkRenameDownloadFolderWithCategory;
-        private System.Windows.Forms.Label lblRenameDownloadFolderWith;
         private System.Windows.Forms.CheckBox chkRenameDownloadFolderWithParentThreadDescription;
         private System.Windows.Forms.Label lblParentThreadDescriptionFormat;
         private System.Windows.Forms.TextBox txtParentThreadDescriptionFormat;
+        private System.Windows.Forms.CheckBox chkSortImagesByPoster;
+        private System.Windows.Forms.GroupBox grpThreadFolderNaming;
+        private System.Windows.Forms.GroupBox grpNamingStructure;
+        private System.Windows.Forms.GroupBox grpGeneral;
+        private System.Windows.Forms.CheckBox chkRecursiveAutoFollow;
     }
 }

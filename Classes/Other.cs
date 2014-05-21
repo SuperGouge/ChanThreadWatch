@@ -31,6 +31,7 @@ namespace JDP {
         public string OriginalFileName { get; set; }
         public HashType HashType { get; set; }
         public byte[] Hash { get; set; }
+        public string Poster { get; set; }
 
         public string FileName {
             get { return General.CleanFileName(General.URLFileName(URL)); }
@@ -38,8 +39,13 @@ namespace JDP {
     }
 
     public class DownloadInfo {
+        public string Folder { get; set; }
         public string FileName { get; set; }
         public bool Skipped { get; set; }
+
+        public string Path {
+            get { return System.IO.Path.Combine(Folder ?? String.Empty, FileName); }
+        }
     }
 
     public class ThumbnailInfo {
@@ -63,11 +69,6 @@ namespace JDP {
         public WatcherExtraData ExtraData { get; set; }
         public string Category { get; set; }
         public bool AutoFollow { get; set; }
-    }
-
-    public class CrossLinkInfo {
-        public string URL { get; set; }
-        public ThreadWatcher Referer { get; set; }
     }
 
     public class HTTP404Exception : Exception { }

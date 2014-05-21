@@ -59,6 +59,7 @@ namespace JDP {
             chkImageAuth.Checked = Settings.UseImageAuth ?? false;
             txtImageAuth.Text = Settings.ImageAuth ?? String.Empty;
             chkOneTime.Checked = Settings.OneTimeDownload ?? false;
+            chkAutoFollow.Checked = Settings.AutoFollow ?? false;
             if (Settings.CheckEvery != null) {
                 foreach (ListItemInt32 item in cboCheckEvery.Items) {
                     if (item.Value != Settings.CheckEvery) continue;
@@ -661,7 +662,7 @@ namespace JDP {
                     AddedFrom = watcher.PageID
                 },
                 Category = watcher.Category,
-                AutoFollow = watcher.AutoFollow
+                AutoFollow = Settings.RecursiveAutoFollow != false
             };
             SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
             siteHelper.SetURL(thread.URL);
@@ -778,6 +779,7 @@ namespace JDP {
                     }
                     UpdateCategories(watcher.Category, true);
                     lvThreads.Items.RemoveAt(i);
+                    _watchers.Remove(watcher.PageID);
                 }
                 else {
                     i++;
