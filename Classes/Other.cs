@@ -740,7 +740,7 @@ namespace JDP {
     public enum ThreadDoubleClickAction {
         OpenFolder = 1,
         OpenURL = 2,
-        EditDescription = 3
+        Edit = 3
     }
 
     public enum HashType {
@@ -786,10 +786,5 @@ namespace JDP {
         First = 0,
         Last = 1,
         Only = 2
-    }
-
-    public enum ThreadEditType {
-        Description = 1,
-        Category = 2
     }
 }

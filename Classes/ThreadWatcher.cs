@@ -136,7 +136,6 @@ namespace JDP {
                 lock (_settingsSync) {
                     return !String.IsNullOrEmpty(_threadDownloadDirectory) &&
                            Settings.RenameDownloadFolderWithCategory == true &&
-                           !String.IsNullOrEmpty(_category) &&
                            !String.Equals(General.GetLastDirectory(_threadDownloadDirectory), General.CleanFileName(_category), StringComparison.Ordinal);
                 }
             }
@@ -796,6 +795,11 @@ namespace JDP {
                     }
                     if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
                     Directory.Move(_threadDownloadDirectory, destDir);
+                    string categoryPath = General.RemoveLastDirectory(_threadDownloadDirectory);
+                    if (categoryPath != MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
+                        try { Directory.Delete(categoryPath); }
+                        catch { }
+                    }
                     _threadDownloadDirectory = destDir;
                     renamedDir = true;
                 }

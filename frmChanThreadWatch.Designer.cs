@@ -51,7 +51,7 @@
             this.btnAbout = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
             this.cmThreads = new System.Windows.Forms.ContextMenu();
-            this.miEditDescription = new System.Windows.Forms.MenuItem();
+            this.miEdit = new System.Windows.Forms.MenuItem();
             this.miOpenFolder = new System.Windows.Forms.MenuItem();
             this.miOpenURL = new System.Windows.Forms.MenuItem();
             this.miStop = new System.Windows.Forms.MenuItem();
@@ -62,7 +62,7 @@
             this.miCheckNow = new System.Windows.Forms.MenuItem();
             this.miCheckEvery = new System.Windows.Forms.MenuItem();
             this.grpDoubleClick = new System.Windows.Forms.GroupBox();
-            this.rbEditDescription = new System.Windows.Forms.RadioButton();
+            this.rbEdit = new System.Windows.Forms.RadioButton();
             this.rbOpenURL = new System.Windows.Forms.RadioButton();
             this.rbOpenFolder = new System.Windows.Forms.RadioButton();
             this.tmrUpdateWaitStatus = new System.Windows.Forms.Timer(this.components);
@@ -78,17 +78,16 @@
             // lvThreads
             // 
             this.lvThreads.AllowColumnReorder = true;
-            this.lvThreads.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                           | System.Windows.Forms.AnchorStyles.Left)
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvThreads.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvThreads.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                this.chDescription,
-                this.chStatus,
-                this.chLastImageOn,
-                this.chAddedOn,
-                this.chAddedFrom,
-                this.chCategory
-            });
+            this.chDescription,
+            this.chStatus,
+            this.chLastImageOn,
+            this.chAddedOn,
+            this.chAddedFrom,
+            this.chCategory});
             this.lvThreads.FullRowSelect = true;
             this.lvThreads.HideSelection = false;
             this.lvThreads.Location = new System.Drawing.Point(8, 8);
@@ -331,23 +330,22 @@
             // cmThreads
             // 
             this.cmThreads.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                this.miEditDescription,
-                this.miOpenFolder,
-                this.miOpenURL,
-                this.miStop,
-                this.miStart,
-                this.miCopyURL,
-                this.miRemove,
-                this.miRemoveAndDeleteFolder,
-                this.miCheckNow,
-                this.miCheckEvery
-            });
+            this.miEdit,
+            this.miOpenFolder,
+            this.miOpenURL,
+            this.miStop,
+            this.miStart,
+            this.miCopyURL,
+            this.miRemove,
+            this.miRemoveAndDeleteFolder,
+            this.miCheckNow,
+            this.miCheckEvery});
             // 
-            // miEditDescription
+            // miEdit
             // 
-            this.miEditDescription.Index = 0;
-            this.miEditDescription.Text = "Edit Description";
-            this.miEditDescription.Click += new System.EventHandler(this.miEditDescription_Click);
+            this.miEdit.Index = 0;
+            this.miEdit.Text = "Edit";
+            this.miEdit.Click += new System.EventHandler(this.miEdit_Click);
             // 
             // miOpenFolder
             // 
@@ -405,7 +403,7 @@
             // grpDoubleClick
             // 
             this.grpDoubleClick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpDoubleClick.Controls.Add(this.rbEditDescription);
+            this.grpDoubleClick.Controls.Add(this.rbEdit);
             this.grpDoubleClick.Controls.Add(this.rbOpenURL);
             this.grpDoubleClick.Controls.Add(this.rbOpenFolder);
             this.grpDoubleClick.Location = new System.Drawing.Point(374, 210);
@@ -415,15 +413,15 @@
             this.grpDoubleClick.TabStop = false;
             this.grpDoubleClick.Text = "On Double Click";
             // 
-            // rbEditDescription
+            // rbEdit
             // 
-            this.rbEditDescription.Location = new System.Drawing.Point(12, 58);
-            this.rbEditDescription.Name = "rbEditDescription";
-            this.rbEditDescription.Size = new System.Drawing.Size(100, 17);
-            this.rbEditDescription.TabIndex = 2;
-            this.rbEditDescription.TabStop = true;
-            this.rbEditDescription.Text = "Edit Description";
-            this.rbEditDescription.UseVisualStyleBackColor = true;
+            this.rbEdit.Location = new System.Drawing.Point(12, 58);
+            this.rbEdit.Name = "rbEdit";
+            this.rbEdit.Size = new System.Drawing.Size(100, 17);
+            this.rbEdit.TabIndex = 2;
+            this.rbEdit.TabStop = true;
+            this.rbEdit.Text = "Edit";
+            this.rbEdit.UseVisualStyleBackColor = true;
             // 
             // rbOpenURL
             // 
@@ -512,6 +510,7 @@
             this.pnlCheckEvery.PerformLayout();
             this.grpDoubleClick.ResumeLayout(false);
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -550,8 +549,8 @@
         private System.Windows.Forms.ColumnHeader chAddedOn;
         private System.Windows.Forms.ColumnHeader chLastImageOn;
         private System.Windows.Forms.ColumnHeader chDescription;
-        private System.Windows.Forms.MenuItem miEditDescription;
-        private System.Windows.Forms.RadioButton rbEditDescription;
+        private System.Windows.Forms.MenuItem miEdit;
+        private System.Windows.Forms.RadioButton rbEdit;
         private System.Windows.Forms.Timer tmrSaveThreadList;
         private System.Windows.Forms.Button btnDownloads;
         private System.Windows.Forms.Timer tmrMaintenance;
@@ -562,6 +561,5 @@
         private System.Windows.Forms.ColumnHeader chCategory;
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.CheckBox chkAutoFollow;
-        //private System.Windows.Forms.MenuItem miEditCategory;
     }
 }

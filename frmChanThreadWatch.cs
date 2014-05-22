@@ -84,16 +84,16 @@ namespace JDP {
 
         private ThreadDoubleClickAction OnThreadDoubleClick {
             get {
-                if (rbEditDescription.Checked)
-                    return ThreadDoubleClickAction.EditDescription;
+                if (rbEdit.Checked)
+                    return ThreadDoubleClickAction.Edit;
                 else if (rbOpenURL.Checked)
                     return ThreadDoubleClickAction.OpenURL;
                 else
                     return ThreadDoubleClickAction.OpenFolder;
             }
             set {
-                if (value == ThreadDoubleClickAction.EditDescription)
-                    rbEditDescription.Checked = true;
+                if (value == ThreadDoubleClickAction.Edit)
+                    rbEdit.Checked = true;
                 else if (value == ThreadDoubleClickAction.OpenURL)
                     rbOpenURL.Checked = true;
                 else
@@ -269,50 +269,31 @@ namespace JDP {
             _saveThreadList = true;
         }
 
-        private void miEditDescription_Click(object sender, EventArgs e) {
+        private void miEdit_Click(object sender, EventArgs e) {
             if (_isExiting) return;
             foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
-                using (frmThreadEdit editForm = new frmThreadEdit(ThreadEditType.Description)) {
-                    editForm.Value = watcher.Description;
+                using (frmThreadEdit editForm = new frmThreadEdit(watcher, _categories)) {
                     if (editForm.ShowDialog(this) == DialogResult.OK) {
-                        watcher.Description = editForm.Value;
-                        DisplayDescription(watcher);
+                        watcher.Description = editForm.Description;
+                        if (watcher.Category != editForm.Category) {
+                            UpdateCategories(watcher.Category, true);
+                            UpdateCategories(editForm.Category);
+                        }
+                        watcher.Category = editForm.Category;
+                        if (!watcher.IsRunning) {
+                            watcher.PageAuth = editForm.PageAuth;
+                            watcher.ImageAuth = editForm.ImageAuth;
+                            watcher.CheckIntervalSeconds = editForm.CheckIntervalSeconds;
+                            watcher.OneTimeDownload = editForm.OneTimeDownload;
+                            watcher.AutoFollow = editForm.AutoFollow;
+                        }
+                        DisplayData(watcher);
                         _saveThreadList = true;
                     }
                 }
                 break;
             }
         }
-
-        /*private void miEditCategory_Click(object sender, EventArgs e) {
-            if (_isExiting) return;
-            foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
-                using (frmThreadEdit editForm = new frmThreadEdit(ThreadEditType.Category)) {
-                    editForm.Value = watcher.Category;
-                    if (editForm.ShowDialog(this) == DialogResult.OK) {
-                        ThreadWatcher rootThread = watcher.RootThread;
-                        string origDir = rootThread.ThreadDownloadDirectory;
-                        //rootThread.Stop(StopReason.Other);
-                        //rootThread.WaitUntilStopped();
-                        rootThread.Category = editForm.Value;
-                        DisplayCategory(rootThread);
-                        //rootThread.Start();
-                        foreach (ThreadWatcher threadWatcher in rootThread.CrossLinks) {
-                            threadWatcher.DoNotRename = true;
-                            threadWatcher.Category = editForm.Value;
-                            threadWatcher.Stop(StopReason.Other);
-                            threadWatcher.WaitUntilStopped();
-                            threadWatcher.ThreadDownloadDirectory = Path.Combine(rootThread.ThreadDownloadDirectory, General.GetRelativeDirectoryPath(threadWatcher.ThreadDownloadDirectory, origDir));
-                            DisplayCategory(threadWatcher);
-                            threadWatcher.DoNotRename = false;
-                            threadWatcher.Start();
-                        }
-                        _saveThreadList = true;
-                    }
-                }
-                break;
-            }
-        }*/
 
         private void miOpenFolder_Click(object sender, EventArgs e) {
             int selectedCount = lvThreads.SelectedItems.Count;
@@ -379,9 +360,7 @@ namespace JDP {
                 (watcher) => {
                     try {
                         if (Directory.Exists(watcher.ThreadDownloadDirectory)) Directory.Delete(watcher.ThreadDownloadDirectory, true);
-                        string category = General.GetLastDirectory(General.RemoveLastDirectory(watcher.ThreadDownloadDirectory));
-                        if (category == watcher.MainDownloadDirectory) category = String.Empty;
-                        string categoryPath = Path.Combine(watcher.MainDownloadDirectory, category);
+                        string categoryPath = General.RemoveLastDirectory(watcher.ThreadDownloadDirectory);
                         if (categoryPath != watcher.MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
                             Directory.Delete(categoryPath);
                         }
@@ -460,7 +439,7 @@ namespace JDP {
                         anyRunning |= isRunning;
                         anyStopped |= !isRunning;
                     }
-                    miEditDescription.Visible = selectedCount == 1;
+                    miEdit.Visible = selectedCount == 1;
                     miStop.Visible = anyRunning;
                     miStart.Visible = anyStopped;
                     miCheckNow.Visible = anyRunning;
@@ -473,8 +452,8 @@ namespace JDP {
         }
 
         private void lvThreads_MouseDoubleClick(object sender, MouseEventArgs e) {
-            if (OnThreadDoubleClick == ThreadDoubleClickAction.EditDescription) {
-                miEditDescription_Click(null, null);
+            if (OnThreadDoubleClick == ThreadDoubleClickAction.Edit) {
+                miEdit_Click(null, null);
             }
             else if (OnThreadDoubleClick == ThreadDoubleClickAction.OpenFolder) {
                 miOpenFolder_Click(null, null);
@@ -746,14 +725,8 @@ namespace JDP {
             watcher.Tag = thread.ExtraData;
 
             if (parentThread != null) parentThread.ChildThreads.Add(watcher.PageID, watcher);
-
-            DisplayDescription(watcher);
-            DisplayAddedOn(watcher);
-            DisplayLastImageOn(watcher);
-            if (!_isLoadingThreadsFromFile) DisplayAddedFrom(watcher);
-            DisplayCategory(watcher);
-
-            _watchers.Add(siteHelper.GetPageID(), watcher);
+            _watchers.Add(watcher.PageID, watcher);
+            DisplayData(watcher);
 
             if (thread.StopReason == null && !_isLoadingThreadsFromFile) {
                 watcher.Start();
@@ -908,6 +881,14 @@ namespace JDP {
 
         private void DisplayCategory(ThreadWatcher watcher) {
             SetSubItemText(watcher, ColumnIndex.Category, watcher.Category);
+        }
+
+        private void DisplayData(ThreadWatcher watcher) {
+            DisplayDescription(watcher);
+            DisplayAddedOn(watcher);
+            DisplayLastImageOn(watcher);
+            if (!_isLoadingThreadsFromFile) DisplayAddedFrom(watcher);
+            DisplayCategory(watcher);
         }
 
         private void SetDownloadStatus(ThreadWatcher watcher, DownloadType downloadType, int completeCount, int totalCount) {
