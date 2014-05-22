@@ -627,29 +627,31 @@ namespace JDP {
         }
 
         private void ThreadWatcher_AddThread(ThreadWatcher watcher, AddThreadEventArgs args) {
-            ThreadInfo thread = new ThreadInfo {
-                URL = args.PageURL,
-                PageAuth = watcher.PageAuth,
-                ImageAuth = watcher.ImageAuth,
-                CheckIntervalSeconds = watcher.CheckIntervalSeconds,
-                OneTimeDownload = watcher.OneTimeDownload,
-                SaveDir = null,
-                Description = String.Empty,
-                StopReason = null,
-                ExtraData = new WatcherExtraData {
-                    AddedOn = DateTime.Now,
-                    AddedFrom = watcher.PageID
-                },
-                Category = watcher.Category,
-                AutoFollow = Settings.RecursiveAutoFollow != false
-            };
-            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
-            siteHelper.SetURL(thread.URL);
-            if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
-            if (AddThread(thread)) {
-                UpdateCategories(thread.Category);
-                _saveThreadList = true;
-            }
+            BeginInvoke(() => {
+                ThreadInfo thread = new ThreadInfo {
+                    URL = args.PageURL,
+                    PageAuth = watcher.PageAuth,
+                    ImageAuth = watcher.ImageAuth,
+                    CheckIntervalSeconds = watcher.CheckIntervalSeconds,
+                    OneTimeDownload = watcher.OneTimeDownload,
+                    SaveDir = null,
+                    Description = String.Empty,
+                    StopReason = null,
+                    ExtraData = new WatcherExtraData {
+                        AddedOn = DateTime.Now,
+                        AddedFrom = watcher.PageID
+                    },
+                    Category = watcher.Category,
+                    AutoFollow = Settings.RecursiveAutoFollow != false
+                };
+                SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
+                siteHelper.SetURL(thread.URL);
+                if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
+                if (AddThread(thread)) {
+                    UpdateCategories(thread.Category);
+                    _saveThreadList = true;
+                }
+            });
         }
 
         private bool AddThread(string pageURL) {
@@ -1029,18 +1031,21 @@ namespace JDP {
                     UpdateCategories(thread.Category);
                     AddThread(thread);
                 }
+                _isLoadingThreadsFromFile = false;
                 foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                     ThreadWatcher parentThread;
                     _watchers.TryGetValue(((WatcherExtraData)threadWatcher.Tag).AddedFrom, out parentThread);
                     threadWatcher.ParentThread = parentThread;
-                    if (parentThread != null) parentThread.ChildThreads.Add(threadWatcher.PageID, threadWatcher);
+                    if (parentThread != null && !parentThread.ChildThreads.ContainsKey(threadWatcher.PageID) && !parentThread.ChildThreads.ContainsKey(parentThread.PageID)) {
+                        parentThread.ChildThreads.Add(threadWatcher.PageID, threadWatcher);
+                    }
                     DisplayAddedFrom(threadWatcher);
                     if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
                 }
                 if (Settings.ChildThreadsAreNewFormat != true) {
                     foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                         if (threadWatcher.ChildThreads.Count == 0 || threadWatcher.ParentThread != null) continue;
-                        foreach (ThreadWatcher descendantThread in threadWatcher.DescendentThreads.Values) {
+                        foreach (ThreadWatcher descendantThread in threadWatcher.DescendantThreads.Values) {
                             descendantThread.DoNotRename = true;
                             string sourceDir = Path.Combine(descendantThread.ParentThread.ThreadDownloadDirectory, General.GetLastDirectory(descendantThread.ThreadDownloadDirectory));
                             string destDir = Path.Combine(General.RemoveLastDirectory(threadWatcher.ThreadDownloadDirectory),
@@ -1062,7 +1067,6 @@ namespace JDP {
                     }
                     catch { }
                 }
-                _isLoadingThreadsFromFile = false;
             }
             catch { }
         }

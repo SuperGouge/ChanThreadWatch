@@ -42,7 +42,7 @@ namespace JDP {
                 case 10: cboCheckEvery.SelectedIndex = 4; break;
                 case 60: cboCheckEvery.SelectedIndex = 5; break;
                 default:
-                    txtCheckEvery.Text = watcher.CheckIntervalSeconds.ToString(CultureInfo.InvariantCulture);
+                    txtCheckEvery.Text = (watcher.CheckIntervalSeconds / 60).ToString(CultureInfo.InvariantCulture);
                     cboCheckEvery.SelectedIndex = -1;
                     cboCheckEvery.Enabled = false;
                     break;

@@ -751,7 +751,9 @@ namespace JDP {
     public enum ReplaceType {
         Other = 0,
         ImageLinkHref = 1,
-        ImageSrc = 2
+        ImageSrc = 2,
+        QuoteLinkHref = 3,
+        DeadLink = 4
     }
 
     public enum DownloadType {

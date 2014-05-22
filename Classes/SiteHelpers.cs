@@ -159,7 +159,7 @@ namespace JDP {
             return imageList;
         }
 
-        public virtual HashSet<string> GetCrossLinks() {
+        public virtual HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList) {
             return new HashSet<string>();
         }
 
@@ -325,7 +325,7 @@ namespace JDP {
             return imageList;
         }
 
-        public override HashSet<string> GetCrossLinks() {
+        public override HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList) {
             HashSet<string> crossLinks = new HashSet<string>();
 
             foreach (HTMLTagRange postMessageTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("blockquote"),
@@ -334,10 +334,45 @@ namespace JDP {
                 foreach (HTMLTag quoteLinkTag in Enumerable.Where(_htmlParser.FindStartTags(postMessageTagRange, "a"),
                     t => HTMLParser.ClassAttributeValueHas(t, "quotelink")))
                 {
-                    string href = quoteLinkTag.GetAttributeValueOrEmpty("href");
+                    HTMLAttribute attribute = quoteLinkTag.GetAttribute("href");
+                    string href = attribute.Value.Substring(0, attribute.Value.Contains("#") ? attribute.Value.IndexOf('#') : attribute.Value.Length);
                     if (!href.StartsWith("/") || !href.Contains("/thread/")) continue;
-                    Uri uri = new Uri(_url);
-                    crossLinks.Add(General.CleanPageURL(uri.Scheme + "://" + uri.Host + href));
+                    crossLinks.Add(General.GetAbsoluteURL(_url, href));
+                    if (replaceList != null) {
+                        replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.QuoteLinkHref,
+                                Tag = href.Replace("/thread", "").Insert(0, GetSiteName())
+                            });
+                    }
+                }
+
+                foreach (HTMLTagRange deadLinkTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags(postMessageTagRange, "span"),
+                    t => HTMLParser.ClassAttributeValueHas(t, "deadlink")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+                {
+                    string boardName;
+                    string pageID;
+                    string deadLinkInnerHTML = HttpUtility.HtmlDecode(_htmlParser.GetInnerHTML(deadLinkTagRange));
+                    if (deadLinkInnerHTML.Contains(">>>")) {
+                        boardName = deadLinkInnerHTML.Split('/')[1];
+                        pageID = deadLinkInnerHTML.Split('/')[2];
+                    }
+                    else {
+                        boardName = GetBoardName();
+                        pageID = deadLinkInnerHTML.Substring(2);
+                    }
+
+                    if (replaceList != null) {
+                        replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = deadLinkTagRange.StartTag.Offset,
+                                Length = deadLinkTagRange.EndTag.Offset + deadLinkTagRange.EndTag.Length - deadLinkTagRange.StartTag.Offset,
+                                Type = ReplaceType.DeadLink,
+                                Tag = String.Join("/", new[] { GetSiteName(), boardName, pageID })
+                            });
+                    }
                 }
             }
             return crossLinks;

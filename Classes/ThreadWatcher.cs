@@ -54,6 +54,7 @@ namespace JDP {
             _siteHelper = SiteHelper.GetInstance(PageHost);
             _siteHelper.SetURL(PageURL);
             _pageID = _siteHelper.GetPageID();
+            _threadName = _siteHelper.GetThreadName();
         }
 
         public string PageURL {
@@ -66,6 +67,10 @@ namespace JDP {
 
         public string PageID {
             get { return _pageID; }
+        }
+
+        public string ThreadName {
+            get { return _threadName; }
         }
 
         public SiteHelper SiteHelper {
@@ -168,7 +173,7 @@ namespace JDP {
                     TryRenameThreadDownloadDirectory(false);
                 }
                 if (Settings.RenameDownloadFolderWithParentThreadDescription == true) {
-                    foreach (ThreadWatcher descendantThread in RootThread.DescendentThreads.Values) {
+                    foreach (ThreadWatcher descendantThread in RootThread.DescendantThreads.Values) {
                         descendantThread.TryRenameThreadDownloadDirectory(false);
                     }
                 }
@@ -195,14 +200,14 @@ namespace JDP {
             get { lock (_settingsSync) { return _childThreads; } }
         }
 
-        public Dictionary<string, ThreadWatcher> DescendentThreads {
+        public Dictionary<string, ThreadWatcher> DescendantThreads {
             get {
                 Dictionary<string, ThreadWatcher> dictionary = new Dictionary<string, ThreadWatcher>();
                 foreach (ThreadWatcher childThread in ChildThreads.Values) {
                     if (!dictionary.ContainsKey(childThread.PageID)) dictionary.Add(childThread.PageID, childThread);
                 }
                 foreach (ThreadWatcher childThread in ChildThreads.Values) {
-                    foreach (ThreadWatcher descendantThread in childThread.DescendentThreads.Values) {
+                    foreach (ThreadWatcher descendantThread in childThread.DescendantThreads.Values) {
                         if (!dictionary.ContainsKey(descendantThread.PageID)) dictionary.Add(descendantThread.PageID, descendantThread);
                     }
                 }
@@ -430,7 +435,6 @@ namespace JDP {
                             _completedImages = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
                             _completedThumbs = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
                             _maxFileNameLengthBaseDir = 0;
-                            _threadName = siteHelper.GetThreadName();
 
                             if (String.IsNullOrEmpty(_threadDownloadDirectory)) {
                                 _threadDownloadDirectory = Path.Combine(
@@ -441,7 +445,7 @@ namespace JDP {
                                 Directory.CreateDirectory(_threadDownloadDirectory);
                             }
                             if (String.IsNullOrEmpty(_description)) {
-                                _description = General.GetLastDirectory(_threadDownloadDirectory);
+                                _description = General.CleanFileName(String.Format("{0}_{1}_{2}", siteHelper.GetSiteName(), siteHelper.GetBoardName(), _threadName));
                             }
                             _minCheckIntervalSeconds = siteHelper.IsBoardHighTurnover() ? 30 : 60;
                             _checkIntervalSeconds = Math.Max(_checkIntervalSeconds, _minCheckIntervalSeconds);
@@ -499,10 +503,11 @@ namespace JDP {
                         siteHelper.SetHTMLParser(pageParser);
 
                         if (AutoFollow) {
-                            foreach (string crossLink in siteHelper.GetCrossLinks()) {
+                            foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList)) {
                                 SiteHelper crossLinkSiteHelper = SiteHelper.GetInstance((new Uri(crossLink)).Host);
                                 crossLinkSiteHelper.SetURL(crossLink);
-                                if (!RootThread.DescendentThreads.ContainsKey(crossLinkSiteHelper.GetPageID())) OnAddThread(new AddThreadEventArgs(crossLink));
+                                string crossLinkID = crossLinkSiteHelper.GetPageID();
+                                if (!RootThread.DescendantThreads.ContainsKey(crossLinkID) && RootThread.PageID != crossLinkID) OnAddThread(new AddThreadEventArgs(crossLink));
                             }
                         }
 
@@ -723,6 +728,7 @@ namespace JDP {
                             for (int i = 0; i < pageInfo.ReplaceList.Count; i++) {
                                 ReplaceInfo replace = pageInfo.ReplaceList[i];
                                 DownloadInfo downloadInfo = null;
+                                ThreadWatcher watcher;
                                 Func<string, string> getRelativeDownloadPath = (fileDownloadDir) => {
                                     return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.Path),
                                         threadDir).Replace(Path.DirectorySeparatorChar, '/');
@@ -732,6 +738,19 @@ namespace JDP {
                                 }
                                 if (replace.Type == ReplaceType.ImageSrc && _completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
                                     replace.Value = "src=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir)) + "\"";
+                                }
+                                if (replace.Type == ReplaceType.QuoteLinkHref && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
+                                    replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
+                                }
+                                if (replace.Type == ReplaceType.DeadLink) {
+                                    string[] tagSplit = replace.Tag.Split('/');
+                                    string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
+                                    if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
+                                        replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                    }
+                                    else {
+                                        replace.Value = "<span class=\"deadlink\">" + innerHTML + "</span>";
+                                    }
                                 }
                             }
                             General.AddOtherReplaces(htmlParser, pageInfo.URL, pageInfo.ReplaceList);
