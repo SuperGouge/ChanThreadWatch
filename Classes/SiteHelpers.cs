@@ -159,7 +159,7 @@ namespace JDP {
             return imageList;
         }
 
-        public virtual HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList) {
+        public virtual HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList, bool interBoardAutoFollow) {
             return new HashSet<string>();
         }
 
@@ -325,7 +325,7 @@ namespace JDP {
             return imageList;
         }
 
-        public override HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList) {
+        public override HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList, bool interBoardAutoFollow) {
             HashSet<string> crossLinks = new HashSet<string>();
 
             foreach (HTMLTagRange postMessageTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("blockquote"),
@@ -336,7 +336,7 @@ namespace JDP {
                 {
                     HTMLAttribute attribute = quoteLinkTag.GetAttribute("href");
                     string href = attribute.Value.Substring(0, attribute.Value.Contains("#") ? attribute.Value.IndexOf('#') : attribute.Value.Length);
-                    if (!href.StartsWith("/") || !href.Contains("/thread/")) continue;
+                    if (!href.StartsWith("/") || !href.Contains("/thread/") || (!interBoardAutoFollow && GetBoardName() != href.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0])) continue;
                     crossLinks.Add(General.GetAbsoluteURL(_url, href));
                     if (replaceList != null) {
                         replaceList.Add(
@@ -344,7 +344,8 @@ namespace JDP {
                                 Offset = attribute.Offset,
                                 Length = attribute.Length,
                                 Type = ReplaceType.QuoteLinkHref,
-                                Tag = href.Replace("/thread", "").Insert(0, GetSiteName())
+                                Tag = href.Replace("/thread", "").Insert(0, GetSiteName()),
+                                Value = attribute.Value
                             });
                     }
                 }
@@ -370,7 +371,8 @@ namespace JDP {
                                 Offset = deadLinkTagRange.StartTag.Offset,
                                 Length = deadLinkTagRange.EndTag.Offset + deadLinkTagRange.EndTag.Length - deadLinkTagRange.StartTag.Offset,
                                 Type = ReplaceType.DeadLink,
-                                Tag = String.Join("/", new[] { GetSiteName(), boardName, pageID })
+                                Tag = String.Join("/", new[] { GetSiteName(), boardName, pageID }),
+                                Value = _htmlParser.GetHTML(deadLinkTagRange)
                             });
                     }
                 }

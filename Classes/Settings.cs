@@ -101,6 +101,11 @@ namespace JDP {
             set { SetBool("RecursiveAutoFollow", value); }
         }
 
+        public static bool? InterBoardAutoFollow {
+            get { return GetBool("InterBoardAutoFollow"); }
+            set { SetBool("InterBoardAutoFollow", value); }
+        }
+
         public static bool? SaveThumbnails {
             get { return GetBool("SaveThumbnails"); }
             set { SetBool("SaveThumbnails", value); }

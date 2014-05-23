@@ -503,7 +503,7 @@ namespace JDP {
                         siteHelper.SetHTMLParser(pageParser);
 
                         if (AutoFollow) {
-                            foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList)) {
+                            foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList, Settings.InterBoardAutoFollow != false)) {
                                 SiteHelper crossLinkSiteHelper = SiteHelper.GetInstance((new Uri(crossLink)).Host);
                                 crossLinkSiteHelper.SetURL(crossLink);
                                 string crossLinkID = crossLinkSiteHelper.GetPageID();
@@ -742,15 +742,10 @@ namespace JDP {
                                 if (replace.Type == ReplaceType.QuoteLinkHref && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                                     replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
                                 }
-                                if (replace.Type == ReplaceType.DeadLink) {
+                                if (replace.Type == ReplaceType.DeadLink && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                                     string[] tagSplit = replace.Tag.Split('/');
                                     string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
-                                    if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
-                                        replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
-                                    }
-                                    else {
-                                        replace.Value = "<span class=\"deadlink\">" + innerHTML + "</span>";
-                                    }
+                                    replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
                                 }
                             }
                             General.AddOtherReplaces(htmlParser, pageInfo.URL, pageInfo.ReplaceList);

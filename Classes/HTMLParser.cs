@@ -23,6 +23,14 @@ namespace JDP {
             get { return _tags.AsReadOnly(); }
         }
 
+        public string GetHTML(HTMLTag startTag, HTMLTag endTag) {
+            return GetSection(_preprocessedHTML, startTag.Offset, startTag.IsSelfClosing ? startTag.EndOffset : endTag.EndOffset);
+        }
+
+        public string GetHTML(HTMLTagRange tagRange) {
+            return GetHTML(tagRange.StartTag, tagRange.EndTag);
+        }
+
         public string GetInnerHTML(HTMLTag startTag, HTMLTag endTag) {
             return startTag.IsSelfClosing ? String.Empty : GetSection(_preprocessedHTML, startTag.EndOffset, endTag.Offset);
         }

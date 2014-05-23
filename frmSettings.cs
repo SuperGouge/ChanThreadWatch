@@ -18,9 +18,11 @@ namespace JDP {
             chkRenameDownloadFolderWithDescription.Checked = Settings.RenameDownloadFolderWithDescription ?? false;
             chkRenameDownloadFolderWithCategory.Checked = Settings.RenameDownloadFolderWithCategory ?? false;
             chkRenameDownloadFolderWithParentThreadDescription.Checked = Settings.RenameDownloadFolderWithParentThreadDescription ?? false;
+            pnlParentThreadDescriptionFormat.Enabled = chkRenameDownloadFolderWithParentThreadDescription.Checked;
             txtParentThreadDescriptionFormat.Text = Settings.ParentThreadDescriptionFormat ?? " ({Parent})";
             chkSortImagesByPoster.Checked = Settings.SortImagesByPoster ?? false;
             chkRecursiveAutoFollow.Checked = Settings.RecursiveAutoFollow ?? true;
+            chkInterBoardAutoFollow.Checked = Settings.InterBoardAutoFollow ?? true;
             chkUseOriginalFileNames.Checked = Settings.UseOriginalFileNames ?? false;
             chkVerifyImageHashes.Checked = Settings.VerifyImageHashes ?? true;
             chkUseSlug.Checked = Settings.UseSlug ?? false;
@@ -92,6 +94,7 @@ namespace JDP {
                 Settings.ParentThreadDescriptionFormat = txtParentThreadDescriptionFormat.Text;
                 Settings.SortImagesByPoster = chkSortImagesByPoster.Checked;
                 Settings.RecursiveAutoFollow = chkRecursiveAutoFollow.Checked;
+                Settings.InterBoardAutoFollow = chkInterBoardAutoFollow.Checked;
                 Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
                 Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
                 Settings.UseSlug = chkUseSlug.Checked;
@@ -145,6 +148,10 @@ namespace JDP {
 
         private void chkUseSlug_CheckedChanged(object sender, EventArgs e) {
             pnlSlug.Enabled = chkUseSlug.Checked;
+        }
+
+        private void chkRenameDownloadFolderWithParentThreadDescription_CheckedChanged(object sender, EventArgs e) {
+            pnlParentThreadDescriptionFormat.Enabled = chkRenameDownloadFolderWithParentThreadDescription.Checked;
         }
 
         private void SetDownloadFolderTextBox(string path) {

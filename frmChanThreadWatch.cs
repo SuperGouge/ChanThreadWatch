@@ -214,16 +214,19 @@ namespace JDP {
                 txtPageURL.Clear();
                 SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
                 siteHelper.SetURL(pageURL);
-                foreach (ListViewItem item in lvThreads.Items) {
-                    if (((ThreadWatcher)item.Tag).PageID != siteHelper.GetPageID()) continue;
+                ThreadWatcher existingWatcher;
+                if (_watchers.TryGetValue(siteHelper.GetPageID(), out existingWatcher)) {
+                    ListViewItem item = ((WatcherExtraData)existingWatcher.Tag).ListViewItem;
                     lvThreads.SelectedItems.Clear();
                     lvThreads.Select();
                     item.Selected = true;
                     item.EnsureVisible();
                 }
+                lvThreads.Sort();
                 return;
             }
             UpdateCategories(cboCategory.Text);
+            FocusLastThread();
             lvThreads.Sort();
             txtPageURL.Clear();
             txtPageURL.Focus();
@@ -649,6 +652,8 @@ namespace JDP {
                 if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
                 if (AddThread(thread)) {
                     UpdateCategories(thread.Category);
+                    FocusLastThread();
+                    lvThreads.Sort();
                     _saveThreadList = true;
                 }
             });
@@ -1183,6 +1188,13 @@ namespace JDP {
                     cboCategory.Items.Add(key);
                 }
             }
+        }
+
+        private void FocusLastThread() {
+            lvThreads.SelectedItems.Clear();
+            lvThreads.Select();
+            lvThreads.Items[lvThreads.Items.Count - 1].Selected = true;
+            lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
         }
     }
 }
