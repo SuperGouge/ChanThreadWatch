@@ -480,5 +480,17 @@ namespace JDP {
             StartTag = startTag;
             EndTag = endTag;
         }
+
+        public int Offset {
+            get { return StartTag.Offset; }
+        }
+
+        public int EndOffset {
+            get { return EndTag.EndOffset; }
+        }
+
+        public int Length {
+            get { return EndOffset - Offset; }
+        }
     }
 }

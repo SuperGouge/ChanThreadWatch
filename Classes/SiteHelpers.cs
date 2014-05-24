@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Web;
 
 namespace JDP {
@@ -163,6 +165,9 @@ namespace JDP {
             return new HashSet<string>();
         }
 
+        public virtual void ResurrectDeadPosts(HTMLParser previousParser) {
+        }
+
         public virtual string GetNextPageURL() {
             return null;
         }
@@ -218,7 +223,7 @@ namespace JDP {
                 if (fileThumbImageTag == null) continue;
 
                 string imageURL = fileTextLinkStartTag.GetAttributeValue("href");
-                if (imageURL == null) continue;
+                if (imageURL == null || !imageURL.StartsWith("//i.4cdn.org/")) continue;
 
                 string thumbURL = fileThumbImageTag.GetAttributeValue("src");
                 if (thumbURL == null) continue;
@@ -368,8 +373,8 @@ namespace JDP {
                     if (replaceList != null) {
                         replaceList.Add(
                             new ReplaceInfo {
-                                Offset = deadLinkTagRange.StartTag.Offset,
-                                Length = deadLinkTagRange.EndTag.Offset + deadLinkTagRange.EndTag.Length - deadLinkTagRange.StartTag.Offset,
+                                Offset = deadLinkTagRange.Offset,
+                                Length = deadLinkTagRange.Length,
                                 Type = ReplaceType.DeadLink,
                                 Tag = String.Join("/", new[] { GetSiteName(), boardName, pageID }),
                                 Value = _htmlParser.GetHTML(deadLinkTagRange)
@@ -378,6 +383,45 @@ namespace JDP {
                 }
             }
             return crossLinks;
+        }
+
+        public override void ResurrectDeadPosts(HTMLParser previousParser) {
+            if (previousParser == null) return;
+            List<ReplaceInfo> replaceList = new List<ReplaceInfo>();
+            Dictionary<string, HTMLTagRange> newPostContainers = new Dictionary<string, HTMLTagRange>();
+            foreach (HTMLTagRange postContainerTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
+                t => HTMLParser.ClassAttributeValueHas(t, "postContainer")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                newPostContainers.Add(postContainerTagRange.StartTag.GetAttributeValue("id"), postContainerTagRange);
+            }
+
+            HTMLTagRange lastExistingPostContainerTagRange = null;
+            foreach (HTMLTagRange previousPostContainerTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(previousParser.FindStartTags("div"),
+                t => HTMLParser.ClassAttributeValueHas(t, "postContainer")), t => previousParser.CreateTagRange(t)), r => r != null))
+            {
+                HTMLTagRange tempTagRange;
+                if (!newPostContainers.TryGetValue(previousPostContainerTagRange.StartTag.GetAttributeValue("id"), out tempTagRange)) {
+                    int offset = lastExistingPostContainerTagRange != null ? lastExistingPostContainerTagRange.EndOffset :
+                        Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags("div"), t => HTMLParser.ClassAttributeValueHas(t, "thread"))).EndOffset;
+                    replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = offset,
+                                Length = previousPostContainerTagRange.Length,
+                                Type = ReplaceType.DeadPost,
+                                Tag = previousPostContainerTagRange.StartTag.GetAttributeValue("id"),
+                                Value = previousParser.GetHTML(previousPostContainerTagRange)
+                            });
+                }
+                else {
+                    lastExistingPostContainerTagRange = tempTagRange;
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter sw = new StringWriter(sb)) {
+                General.WriteReplacedString(_htmlParser.PreprocessedHTML, replaceList, sw);
+            }
+            _htmlParser = new HTMLParser(sb.ToString());
         }
 
         public override bool IsBoardHighTurnover() {

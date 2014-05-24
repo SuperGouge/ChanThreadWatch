@@ -478,10 +478,18 @@ namespace JDP {
                 OnDownloadStatus(new DownloadStatusEventArgs(DownloadType.Page, 0, _pageList.Count));
                 while (pageIndex < _pageList.Count && !IsStopping) {
                     string saveFileName = General.CleanFileName(_threadName) + ((pageIndex == 0) ? String.Empty : ("_" + (pageIndex + 1))) + ".html";
+                    HTMLParser previousParser = null;
                     HTMLParser pageParser = null;
 
                     PageInfo pageInfo = _pageList[pageIndex];
                     pageInfo.Path = Path.Combine(threadDir, saveFileName);
+
+                    if (File.Exists(pageInfo.Path)) {
+                        string previousText = null;
+                        try { previousText = File.ReadAllText(pageInfo.Path); }
+                        catch { }
+                        previousParser = !String.IsNullOrEmpty(previousText) ? new HTMLParser(previousText) : null;
+                    }
 
                     ManualResetEvent downloadEndEvent = new ManualResetEvent(false);
                     DownloadPageEndCallback downloadEnd = (result, content, lastModifiedTime, encoding) => {
@@ -501,6 +509,7 @@ namespace JDP {
                     if (pageParser != null) {
                         siteHelper.SetURL(pageInfo.URL);
                         siteHelper.SetHTMLParser(pageParser);
+                        siteHelper.ResurrectDeadPosts(previousParser);
 
                         if (AutoFollow) {
                             foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList, Settings.InterBoardAutoFollow != false)) {

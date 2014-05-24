@@ -753,7 +753,8 @@ namespace JDP {
         ImageLinkHref = 1,
         ImageSrc = 2,
         QuoteLinkHref = 3,
-        DeadLink = 4
+        DeadLink = 4,
+        DeadPost = 5
     }
 
     public enum DownloadType {
