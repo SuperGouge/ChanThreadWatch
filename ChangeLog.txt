@@ -1,3 +1,12 @@
+1.10.0 (2014-May-24):
+  * Ability to sort images by poster.
+  * Ability to edit all thread properties even after being added.
+  * Now keeps deleted/dead posts.
+  * Ability to follow only cross-links within the same board.
+  * Post-processed HTML now makes cross-links point to local threads paths if existing.
+  * Changed handling of child threads, now stored in base download directory.
+  * New settings to better customize the new handling of child threads.
+  * Greatly improved startup time especially for large thread lists.
 1.9.0 (2014-Apr-25):
   * Added auto-follow feature.
   * Added categories.

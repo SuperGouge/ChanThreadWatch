@@ -2,24 +2,31 @@
 
 ## Fork of the original ChanThreadWatch.
 
-This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.
-You can DOWNLOAD this program here: [https://github.com/SuperGouge/ChanThreadWatch/releases](https://github.com/SuperGouge/ChanThreadWatch/releases)
-You can find the official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
+This project is a fork of the original ChanThreadWatch. All credit goes to the original developper.  
+You can DOWNLOAD this program here: [https://github.com/SuperGouge/ChanThreadWatch/releases](https://github.com/SuperGouge/ChanThreadWatch/releases)  
+You can find the original official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
+
+**DISCLAIMER:** The latest version of this program (1.10.0) changes the handling of child threads.
+If you used the auto-follow feature of the 1.9.0 version and still have child threads, they will be converted to the new format.
+However, you are advised to make a backup of both your "threads.txt" file (in the "%AppData%\Chan Thread Watch" folder) and your child threads (nested in their parent's folder) in case anything happens during the conversion.
 
 ## Planned features
-- Rename folder when renaming category
-- Rename folder when renaming description of a thread in auto-follow mode
-- Replace cross-links in post-processed HTML for threads in auto-follow mode
-- Chose default auto-follow behaviour of child threads in settings
-- Edit auto-follow property after adding a thread
-- Keep deleted posts
 - Post highlighting by poster ID
-- Organize images by poster name/ID
 - Custom automatic description (thread title, creation date, etc.)
 - 4chan X compatible post-processed HTML
 - Support for more imageboards
 
 ## Changelog
+### 1.10.0 (2014-May-24):
+- Ability to sort images by poster.
+- Ability to edit all thread properties even after being added.
+- Now keeps deleted/dead posts.
+- Ability to follow only cross-links within the same board.
+- Post-processed HTML now makes cross-links point to local threads paths if existing.
+- Changed handling of child threads, now stored in base download directory.
+- New settings to better customize the new handling of child threads.
+- Greatly improved startup time especially for large thread lists.
+
 ### 1.9.0 (2014-Apr-25):
 - Added auto-follow feature.
 - Added categories.
