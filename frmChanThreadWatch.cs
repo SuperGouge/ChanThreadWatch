@@ -28,7 +28,7 @@ namespace JDP {
             InitializeComponent();
             Icon = Resources.ChanThreadWatchIcon;
             Settings.Load();
-            ClientSize = Settings.ClientSize ?? new Size(636, 373);
+            ClientSize = Settings.ClientSize ?? new Size(636, 409);
             int initialWidth = ClientSize.Width;
             GUI.SetFontAndScaling(this);
             float scaleFactorX = (float)ClientSize.Width / initialWidth;
@@ -1045,7 +1045,9 @@ namespace JDP {
                         parentThread.ChildThreads.Add(threadWatcher.PageID, threadWatcher);
                     }
                     DisplayAddedFrom(threadWatcher);
-                    if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
+                    if (Settings.ChildThreadsAreNewFormat == true && threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) {
+                        threadWatcher.Start();
+                    }
                 }
                 if (Settings.ChildThreadsAreNewFormat != true) {
                     foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
@@ -1071,6 +1073,10 @@ namespace JDP {
                         Settings.Save();
                     }
                     catch { }
+
+                    foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
+                        if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
+                    }
                 }
             }
             catch { }

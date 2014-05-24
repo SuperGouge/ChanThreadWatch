@@ -219,7 +219,7 @@ namespace JDP {
                 string value = Get("ClientSize") ?? String.Empty;
                 string[] size = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 int width, height;
-                if (size.Length != 2 || !Int32.TryParse(size[0], out width) || !Int32.TryParse(size[1], out height)) return null;
+                if (size.Length != 2 || !Int32.TryParse(size[0], out width) || !Int32.TryParse(size[1], out height) || width < 1 || height < 1) return null;
                 return new Size(width, height);
             }
             set { Set("ClientSize", value.HasValue ? value.Value.Width + "," + value.Value.Height : null); }

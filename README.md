@@ -6,7 +6,7 @@ This project is a fork of the original ChanThreadWatch. All credit goes to the o
 You can DOWNLOAD this program here: [https://github.com/SuperGouge/ChanThreadWatch/releases](https://github.com/SuperGouge/ChanThreadWatch/releases)  
 You can find the original official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
-**DISCLAIMER:** The latest version of this program (1.10.0) changes the handling of child threads.
+**DISCLAIMER:** The latest major version of this program (1.10) changes the handling of child threads.
 If you used the auto-follow feature of the 1.9.0 version and still have child threads, they will be converted to the new format.
 However, you are advised to make a backup of both your "threads.txt" file (in the "%AppData%\Chan Thread Watch" folder) and your child threads (nested in their parent's folder) in case anything happens during the conversion.
 
@@ -17,6 +17,10 @@ However, you are advised to make a backup of both your "threads.txt" file (in th
 - Support for more imageboards
 
 ## Changelog
+### 1.10.1 (2014-May-24):
+- Fixed OverflowException occurring when ClientSize setting had a 0 as a width or height.
+- Fixed handling of child threads conversion during startup.
+
 ### 1.10.0 (2014-May-24):
 - Ability to sort images by poster.
 - Ability to edit all thread properties even after being added.
