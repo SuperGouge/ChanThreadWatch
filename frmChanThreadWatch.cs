@@ -1054,17 +1054,26 @@ namespace JDP {
                         if (threadWatcher.ChildThreads.Count == 0 || threadWatcher.ParentThread != null) continue;
                         foreach (ThreadWatcher descendantThread in threadWatcher.DescendantThreads.Values) {
                             descendantThread.DoNotRename = true;
-                            string sourceDir = Path.Combine(descendantThread.ParentThread.ThreadDownloadDirectory, General.GetLastDirectory(descendantThread.ThreadDownloadDirectory));
-                            string destDir = Path.Combine(General.RemoveLastDirectory(threadWatcher.ThreadDownloadDirectory),
-                                General.GetRelativeDirectoryPath(descendantThread.ThreadDownloadDirectory, threadWatcher.ThreadDownloadDirectory));
-                            if (String.Equals(destDir, sourceDir, StringComparison.Ordinal)) return;
-                            if (String.Equals(destDir, sourceDir, StringComparison.OrdinalIgnoreCase)) {
-                                Directory.Move(sourceDir, destDir + " Temp");
-                                sourceDir = destDir + " Temp";
+                            string sourceDir = descendantThread.ThreadDownloadDirectory;
+                            string destDir;
+                            if (General.RemoveLastDirectory(sourceDir) == descendantThread.MainDownloadDirectory) {
+                                destDir = Path.Combine(descendantThread.MainDownloadDirectory, General.RemoveLastDirectory(sourceDir));
                             }
-                            if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
-                            Directory.Move(sourceDir, destDir);
-                            descendantThread.ThreadDownloadDirectory = destDir;
+                            else {
+                                destDir = Path.Combine(General.RemoveLastDirectory(threadWatcher.ThreadDownloadDirectory),
+                                    General.GetRelativeDirectoryPath(descendantThread.ThreadDownloadDirectory, threadWatcher.ThreadDownloadDirectory));
+                            }
+                            if (String.Equals(destDir, sourceDir, StringComparison.Ordinal) || !Directory.Exists(sourceDir)) continue;
+                            try {
+                                if (String.Equals(destDir, sourceDir, StringComparison.OrdinalIgnoreCase)) {
+                                    Directory.Move(sourceDir, destDir + " Temp");
+                                    sourceDir = destDir + " Temp";
+                                }
+                                if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
+                                Directory.Move(sourceDir, destDir);
+                                descendantThread.ThreadDownloadDirectory = destDir;
+                            }
+                            catch { }
                             descendantThread.DoNotRename = false;
                         }
                     }
