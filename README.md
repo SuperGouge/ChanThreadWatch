@@ -17,6 +17,9 @@ However, you are advised to make a backup of both your "threads.txt" file (in th
 - Support for more imageboards
 
 ## Changelog
+### 1.10.2 (2014-May-24):
+- Fixed ArgumentOutOfRangeException occurring when thread list is empty.
+
 ### 1.10.1 (2014-May-24):
 - Fixed OverflowException occurring when ClientSize setting had a 0 as a width or height.
 - Fixed handling of child threads conversion during startup.

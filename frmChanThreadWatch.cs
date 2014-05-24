@@ -126,7 +126,7 @@ namespace JDP {
             btnSettings.Enabled = true;
             btnAbout.Enabled = true;
             lvThreads.Enabled = true;
-            lvThreads.EnsureVisible(lvThreads.Items.Count - 1);
+            FocusLastThread();
         }
 
         private void frmChanThreadWatch_FormClosed(object sender, FormClosedEventArgs e) {
@@ -1199,8 +1199,10 @@ namespace JDP {
         private void FocusLastThread() {
             lvThreads.SelectedItems.Clear();
             lvThreads.Select();
-            lvThreads.Items[lvThreads.Items.Count - 1].Selected = true;
-            lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
+            if (lvThreads.Items.Count > 0) {
+                lvThreads.Items[lvThreads.Items.Count - 1].Selected = true;
+                lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
+            }
         }
     }
 }
