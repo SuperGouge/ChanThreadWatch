@@ -35,6 +35,10 @@ namespace JDP {
             _htmlParser = htmlParser;
         }
 
+        public HTMLParser GetHTMLParser() {
+            return _htmlParser;
+        }
+
         protected string[] SplitURL() {
             int pos = _url.IndexOf("://", StringComparison.Ordinal);
             if (pos == -1) return new string[0];
@@ -389,6 +393,7 @@ namespace JDP {
             if (previousParser == null) return;
             List<ReplaceInfo> replaceList = new List<ReplaceInfo>();
             Dictionary<string, HTMLTagRange> newPostContainers = new Dictionary<string, HTMLTagRange>();
+            Dictionary<string, HTMLTagRange> resurrectedPostContainers = new Dictionary<string, HTMLTagRange>();
             foreach (HTMLTagRange postContainerTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
                 t => HTMLParser.ClassAttributeValueHas(t, "postContainer")), t => _htmlParser.CreateTagRange(t)), r => r != null))
             {
@@ -403,14 +408,16 @@ namespace JDP {
                 if (!newPostContainers.TryGetValue(previousPostContainerTagRange.StartTag.GetAttributeValue("id"), out tempTagRange)) {
                     int offset = lastExistingPostContainerTagRange != null ? lastExistingPostContainerTagRange.EndOffset :
                         Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags("div"), t => HTMLParser.ClassAttributeValueHas(t, "thread"))).EndOffset;
+                    HTMLTag inputTag = previousParser.FindTag(false, previousPostContainerTagRange, "input");
                     replaceList.Add(
                             new ReplaceInfo {
                                 Offset = offset,
-                                Length = previousPostContainerTagRange.Length,
+                                Length = 0,
                                 Type = ReplaceType.DeadPost,
                                 Tag = previousPostContainerTagRange.StartTag.GetAttributeValue("id"),
-                                Value = previousParser.GetHTML(previousPostContainerTagRange)
+                                Value = previousParser.GetHTML(previousPostContainerTagRange).Insert(inputTag.EndOffset - previousPostContainerTagRange.Offset, "<strong style=\"color: #FF0000\">[Deleted]</strong>")
                             });
+                    resurrectedPostContainers.Add(previousPostContainerTagRange.StartTag.GetAttributeValue("id"), previousPostContainerTagRange);
                 }
                 else {
                     lastExistingPostContainerTagRange = tempTagRange;
@@ -418,6 +425,33 @@ namespace JDP {
             }
 
             StringBuilder sb = new StringBuilder();
+            using (StringWriter sw = new StringWriter(sb)) {
+                General.WriteReplacedString(_htmlParser.PreprocessedHTML, replaceList, sw);
+            }
+            _htmlParser = new HTMLParser(sb.ToString());
+
+            replaceList.Clear();
+            foreach (HTMLTagRange deadLinkTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("span"),
+                    t => HTMLParser.ClassAttributeValueHas(t, "deadlink")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                string deadLinkInnerHTML = HttpUtility.HtmlDecode(_htmlParser.GetInnerHTML(deadLinkTagRange));
+                if (deadLinkInnerHTML.Contains(">>>")) continue;
+                string[] deadLinkSplit = deadLinkInnerHTML.Split('/');
+                if (deadLinkSplit.Length < 1) continue;
+                string deadLinkID = deadLinkSplit[deadLinkSplit.Length - 1];
+                if (resurrectedPostContainers.ContainsKey("pc" + deadLinkID)) {
+                    replaceList.Add(
+                        new ReplaceInfo {
+                            Offset = deadLinkTagRange.Offset,
+                            Length = deadLinkTagRange.Length,
+                            Type = ReplaceType.DeadLink,
+                            Tag = "pc" + deadLinkID,
+                            Value = "<a class=\"quotelink\" href=\"#p" + deadLinkID + "\">>>" + deadLinkID + "</a>"
+                        });
+                }
+            }
+
+            sb = new StringBuilder();
             using (StringWriter sw = new StringWriter(sb)) {
                 General.WriteReplacedString(_htmlParser.PreprocessedHTML, replaceList, sw);
             }

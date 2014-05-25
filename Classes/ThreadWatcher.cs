@@ -733,7 +733,7 @@ namespace JDP {
                     if (!IsStopping || StopReason != StopReason.IOError) {
                         foreach (PageInfo pageInfo in _pageList) {
                             if (!pageInfo.IsFresh) continue;
-                            HTMLParser htmlParser = new HTMLParser(File.ReadAllText(pageInfo.Path, pageInfo.Encoding));
+                            HTMLParser htmlParser = siteHelper.GetHTMLParser();
                             for (int i = 0; i < pageInfo.ReplaceList.Count; i++) {
                                 ReplaceInfo replace = pageInfo.ReplaceList[i];
                                 DownloadInfo downloadInfo = null;
