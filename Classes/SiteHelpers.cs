@@ -409,13 +409,17 @@ namespace JDP {
                     int offset = lastExistingPostContainerTagRange != null ? lastExistingPostContainerTagRange.EndOffset :
                         Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags("div"), t => HTMLParser.ClassAttributeValueHas(t, "thread"))).EndOffset;
                     HTMLTag inputTag = previousParser.FindTag(false, previousPostContainerTagRange, "input");
+                    string value = previousParser.GetHTML(previousPostContainerTagRange);
+                    if (!value.Contains("<strong style=\"color: #FF0000\">[Deleted]</strong>")) {
+                        value = value.Insert(inputTag.EndOffset - previousPostContainerTagRange.Offset, "<strong style=\"color: #FF0000\">[Deleted]</strong>");
+                    }
                     replaceList.Add(
                             new ReplaceInfo {
                                 Offset = offset,
                                 Length = 0,
                                 Type = ReplaceType.DeadPost,
                                 Tag = previousPostContainerTagRange.StartTag.GetAttributeValue("id"),
-                                Value = previousParser.GetHTML(previousPostContainerTagRange).Insert(inputTag.EndOffset - previousPostContainerTagRange.Offset, "<strong style=\"color: #FF0000\">[Deleted]</strong>")
+                                Value = value
                             });
                     resurrectedPostContainers.Add(previousPostContainerTagRange.StartTag.GetAttributeValue("id"), previousPostContainerTagRange);
                 }
