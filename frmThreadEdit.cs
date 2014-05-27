@@ -34,8 +34,9 @@ namespace JDP {
             chkOneTime.Checked = watcher.OneTimeDownload;
             chkAutoFollow.Checked = watcher.AutoFollow;
 
-            switch (watcher.CheckIntervalSeconds) {
+            switch (watcher.CheckIntervalSeconds / 60) {
                 case 0: cboCheckEvery.SelectedIndex = 0; break;
+                case 1: cboCheckEvery.SelectedIndex = 0; break;
                 case 2: cboCheckEvery.SelectedIndex = 1; break;
                 case 3: cboCheckEvery.SelectedIndex = 2; break;
                 case 5: cboCheckEvery.SelectedIndex = 3; break;

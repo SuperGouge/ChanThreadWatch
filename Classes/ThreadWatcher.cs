@@ -749,12 +749,24 @@ namespace JDP {
                                     replace.Value = "src=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir)) + "\"";
                                 }
                                 if (replace.Type == ReplaceType.QuoteLinkHref && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
-                                    replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
+                                    if (watcher._hasInitialized) {
+                                        replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
+                                    }
+                                    else {
+                                        pageInfo.ReplaceList.RemoveAt(i);
+                                        i--;
+                                    }
                                 }
                                 if (replace.Type == ReplaceType.DeadLink && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                                     string[] tagSplit = replace.Tag.Split('/');
                                     string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
-                                    replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                    if (watcher._hasInitialized) {
+                                        replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                    }
+                                    else {
+                                        pageInfo.ReplaceList.RemoveAt(i);
+                                        i--;
+                                    }
                                 }
                             }
                             General.AddOtherReplaces(htmlParser, pageInfo.URL, pageInfo.ReplaceList);

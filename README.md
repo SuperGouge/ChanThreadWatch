@@ -20,7 +20,7 @@ However, you are advised to make a backup of both your "threads.txt" file (in th
 ### 1.10.3 (2014-May-25):
 - Fixed resurrected posts not being correctly added to output file.
 - Added "[Deleted]" warning to resurrected posts.
-- Dead links quotinq resurrected posts are now resurrected too.
+- Dead links quoting resurrected posts are now resurrected too.
 - Fixed some occasional exceptions during child threads conversion.
 
 ### 1.10.2 (2014-May-24):
