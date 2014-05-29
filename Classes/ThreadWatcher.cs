@@ -509,7 +509,7 @@ namespace JDP {
                     if (pageParser != null) {
                         siteHelper.SetURL(pageInfo.URL);
                         siteHelper.SetHTMLParser(pageParser);
-                        siteHelper.ResurrectDeadPosts(previousParser);
+                        siteHelper.ResurrectDeadPosts(previousParser, pageInfo.ReplaceList);
 
                         if (AutoFollow) {
                             foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList, Settings.InterBoardAutoFollow != false)) {
@@ -748,20 +748,18 @@ namespace JDP {
                                 if (replace.Type == ReplaceType.ImageSrc && _completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
                                     replace.Value = "src=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir)) + "\"";
                                 }
-                                if (replace.Type == ReplaceType.QuoteLinkHref && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
+                                if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                                     if (watcher._hasInitialized) {
-                                        replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
-                                    }
-                                    else {
-                                        pageInfo.ReplaceList.RemoveAt(i);
-                                        i--;
-                                    }
-                                }
-                                if (replace.Type == ReplaceType.DeadLink && RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
-                                    string[] tagSplit = replace.Tag.Split('/');
-                                    string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
-                                    if (watcher._hasInitialized) {
-                                        replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                        switch (replace.Type) {
+                                            case ReplaceType.QuoteLinkHref:
+                                                replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
+                                                break;
+                                            case ReplaceType.DeadLink:
+                                                string[] tagSplit = replace.Tag.Split('/');
+                                                string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
+                                                replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                                break;
+                                        }
                                     }
                                     else {
                                         pageInfo.ReplaceList.RemoveAt(i);

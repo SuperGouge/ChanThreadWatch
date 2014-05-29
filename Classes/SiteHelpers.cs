@@ -169,7 +169,7 @@ namespace JDP {
             return new HashSet<string>();
         }
 
-        public virtual void ResurrectDeadPosts(HTMLParser previousParser) {
+        public virtual void ResurrectDeadPosts(HTMLParser previousParser, List<ReplaceInfo> replaceList) {
         }
 
         public virtual string GetNextPageURL() {
@@ -389,9 +389,9 @@ namespace JDP {
             return crossLinks;
         }
 
-        public override void ResurrectDeadPosts(HTMLParser previousParser) {
+        public override void ResurrectDeadPosts(HTMLParser previousParser, List<ReplaceInfo> replaceList) {
             if (previousParser == null) return;
-            List<ReplaceInfo> replaceList = new List<ReplaceInfo>();
+            List<ReplaceInfo> tempReplaceList = new List<ReplaceInfo>();
             Dictionary<string, HTMLTagRange> newPostContainers = new Dictionary<string, HTMLTagRange>();
             Dictionary<string, HTMLTagRange> resurrectedPostContainers = new Dictionary<string, HTMLTagRange>();
             foreach (HTMLTagRange postContainerTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
@@ -413,7 +413,7 @@ namespace JDP {
                     if (!value.Contains("<strong style=\"color: #FF0000\">[Deleted]</strong>")) {
                         value = value.Insert(inputTag.EndOffset - previousPostContainerTagRange.Offset, "<strong style=\"color: #FF0000\">[Deleted]</strong>");
                     }
-                    replaceList.Add(
+                    tempReplaceList.Add(
                             new ReplaceInfo {
                                 Offset = offset,
                                 Length = 0,
@@ -430,21 +430,19 @@ namespace JDP {
 
             StringBuilder sb = new StringBuilder();
             using (StringWriter sw = new StringWriter(sb)) {
-                General.WriteReplacedString(_htmlParser.PreprocessedHTML, replaceList, sw);
+                General.WriteReplacedString(_htmlParser.PreprocessedHTML, tempReplaceList, sw);
             }
             _htmlParser = new HTMLParser(sb.ToString());
 
-            replaceList.Clear();
+            tempReplaceList.Clear();
             foreach (HTMLTagRange deadLinkTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("span"),
                     t => HTMLParser.ClassAttributeValueHas(t, "deadlink")), t => _htmlParser.CreateTagRange(t)), r => r != null))
             {
                 string deadLinkInnerHTML = HttpUtility.HtmlDecode(_htmlParser.GetInnerHTML(deadLinkTagRange));
                 if (deadLinkInnerHTML.Contains(">>>")) continue;
-                string[] deadLinkSplit = deadLinkInnerHTML.Split('/');
-                if (deadLinkSplit.Length < 1) continue;
-                string deadLinkID = deadLinkSplit[deadLinkSplit.Length - 1];
+                string deadLinkID = deadLinkInnerHTML.Substring(2);
                 if (resurrectedPostContainers.ContainsKey("pc" + deadLinkID)) {
-                    replaceList.Add(
+                    tempReplaceList.Add(
                         new ReplaceInfo {
                             Offset = deadLinkTagRange.Offset,
                             Length = deadLinkTagRange.Length,
@@ -457,9 +455,66 @@ namespace JDP {
 
             sb = new StringBuilder();
             using (StringWriter sw = new StringWriter(sb)) {
-                General.WriteReplacedString(_htmlParser.PreprocessedHTML, replaceList, sw);
+                General.WriteReplacedString(_htmlParser.PreprocessedHTML, tempReplaceList, sw);
             }
             _htmlParser = new HTMLParser(sb.ToString());
+
+            if (replaceList == null) return;
+            foreach (HTMLTagRange postContainerTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
+                t => HTMLParser.ClassAttributeValueHas(t, "postContainer")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                if (!resurrectedPostContainers.ContainsKey(postContainerTagRange.StartTag.GetAttributeValue("id"))) continue;
+
+                HTMLTagRange fileTextDivTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postContainerTagRange, "div"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
+                if (fileTextDivTagRange == null) continue;
+
+                HTMLTagRange fileThumbLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postContainerTagRange, "a"), t => HTMLParser.ClassAttributeValueHas(t, "fileThumb"))));
+                if (fileThumbLinkTagRange == null) continue;
+
+                HTMLTag fileTextLinkStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "a");
+                if (fileTextLinkStartTag == null) continue;
+
+                HTMLTag fileThumbImageTag = _htmlParser.FindStartTag(fileThumbLinkTagRange, "img");
+                if (fileThumbImageTag == null) continue;
+
+                HTMLAttribute attribute = fileTextLinkStartTag.GetAttribute("href");
+                if (attribute != null) {
+                    replaceList.Add(
+                        new ReplaceInfo {
+                            Offset = attribute.Offset,
+                            Length = attribute.Length,
+                            Type = ReplaceType.ImageLinkHref,
+                            Tag = String.Empty,
+                            Value = attribute.Value
+                        });
+                }
+
+                attribute = fileThumbLinkTagRange.StartTag.GetAttribute("href");
+                if (attribute != null) {
+                    replaceList.Add(
+                        new ReplaceInfo {
+                            Offset = attribute.Offset,
+                            Length = attribute.Length,
+                            Type = ReplaceType.ImageLinkHref,
+                            Tag = String.Empty,
+                            Value = attribute.Value
+                        });
+                }
+
+                attribute = fileThumbImageTag.GetAttribute("src");
+                if (attribute != null) {
+                    replaceList.Add(
+                        new ReplaceInfo {
+                            Offset = attribute.Offset,
+                            Length = attribute.Length,
+                            Type = ReplaceType.ImageSrc,
+                            Tag = String.Empty,
+                            Value = attribute.Value
+                        });
+                }
+            }
         }
 
         public override bool IsBoardHighTurnover() {
