@@ -28,6 +28,11 @@ namespace JDP {
             InitializeComponent();
             Icon = Resources.ChanThreadWatchIcon;
             Settings.Load();
+            string logPath = Path.Combine(Settings.GetSettingsDirectory(), Settings.LogFileName);
+            if (!File.Exists(logPath)) {
+                try { File.Create(logPath); }
+                catch { }
+            }
             ClientSize = Settings.ClientSize ?? new Size(636, 409);
             int initialWidth = ClientSize.Width;
             GUI.SetFontAndScaling(this);
@@ -142,7 +147,9 @@ namespace JDP {
             try {
                 Settings.Save();
             }
-            catch { }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
 
             foreach (ThreadWatcher watcher in ThreadWatchers) {
                 watcher.Stop(StopReason.Exiting);
@@ -311,7 +318,9 @@ namespace JDP {
                     try {
                         Process.Start(dir);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        Logger.Log(ex.ToString());
+                    }
                 });
             }
         }
@@ -329,7 +338,9 @@ namespace JDP {
                     try {
                         Process.Start(url);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        Logger.Log(ex.ToString());
+                    }
                 });
             }
         }
@@ -361,14 +372,11 @@ namespace JDP {
             }
             RemoveThreads(false, true,
                 (watcher) => {
-                    try {
-                        if (Directory.Exists(watcher.ThreadDownloadDirectory)) Directory.Delete(watcher.ThreadDownloadDirectory, true);
-                        string categoryPath = General.RemoveLastDirectory(watcher.ThreadDownloadDirectory);
-                        if (categoryPath != watcher.MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
-                            Directory.Delete(categoryPath);
-                        }
+                    if (Directory.Exists(watcher.ThreadDownloadDirectory)) Directory.Delete(watcher.ThreadDownloadDirectory, true);
+                    string categoryPath = General.RemoveLastDirectory(watcher.ThreadDownloadDirectory);
+                    if (categoryPath != watcher.MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
+                        Directory.Delete(categoryPath);
                     }
-                    catch { }
                 });
         }
 
@@ -755,7 +763,9 @@ namespace JDP {
                 if ((removeCompleted || (removeSelected && lvThreads.Items[i].Selected)) && !watcher.IsRunning) {
                     if (preRemoveAction != null) {
                         try { preRemoveAction(watcher); }
-                        catch { }
+                        catch (Exception ex) {
+                            Logger.Log(ex.ToString());
+                        }
                     }
                     UpdateCategories(watcher.Category, true);
                     lvThreads.Items.RemoveAt(i);
@@ -975,7 +985,9 @@ namespace JDP {
                 string path = Path.Combine(Settings.GetSettingsDirectory(), Settings.ThreadsFileName);
                 File.WriteAllLines(path, lines.ToArray());
             }
-            catch { }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
         }
 
         private void LoadThreadList() {
@@ -1073,7 +1085,9 @@ namespace JDP {
                                 Directory.Move(sourceDir, destDir);
                                 descendantThread.ThreadDownloadDirectory = destDir;
                             }
-                            catch { }
+                            catch (Exception ex) {
+                                Logger.Log(ex.ToString());
+                            }
                             descendantThread.DoNotRename = false;
                         }
                     }
@@ -1081,14 +1095,18 @@ namespace JDP {
                     try {
                         Settings.Save();
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        Logger.Log(ex.ToString());
+                    }
 
                     foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                         if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
                     }
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
         }
 
         private void CheckForUpdates() {

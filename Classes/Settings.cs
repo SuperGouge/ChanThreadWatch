@@ -175,6 +175,10 @@ namespace JDP {
             get { return "threads.txt"; }
         }
 
+        public static string LogFileName {
+            get { return "log.txt"; }
+        }
+
         public static ThreadDoubleClickAction? OnThreadDoubleClick {
             get {
                 int x = GetInt("OnThreadDoubleClick") ?? -1;

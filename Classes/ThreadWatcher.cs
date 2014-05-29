@@ -457,6 +457,7 @@ namespace JDP {
                 catch (Exception ex) {
                     if (ex is IOException || ex is UnauthorizedAccessException) {
                         Stop(StopReason.IOError);
+                        Logger.Log(ex.ToString());
                     }
                     else throw;
                 }
@@ -614,8 +615,9 @@ namespace JDP {
                             try {
                                 Directory.CreateDirectory(Path.Combine(imageDir, image.Poster));
                             }
-                            catch {
+                            catch (Exception ex) {
                                 Stop(StopReason.IOError);
+                                Logger.Log(ex.ToString());
                             }
                             _maxFileNameLength = General.GetMaximumFileNameLength(Path.Combine(imageDir, image.Poster));
                         }
@@ -686,8 +688,9 @@ namespace JDP {
                             try {
                                 Directory.CreateDirectory(thumbDir);
                             }
-                            catch {
+                            catch (Exception ex) {
                                 Stop(StopReason.IOError);
+                                Logger.Log(ex.ToString());
                             }
                         }
 
@@ -783,8 +786,9 @@ namespace JDP {
                     Stop(StopReason.DownloadComplete);
                 }
             }
-            catch {
+            catch (Exception ex) {
                 Stop(StopReason.Other);
+                Logger.Log(ex.ToString());
             }
 
             if (ThreadDownloadDirectoryPendingRename) {
@@ -836,7 +840,9 @@ namespace JDP {
                     _threadDownloadDirectory = destDir;
                     renamedDir = true;
                 }
-                catch { }
+                catch (Exception ex) {
+                    Logger.Log(ex.ToString());
+                }
             }
             if (renamedDir) {
                 OnThreadDownloadDirectoryRename(EventArgs.Empty);

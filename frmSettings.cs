@@ -113,7 +113,9 @@ namespace JDP {
                 try {
                     Settings.Save();
                 }
-                catch { }
+                catch (Exception ex) {
+                    Logger.Log(ex.ToString());
+                }
 
                 if (!String.Equals(Settings.AbsoluteDownloadDirectory, oldAbsoluteDownloadFolder, StringComparison.OrdinalIgnoreCase)) {
                     MessageBox.Show(this, "The new download folder will not affect threads currently being watched until the program is restared.  " +

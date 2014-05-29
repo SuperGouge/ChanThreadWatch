@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Classes\GUI.cs" />
     <Compile Include="Classes\HTMLParser.cs" />
+    <Compile Include="Classes\Logger.cs" />
     <Compile Include="Classes\Other.cs" />
     <Compile Include="Classes\SiteHelpers.cs" />
     <Compile Include="Classes\General.cs" />
