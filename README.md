@@ -11,12 +11,18 @@ If you used the auto-follow feature of the 1.9.0 version and still have child th
 However, you are advised to make a backup of both your "threads.txt" file (in the "%AppData%\Chan Thread Watch" folder) and your child threads (nested in their parent's folder) in case anything happens during the conversion.
 
 ## Planned features
-- Post highlighting by poster ID
 - Custom automatic description (thread title, creation date, etc.)
 - 4chan X compatible post-processed HTML
 - Support for more imageboards
 
 ## Changelog
+### 1.10.4 (2014-May-29):
+- Added exception logging capabilities.
+- Fixed display of deleted posts' images.
+- Fixed seconds to minutes conversion in thread edit form.
+- Fixed ArgumentNullException caused by uninitialized watchers.
+- Fixed links not working when quoting resurrected posts.
+
 ### 1.10.3 (2014-May-25):
 - Fixed resurrected posts not being correctly added to output file.
 - Added "[Deleted]" warning to resurrected posts.
