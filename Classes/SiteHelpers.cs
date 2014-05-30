@@ -487,7 +487,7 @@ namespace JDP {
                             Length = attribute.Length,
                             Type = ReplaceType.ImageLinkHref,
                             Tag = String.Empty,
-                            Value = attribute.Value
+                            Value = "href=\"" + HttpUtility.HtmlAttributeEncode(attribute.Value) + "\""
                         });
                 }
 
@@ -499,7 +499,7 @@ namespace JDP {
                             Length = attribute.Length,
                             Type = ReplaceType.ImageLinkHref,
                             Tag = String.Empty,
-                            Value = attribute.Value
+                            Value = "href=\"" + HttpUtility.HtmlAttributeEncode(attribute.Value) + "\""
                         });
                 }
 
@@ -511,7 +511,7 @@ namespace JDP {
                             Length = attribute.Length,
                             Type = ReplaceType.ImageSrc,
                             Tag = String.Empty,
-                            Value = attribute.Value
+                            Value = "src=\"" + HttpUtility.HtmlAttributeEncode(attribute.Value) + "\""
                         });
                 }
             }
