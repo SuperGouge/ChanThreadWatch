@@ -16,6 +16,9 @@ However, you are advised to make a backup of both your "threads.txt" file (in th
 - Support for more imageboards
 
 ## Changelog
+### 1.10.5 (2014-May-30):
+- Quick fix for deleted posts' images.
+
 ### 1.10.4 (2014-May-29):
 - Added exception logging capabilities.
 - Fixed display of deleted posts' images.
