@@ -672,7 +672,7 @@ namespace JDP {
                 URL = pageURL,
                 PageAuth = (chkPageAuth.Checked && (txtPageAuth.Text.IndexOf(':') != -1)) ? txtPageAuth.Text : String.Empty,
                 ImageAuth = (chkImageAuth.Checked && (txtImageAuth.Text.IndexOf(':') != -1)) ? txtImageAuth.Text : String.Empty,
-                CheckIntervalSeconds = cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue * 60 : Int32.Parse(txtCheckEvery.Text) * 60,
+                CheckIntervalSeconds = pnlCheckEvery.Enabled ? (cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue * 60 : Int32.Parse(txtCheckEvery.Text) * 60) : 0,
                 OneTimeDownload = chkOneTime.Checked,
                 SaveDir = null,
                 Description = String.Empty,
@@ -740,7 +740,11 @@ namespace JDP {
             watcher.Tag = thread.ExtraData;
 
             if (parentThread != null) parentThread.ChildThreads.Add(watcher.PageID, watcher);
-            _watchers.Add(watcher.PageID, watcher);
+            if (!_watchers.ContainsKey(watcher.PageID)) {
+                _watchers.Add(watcher.PageID, watcher);
+            } else {
+                _watchers[watcher.PageID] = watcher;
+            }
             DisplayData(watcher);
 
             if (thread.StopReason == null && !_isLoadingThreadsFromFile) {
