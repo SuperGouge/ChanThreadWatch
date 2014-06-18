@@ -41,6 +41,7 @@
             this.chkRenameDownloadFolderWithDescription = new System.Windows.Forms.CheckBox();
             this.chkUseSlug = new System.Windows.Forms.CheckBox();
             this.pnlSlug = new System.Windows.Forms.Panel();
+            this.lblSlugType = new System.Windows.Forms.Label();
             this.rbSlugOnly = new System.Windows.Forms.RadioButton();
             this.rbSlugLast = new System.Windows.Forms.RadioButton();
             this.rbSlugFirst = new System.Windows.Forms.RadioButton();
@@ -50,17 +51,17 @@
             this.txtParentThreadDescriptionFormat = new System.Windows.Forms.TextBox();
             this.chkSortImagesByPoster = new System.Windows.Forms.CheckBox();
             this.grpThreadFolderNaming = new System.Windows.Forms.GroupBox();
+            this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
-            this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
-            this.lblSlugType = new System.Windows.Forms.Label();
-            this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
+            this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
+            this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
+            this.pnlParentThreadDescriptionFormat.SuspendLayout();
             this.grpNamingStructure.SuspendLayout();
             this.grpGeneral.SuspendLayout();
-            this.pnlParentThreadDescriptionFormat.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
@@ -253,6 +254,15 @@
             this.pnlSlug.Size = new System.Drawing.Size(308, 26);
             this.pnlSlug.TabIndex = 17;
             // 
+            // lblSlugType
+            // 
+            this.lblSlugType.AutoSize = true;
+            this.lblSlugType.Location = new System.Drawing.Point(3, 8);
+            this.lblSlugType.Name = "lblSlugType";
+            this.lblSlugType.Size = new System.Drawing.Size(54, 13);
+            this.lblSlugType.TabIndex = 21;
+            this.lblSlugType.Text = "Slug type:";
+            // 
             // rbSlugOnly
             // 
             this.rbSlugOnly.AutoSize = true;
@@ -346,6 +356,15 @@
             this.grpThreadFolderNaming.TabStop = false;
             this.grpThreadFolderNaming.Text = "Thread Folder Naming";
             // 
+            // pnlParentThreadDescriptionFormat
+            // 
+            this.pnlParentThreadDescriptionFormat.Controls.Add(this.lblParentThreadDescriptionFormat);
+            this.pnlParentThreadDescriptionFormat.Controls.Add(this.txtParentThreadDescriptionFormat);
+            this.pnlParentThreadDescriptionFormat.Location = new System.Drawing.Point(156, 36);
+            this.pnlParentThreadDescriptionFormat.Name = "pnlParentThreadDescriptionFormat";
+            this.pnlParentThreadDescriptionFormat.Size = new System.Drawing.Size(208, 25);
+            this.pnlParentThreadDescriptionFormat.TabIndex = 25;
+            // 
             // grpNamingStructure
             // 
             this.grpNamingStructure.Controls.Add(this.grpThreadFolderNaming);
@@ -374,16 +393,6 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
-            // chkRecursiveAutoFollow
-            // 
-            this.chkRecursiveAutoFollow.AutoSize = true;
-            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 65);
-            this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
-            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(343, 17);
-            this.chkRecursiveAutoFollow.TabIndex = 11;
-            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
-            this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
-            // 
             // chkInterBoardAutoFollow
             // 
             this.chkInterBoardAutoFollow.AutoSize = true;
@@ -394,23 +403,25 @@
             this.chkInterBoardAutoFollow.Text = "Follow threads outside of the current board (only supported for some sites)";
             this.chkInterBoardAutoFollow.UseVisualStyleBackColor = true;
             // 
-            // lblSlugType
+            // chkRecursiveAutoFollow
             // 
-            this.lblSlugType.AutoSize = true;
-            this.lblSlugType.Location = new System.Drawing.Point(3, 8);
-            this.lblSlugType.Name = "lblSlugType";
-            this.lblSlugType.Size = new System.Drawing.Size(54, 13);
-            this.lblSlugType.TabIndex = 21;
-            this.lblSlugType.Text = "Slug type:";
+            this.chkRecursiveAutoFollow.AutoSize = true;
+            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 65);
+            this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
+            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(343, 17);
+            this.chkRecursiveAutoFollow.TabIndex = 11;
+            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
+            this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
-            // pnlParentThreadDescriptionFormat
+            // chkMinimizeToTray
             // 
-            this.pnlParentThreadDescriptionFormat.Controls.Add(this.lblParentThreadDescriptionFormat);
-            this.pnlParentThreadDescriptionFormat.Controls.Add(this.txtParentThreadDescriptionFormat);
-            this.pnlParentThreadDescriptionFormat.Location = new System.Drawing.Point(156, 36);
-            this.pnlParentThreadDescriptionFormat.Name = "pnlParentThreadDescriptionFormat";
-            this.pnlParentThreadDescriptionFormat.Size = new System.Drawing.Size(208, 25);
-            this.pnlParentThreadDescriptionFormat.TabIndex = 25;
+            this.chkMinimizeToTray.AutoSize = true;
+            this.chkMinimizeToTray.Location = new System.Drawing.Point(403, 204);
+            this.chkMinimizeToTray.Name = "chkMinimizeToTray";
+            this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
+            this.chkMinimizeToTray.TabIndex = 27;
+            this.chkMinimizeToTray.Text = "Minimize to tray";
+            this.chkMinimizeToTray.UseVisualStyleBackColor = true;
             // 
             // frmSettings
             // 
@@ -418,6 +429,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(808, 304);
+            this.Controls.Add(this.chkMinimizeToTray);
             this.Controls.Add(this.grpGeneral);
             this.Controls.Add(this.grpNamingStructure);
             this.Controls.Add(this.rbSettingsInExeFolder);
@@ -444,12 +456,12 @@
             this.pnlSlug.PerformLayout();
             this.grpThreadFolderNaming.ResumeLayout(false);
             this.grpThreadFolderNaming.PerformLayout();
+            this.pnlParentThreadDescriptionFormat.ResumeLayout(false);
+            this.pnlParentThreadDescriptionFormat.PerformLayout();
             this.grpNamingStructure.ResumeLayout(false);
             this.grpNamingStructure.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
-            this.pnlParentThreadDescriptionFormat.ResumeLayout(false);
-            this.pnlParentThreadDescriptionFormat.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -490,5 +502,6 @@
         private System.Windows.Forms.CheckBox chkInterBoardAutoFollow;
         private System.Windows.Forms.Label lblSlugType;
         private System.Windows.Forms.Panel pnlParentThreadDescriptionFormat;
+        private System.Windows.Forms.CheckBox chkMinimizeToTray;
     }
 }

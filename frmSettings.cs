@@ -31,6 +31,8 @@ namespace JDP {
             rbSlugLast.Checked = Settings.SlugType == SlugType.Last;
             rbSlugOnly.Checked = Settings.SlugType == SlugType.Only;
             chkCheckForUpdates.Checked = Settings.CheckForUpdates ?? false;
+
+            chkMinimizeToTray.Checked = Settings.MinimizeToTray ?? false;
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
             }
@@ -98,6 +100,9 @@ namespace JDP {
                 Settings.UseOriginalFileNames = chkUseOriginalFileNames.Checked;
                 Settings.VerifyImageHashes = chkVerifyImageHashes.Checked;
                 Settings.UseSlug = chkUseSlug.Checked;
+
+                Settings.MinimizeToTray = chkMinimizeToTray.Checked;
+
                 if (rbSlugFirst.Checked) {
                     Settings.SlugType = SlugType.First;
                 }

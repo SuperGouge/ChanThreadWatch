@@ -22,6 +22,10 @@ namespace JDP {
         private static Dictionary<string, int> _categories = new Dictionary<string, int>();
         private static Dictionary<string, ThreadWatcher> _watchers = new Dictionary<string, ThreadWatcher>();
 
+        private NotifyIcon _appIcon;
+        private ContextMenu _appContextMenu;
+        private MenuItem _appMenuItem;
+
         // ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
 
         public frmChanThreadWatch() {
@@ -81,6 +85,9 @@ namespace JDP {
             if ((Settings.CheckForUpdates == true) && (Settings.LastUpdateCheck ?? DateTime.MinValue) < DateTime.Now.Date) {
                 CheckForUpdates();
             }
+
+            CreateNotifyicon();
+            _appIcon.Visible = Settings.MinimizeToTray ?? false;
         }
 
         public Dictionary<long, DownloadProgressInfo> DownloadProgresses {
@@ -414,6 +421,7 @@ namespace JDP {
             using (frmSettings settingsForm = new frmSettings()) {
                 settingsForm.ShowDialog(this);
             }
+            _appIcon.Visible = Settings.MinimizeToTray ?? false;
         }
 
         private void btnAbout_Click(object sender, EventArgs e) {
@@ -1235,5 +1243,72 @@ namespace JDP {
                 lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
             }
         }
+
+
+        private void CreateNotifyicon()
+        {
+            this.components = new System.ComponentModel.Container();
+            this._appContextMenu = new System.Windows.Forms.ContextMenu();
+            this._appMenuItem = new System.Windows.Forms.MenuItem();
+
+            // Initialize menuItem1
+            // We can addo more, what?
+            this._appMenuItem.Index = 0;
+            this._appMenuItem.Text = "E&xit";
+            this._appMenuItem.Click += (sender, args) =>
+            {
+                //quit
+                this.Close();
+            };
+
+            // Initialize contextMenu1
+            this._appContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { this._appMenuItem });
+
+            // Create the NotifyIcon.
+            this._appIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            
+
+            // The Icon property sets the icon that will appear
+            // in the systray for this application.
+            _appIcon.Icon = Resources.ChanThreadWatchIcon;
+            
+
+            // The ContextMenu property sets the menu that will
+            // appear when the systray icon is right clicked.
+            _appIcon.ContextMenu = this._appContextMenu;
+
+            // The Text property sets the text that will be displayed,
+            // in a tooltip, when the mouse hovers over the systray icon.
+            _appIcon.Text = "Chan Thread Watch";
+            
+
+            // Handle the DoubleClick event to activate the form.
+            _appIcon.DoubleClick += (sender, args) =>
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+            };
+            _appIcon.Click += (sender, args) =>
+            {
+                //Nothing for now
+            };
+
+            this.Resize += (sender, args) =>
+            {
+                if (Settings.MinimizeToTray == false) return;
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    
+                    this.Hide();
+                }
+                //else if (this.WindowState == FormWindowState.Normal)
+                //{
+                //    _appIcon.Visible = false;
+                //}
+            };
+
+        }
+
+        
     }
 }
