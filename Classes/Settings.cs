@@ -11,6 +11,12 @@ namespace JDP {
 
         private static Dictionary<string, string> _settings;
 
+        public static bool? MinimizeToTray
+        {
+            get { return GetBool("MinimizeToTray"); }
+            set { SetBool("MinimizeToTray", value);}
+        }
+
         public static bool? UseCustomUserAgent {
             get { return GetBool("UseCustomUserAgent"); }
             set { SetBool("UseCustomUserAgent", value); }
