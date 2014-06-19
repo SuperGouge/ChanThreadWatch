@@ -381,6 +381,7 @@
             // 
             // grpGeneral
             // 
+            this.grpGeneral.Controls.Add(this.chkMinimizeToTray);
             this.grpGeneral.Controls.Add(this.chkInterBoardAutoFollow);
             this.grpGeneral.Controls.Add(this.chkRecursiveAutoFollow);
             this.grpGeneral.Controls.Add(this.chkSaveThumbnails);
@@ -388,7 +389,7 @@
             this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
             this.grpGeneral.Location = new System.Drawing.Point(397, 66);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(399, 132);
+            this.grpGeneral.Size = new System.Drawing.Size(399, 155);
             this.grpGeneral.TabIndex = 26;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
@@ -416,7 +417,7 @@
             // chkMinimizeToTray
             // 
             this.chkMinimizeToTray.AutoSize = true;
-            this.chkMinimizeToTray.Location = new System.Drawing.Point(403, 204);
+            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 132);
             this.chkMinimizeToTray.Name = "chkMinimizeToTray";
             this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
             this.chkMinimizeToTray.TabIndex = 27;
@@ -429,7 +430,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(808, 304);
-            this.Controls.Add(this.chkMinimizeToTray);
             this.Controls.Add(this.grpGeneral);
             this.Controls.Add(this.grpNamingStructure);
             this.Controls.Add(this.rbSettingsInExeFolder);
