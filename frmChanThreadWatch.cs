@@ -322,9 +322,19 @@ namespace JDP {
             }
             foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
                 string dir = watcher.ThreadDownloadDirectory;
+                ThreadWatcher tmpWatcher = watcher;
                 ThreadPool.QueueUserWorkItem((s) => {
                     try {
-                        Process.Start(dir);
+                        if (!Directory.Exists(dir)) {
+                            tmpWatcher.Stop(StopReason.Other);
+                            BeginInvoke(() => {
+                                MessageBox.Show(this, "The folder " + dir + " does not exists. The watcher has been stopped to let you fix this, in case of an unwanted deletion or rename. If the thread file cannot be found for the next check, it won't include possible deleted posts.",
+                                    "Folder Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            });
+                        }
+                        else {
+                            Process.Start(dir);
+                        }
                     }
                     catch (Exception ex) {
                         Logger.Log(ex.ToString());
