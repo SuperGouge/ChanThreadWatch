@@ -54,9 +54,9 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
+            this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
-            this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
@@ -205,7 +205,7 @@
             // chkCheckForUpdates
             // 
             this.chkCheckForUpdates.AutoSize = true;
-            this.chkCheckForUpdates.Location = new System.Drawing.Point(6, 109);
+            this.chkCheckForUpdates.Location = new System.Drawing.Point(6, 111);
             this.chkCheckForUpdates.Name = "chkCheckForUpdates";
             this.chkCheckForUpdates.Size = new System.Drawing.Size(353, 17);
             this.chkCheckForUpdates.TabIndex = 10;
@@ -394,10 +394,20 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
+            // chkMinimizeToTray
+            // 
+            this.chkMinimizeToTray.AutoSize = true;
+            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 134);
+            this.chkMinimizeToTray.Name = "chkMinimizeToTray";
+            this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
+            this.chkMinimizeToTray.TabIndex = 27;
+            this.chkMinimizeToTray.Text = "Minimize to tray";
+            this.chkMinimizeToTray.UseVisualStyleBackColor = true;
+            // 
             // chkInterBoardAutoFollow
             // 
             this.chkInterBoardAutoFollow.AutoSize = true;
-            this.chkInterBoardAutoFollow.Location = new System.Drawing.Point(6, 86);
+            this.chkInterBoardAutoFollow.Location = new System.Drawing.Point(6, 88);
             this.chkInterBoardAutoFollow.Name = "chkInterBoardAutoFollow";
             this.chkInterBoardAutoFollow.Size = new System.Drawing.Size(372, 17);
             this.chkInterBoardAutoFollow.TabIndex = 12;
@@ -413,16 +423,6 @@
             this.chkRecursiveAutoFollow.TabIndex = 11;
             this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
-            // 
-            // chkMinimizeToTray
-            // 
-            this.chkMinimizeToTray.AutoSize = true;
-            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 132);
-            this.chkMinimizeToTray.Name = "chkMinimizeToTray";
-            this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
-            this.chkMinimizeToTray.TabIndex = 27;
-            this.chkMinimizeToTray.Text = "Minimize to tray";
-            this.chkMinimizeToTray.UseVisualStyleBackColor = true;
             // 
             // frmSettings
             // 

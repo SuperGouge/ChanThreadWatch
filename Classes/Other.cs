@@ -669,6 +669,18 @@ namespace JDP {
         }
     }
 
+    public class ReparseStatusEventArgs : EventArgs {
+        public ReparseType ReparseType { get; private set; }
+        public int CompleteCount { get; private set; }
+        public int TotalCount { get; private set; }
+
+        public ReparseStatusEventArgs(ReparseType reparseType, int completeCount, int totalCount) {
+            ReparseType = reparseType;
+            CompleteCount = completeCount;
+            TotalCount = totalCount;
+        }
+    }
+
     public class DownloadStartEventArgs : EventArgs {
         public long DownloadID { get; private set; }
         public string URL { get; private set; }
@@ -776,6 +788,11 @@ namespace JDP {
         PageNotFound = 3,
         DownloadComplete = 4,
         IOError = 5
+    }
+
+    public enum ReparseType {
+        Page = 1,
+        Image = 2
     }
 
     public enum BOMType {

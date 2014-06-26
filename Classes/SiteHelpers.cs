@@ -88,7 +88,7 @@ namespace JDP {
             get { return "/src/"; }
         }
 
-        public virtual List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList) {
+        public virtual List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
             HashSet<string> imageFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             HashSet<string> thumbnailFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             List<ImageInfo> imageList = new List<ImageInfo>();
@@ -205,7 +205,11 @@ namespace JDP {
             return _url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1 && SplitURL().Length == 5;
         }
 
-        public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList) {
+        protected override string ImageURLKeyword {
+            get { return "//i.4cdn.org/"; }
+        }
+
+        public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
             List<ImageInfo> imageList = new List<ImageInfo>();
             bool seenSpoiler = false;
 
@@ -227,7 +231,7 @@ namespace JDP {
                 if (fileThumbImageTag == null) continue;
 
                 string imageURL = fileTextLinkStartTag.GetAttributeValue("href");
-                if (imageURL == null || !imageURL.StartsWith("//i.4cdn.org/")) continue;
+                if (imageURL == null || (!local && imageURL.IndexOf(ImageURLKeyword, StringComparison.OrdinalIgnoreCase) == -1)) continue;
 
                 string thumbURL = fileThumbImageTag.GetAttributeValue("src");
                 if (thumbURL == null) continue;
@@ -271,7 +275,7 @@ namespace JDP {
                 }
                 
                 ImageInfo image = new ImageInfo {
-                    URL = "http:" + HttpUtility.HtmlDecode(imageURL),
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
                     Referer = _url,
                     OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
                     HashType = HashType.MD5,
@@ -281,7 +285,7 @@ namespace JDP {
                 if (image.URL.Length == 0 || image.FileName.Length == 0 || image.Hash == null) continue;
 
                 ThumbnailInfo thumb = new ThumbnailInfo {
-                    URL = "http:" + HttpUtility.HtmlDecode(thumbURL),
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
                     Referer = _url
                 };
                 if (thumb.URL == null || thumb.FileName.Length == 0) continue;

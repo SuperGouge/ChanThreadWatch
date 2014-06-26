@@ -70,6 +70,7 @@
             this.tmrSaveThreadList = new System.Windows.Forms.Timer(this.components);
             this.btnDownloads = new System.Windows.Forms.Button();
             this.tmrMaintenance = new System.Windows.Forms.Timer(this.components);
+            this.miReparse = new System.Windows.Forms.MenuItem();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -339,7 +340,8 @@
             this.miRemove,
             this.miRemoveAndDeleteFolder,
             this.miCheckNow,
-            this.miCheckEvery});
+            this.miCheckEvery/*,
+            this.miReparse*/});
             // 
             // miEdit
             // 
@@ -482,6 +484,12 @@
             this.tmrMaintenance.Interval = 1000;
             this.tmrMaintenance.Tick += new System.EventHandler(this.tmrMaintenance_Tick);
             // 
+            // miReparse
+            // 
+            this.miReparse.Index = 10;
+            this.miReparse.Text = "Reparse";
+            this.miReparse.Click += new System.EventHandler(this.miReparse_Click);
+            // 
             // frmChanThreadWatch
             // 
             this.AllowDrop = true;
@@ -561,5 +569,6 @@
         private System.Windows.Forms.ColumnHeader chCategory;
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.CheckBox chkAutoFollow;
+        private System.Windows.Forms.MenuItem miReparse;
     }
 }

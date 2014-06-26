@@ -416,6 +416,17 @@ namespace JDP {
             _saveThreadList = true;
         }
 
+        private void miReparse_Click(object sender, EventArgs e) {
+            if (_isExiting) return;
+            foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
+                if (!watcher.IsRunning && Settings.SaveThumbnails != false) {
+                    //TODO: Prevent program closing when reparsing
+                    watcher.BeginReparse();
+                }
+            }
+            _saveThreadList = true;
+        }
+
         private void btnDownloads_Click(object sender, EventArgs e) {
             if (_downloadForm != null && !_downloadForm.IsDisposed) {
                 _downloadForm.Activate();
@@ -476,6 +487,7 @@ namespace JDP {
                     miCheckEvery.Visible = anyRunning;
                     miRemove.Visible = anyStopped;
                     miRemoveAndDeleteFolder.Visible = anyStopped;
+                    miReparse.Visible = anyStopped;
                     cmThreads.Show(lvThreads, e.Location);
                 }
             }
@@ -618,6 +630,13 @@ namespace JDP {
             });
         }
 
+        private void ThreadWatcher_ReparseStatus(ThreadWatcher watcher, ReparseStatusEventArgs args) {
+            BeginInvoke(() => {
+                SetReparseStatus(watcher, args.ReparseType, args.CompleteCount, args.TotalCount);
+                SetupWaitTimer();
+            });
+        }
+
         private void ThreadWatcher_ThreadDownloadDirectoryRename(ThreadWatcher watcher, EventArgs args) {
             BeginInvoke(() => {
                 _saveThreadList = true;
@@ -730,6 +749,7 @@ namespace JDP {
                 watcher.DownloadStatus += ThreadWatcher_DownloadStatus;
                 watcher.WaitStatus += ThreadWatcher_WaitStatus;
                 watcher.StopStatus += ThreadWatcher_StopStatus;
+                watcher.ReparseStatus += ThreadWatcher_ReparseStatus;
                 watcher.ThreadDownloadDirectoryRename += ThreadWatcher_ThreadDownloadDirectoryRename;
                 watcher.DownloadStart += ThreadWatcher_DownloadStart;
                 watcher.DownloadProgress += ThreadWatcher_DownloadProgress;
@@ -982,6 +1002,27 @@ namespace JDP {
                     break;
             }
             DisplayStatus(watcher, status);
+        }
+
+        private void SetReparseStatus(ThreadWatcher watcher, ReparseType reparseType, int completeCount, int totalCount) {
+            string type;
+            bool hideDetail = false;
+            switch (reparseType) {
+                case ReparseType.Page:
+                    type = totalCount == 1 ? "page" : "pages";
+                    hideDetail = totalCount == 1;
+                    break;
+                case ReparseType.Image:
+                    type = "images";
+                    break;
+                default:
+                    return;
+            }
+            string status = hideDetail ? "Reparsing " + type :
+                String.Format("Reparsing {0}: {1} of {2} completed", type, completeCount, totalCount);
+            DisplayStatus(watcher, status);
+            //TODO: Find alternative to Application.DoEvents() (throws StackOverflowException when reparsing a large number of images)
+            //Application.DoEvents();
         }
 
         private void SaveThreadList() {
@@ -1255,7 +1296,6 @@ namespace JDP {
                 lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
             }
         }
-
 
         private void CreateNotifyIcon() {
             components = new Container();
