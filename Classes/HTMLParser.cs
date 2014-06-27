@@ -51,6 +51,14 @@ namespace JDP {
             return EnumerateTags(containingTagRange.StartTag, containingTagRange.EndTag);
         }
 
+        public HTMLTag FindTagById(string id) {
+            foreach (HTMLTag tag in EnumerateTags(null, null)) {
+                if (tag.GetAttributeValue("id") == id)
+                    return tag;
+            }
+            return null;
+        }
+
         public IEnumerable<HTMLTag> FindTags(bool isEndTag, HTMLTag startAfterTag, HTMLTag stopBeforeTag, params string[] names) {
             foreach (HTMLTag tag in EnumerateTags(startAfterTag, stopBeforeTag)) {
                 if (tag.IsEnd == isEndTag && tag.NameEqualsAny(names)) {
