@@ -31,6 +31,7 @@ namespace JDP {
             rbSlugLast.Checked = Settings.SlugType == SlugType.Last;
             rbSlugOnly.Checked = Settings.SlugType == SlugType.Only;
             chkCheckForUpdates.Checked = Settings.CheckForUpdates ?? false;
+            chkBlacklistWildcards.Checked = Settings.BlacklistWildcards ?? false;
             chkMinimizeToTray.Checked = Settings.MinimizeToTray ?? false;
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
@@ -109,6 +110,7 @@ namespace JDP {
                     Settings.SlugType = SlugType.Last;
                 }
                 Settings.CheckForUpdates = chkCheckForUpdates.Checked;
+                Settings.BlacklistWildcards = chkBlacklistWildcards.Checked;
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 

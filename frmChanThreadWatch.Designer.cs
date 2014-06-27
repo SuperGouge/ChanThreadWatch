@@ -71,6 +71,7 @@
             this.btnDownloads = new System.Windows.Forms.Button();
             this.tmrMaintenance = new System.Windows.Forms.Timer(this.components);
             this.miReparse = new System.Windows.Forms.MenuItem();
+            this.miBlacklist = new System.Windows.Forms.MenuItem();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -339,6 +340,7 @@
             this.miCopyURL,
             this.miRemove,
             this.miRemoveAndDeleteFolder,
+            this.miBlacklist,
             this.miCheckNow,
             this.miCheckEvery/*,
             this.miReparse*/});
@@ -393,13 +395,13 @@
             // 
             // miCheckNow
             // 
-            this.miCheckNow.Index = 8;
+            this.miCheckNow.Index = 9;
             this.miCheckNow.Text = "Check Now";
             this.miCheckNow.Click += new System.EventHandler(this.miCheckNow_Click);
             // 
             // miCheckEvery
             // 
-            this.miCheckEvery.Index = 9;
+            this.miCheckEvery.Index = 10;
             this.miCheckEvery.Text = "Check Every";
             // 
             // grpDoubleClick
@@ -486,9 +488,15 @@
             // 
             // miReparse
             // 
-            this.miReparse.Index = 10;
+            this.miReparse.Index = 11;
             this.miReparse.Text = "Reparse";
             this.miReparse.Click += new System.EventHandler(this.miReparse_Click);
+            // 
+            // miBlacklist
+            // 
+            this.miBlacklist.Index = 8;
+            this.miBlacklist.Text = "Blacklist";
+            this.miBlacklist.Click += new System.EventHandler(this.miBlacklist_Click);
             // 
             // frmChanThreadWatch
             // 
@@ -570,5 +578,6 @@
         private System.Windows.Forms.Label lblCategory;
         private System.Windows.Forms.CheckBox chkAutoFollow;
         private System.Windows.Forms.MenuItem miReparse;
+        private System.Windows.Forms.MenuItem miBlacklist;
     }
 }

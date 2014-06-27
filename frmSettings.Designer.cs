@@ -57,6 +57,7 @@
             this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
+            this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
@@ -381,6 +382,7 @@
             // 
             // grpGeneral
             // 
+            this.grpGeneral.Controls.Add(this.chkBlacklistWildcards);
             this.grpGeneral.Controls.Add(this.chkMinimizeToTray);
             this.grpGeneral.Controls.Add(this.chkInterBoardAutoFollow);
             this.grpGeneral.Controls.Add(this.chkRecursiveAutoFollow);
@@ -389,7 +391,7 @@
             this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
             this.grpGeneral.Location = new System.Drawing.Point(397, 66);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(399, 155);
+            this.grpGeneral.Size = new System.Drawing.Size(399, 180);
             this.grpGeneral.TabIndex = 26;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
@@ -397,7 +399,7 @@
             // chkMinimizeToTray
             // 
             this.chkMinimizeToTray.AutoSize = true;
-            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 134);
+            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 157);
             this.chkMinimizeToTray.Name = "chkMinimizeToTray";
             this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
             this.chkMinimizeToTray.TabIndex = 27;
@@ -423,6 +425,16 @@
             this.chkRecursiveAutoFollow.TabIndex = 11;
             this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
+            // 
+            // chkBlacklistWildcards
+            // 
+            this.chkBlacklistWildcards.AutoSize = true;
+            this.chkBlacklistWildcards.Location = new System.Drawing.Point(6, 134);
+            this.chkBlacklistWildcards.Name = "chkBlacklistWildcards";
+            this.chkBlacklistWildcards.Size = new System.Drawing.Size(147, 17);
+            this.chkBlacklistWildcards.TabIndex = 28;
+            this.chkBlacklistWildcards.Text = "Enable blacklist wildcards";
+            this.chkBlacklistWildcards.UseVisualStyleBackColor = true;
             // 
             // frmSettings
             // 
@@ -503,5 +515,6 @@
         private System.Windows.Forms.Label lblSlugType;
         private System.Windows.Forms.Panel pnlParentThreadDescriptionFormat;
         private System.Windows.Forms.CheckBox chkMinimizeToTray;
+        private System.Windows.Forms.CheckBox chkBlacklistWildcards;
     }
 }

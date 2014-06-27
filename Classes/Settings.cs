@@ -11,12 +11,6 @@ namespace JDP {
 
         private static Dictionary<string, string> _settings;
 
-        public static bool? MinimizeToTray
-        {
-            get { return GetBool("MinimizeToTray"); }
-            set { SetBool("MinimizeToTray", value);}
-        }
-
         public static bool? UseCustomUserAgent {
             get { return GetBool("UseCustomUserAgent"); }
             set { SetBool("UseCustomUserAgent", value); }
@@ -163,6 +157,16 @@ namespace JDP {
             set { Set("LatestUpdateVersion", value); }
         }
 
+        public static bool? MinimizeToTray {
+            get { return GetBool("MinimizeToTray"); }
+            set {  SetBool("MinimizeToTray", value); }
+        }
+
+        public static bool? BlacklistWildcards {
+            get { return GetBool("BlacklistWildcards"); }
+            set { SetBool("BlacklistWildcards", value); }
+        }
+
         public static bool? UseExeDirectoryForSettings { get; set; }
 
         public static string ExeDirectory {
@@ -183,6 +187,10 @@ namespace JDP {
 
         public static string LogFileName {
             get { return "log.txt"; }
+        }
+
+        public static string BlacklistFileName {
+            get { return "blacklist.txt"; }
         }
 
         public static ThreadDoubleClickAction? OnThreadDoubleClick {

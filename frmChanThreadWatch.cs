@@ -22,6 +22,7 @@ namespace JDP {
         private bool _isLoadingThreadsFromFile;
         private static Dictionary<string, int> _categories = new Dictionary<string, int>();
         private static Dictionary<string, ThreadWatcher> _watchers = new Dictionary<string, ThreadWatcher>();
+        private static HashSet<string> _blacklist = new HashSet<string>();
 
         private NotifyIcon _appIcon;
         private ContextMenu _appContextMenu;
@@ -130,6 +131,7 @@ namespace JDP {
             lvThreads.Items.RemoveAt(0);
 
             LoadThreadList();
+            LoadBlacklist();
 
             UseWaitCursor = false;
             btnAdd.Enabled = true;
@@ -225,7 +227,7 @@ namespace JDP {
                 return;
             }
             if (!AddThread(pageURL)) {
-                MessageBox.Show(this, "The same thread is already being watched or downloaded.", "Duplicate Thread", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "The same thread is already being watched, downloaded or has been blacklisted.", "Cannot Add Thread", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtPageURL.Clear();
                 SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
                 siteHelper.SetURL(pageURL);
@@ -396,6 +398,30 @@ namespace JDP {
                         Directory.Delete(categoryPath);
                     }
                 });
+        }
+
+        private void miBlacklist_Click(object sender, EventArgs e) {
+            if (_isExiting) return;
+            List<string> lines = new List<string>();
+            foreach (string rule in _blacklist) {
+                lines.Add(rule);
+            }
+            HashSet<string> blacklist = new HashSet<string>();
+            foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
+                if (!_blacklist.Contains(watcher.PageID) && blacklist.Add(watcher.PageID)) {
+                    lines.Add(watcher.PageID);
+                }
+            }
+            try {
+                string path = Path.Combine(Settings.GetSettingsDirectory(), Settings.BlacklistFileName);
+                File.WriteAllLines(path, lines.ToArray());
+                foreach (string pageID in blacklist) {
+                    _blacklist.Add(pageID);
+                }
+            }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
         }
 
         private void miCheckNow_Click(object sender, EventArgs e) {
@@ -728,9 +754,11 @@ namespace JDP {
             ListViewItem newListViewItem = null;
             SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
             siteHelper.SetURL(thread.URL);
+            string pageID = siteHelper.GetPageID();
+            if (IsBlacklisted(pageID)) return false;
 
-            if (_watchers.ContainsKey(siteHelper.GetPageID())) {
-                watcher = _watchers[siteHelper.GetPageID()];
+            if (_watchers.ContainsKey(pageID)) {
+                watcher = _watchers[pageID];
                 if (watcher.IsRunning) return false;
                 if (thread.ExtraData == null) thread.ExtraData = watcher.Tag as WatcherExtraData;
             }
@@ -1174,6 +1202,24 @@ namespace JDP {
             }
         }
 
+        private void LoadBlacklist() {
+            try {
+                string path = Path.Combine(Settings.GetSettingsDirectory(), Settings.BlacklistFileName);
+                if (!File.Exists(path)) return;
+                string[] lines = File.ReadAllLines(path);
+                if (lines.Length < 1) return;
+                for (int i = 0; i < lines.Length; i++) {
+                    string rule = lines[i];
+                    if (rule.Split('/').Length == 3) {
+                        _blacklist.Add(rule);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
+        }
+
         private void CheckForUpdates() {
             Thread thread = new Thread(CheckForUpdateThread);
             thread.IsBackground = true;
@@ -1320,6 +1366,22 @@ namespace JDP {
                     Hide();
                 }
             };
+        }
+
+        private bool IsBlacklisted(string pageID) {
+            if (_blacklist.Contains(pageID)) return true;
+            if (Settings.BlacklistWildcards != true) return false;
+            string[] pageIDSplit = pageID.Split('/');
+            if (pageIDSplit.Length != 3) return false;
+            foreach (string rule in _blacklist) {
+                string[] ruleSplit = rule.Split('/');
+                if (ruleSplit.Length != 3) continue;
+                if (ruleSplit[0] != "*" && ruleSplit[0] != pageIDSplit[0]) continue;
+                if (ruleSplit[1] != "*" && ruleSplit[1] != pageIDSplit[1]) continue;
+                if (ruleSplit[2] != "*" && ruleSplit[2] != pageIDSplit[2]) continue;
+                return true;
+            }
+            return false;
         }
     }
 }
