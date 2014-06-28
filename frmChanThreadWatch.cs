@@ -39,15 +39,19 @@ namespace JDP {
                 try { File.Create(logPath); }
                 catch { }
             }
-            ClientSize = Settings.ClientSize ?? new Size(636, 409);
+            if (Settings.ClientSize != null) {
+                Size newSize = Settings.ClientSize.Value + Size - ClientSize;
+                if (newSize.Width >= MinimumSize.Width && newSize.Height >= MinimumSize.Height) {
+                    ClientSize = Settings.ClientSize.Value;
+                }
+            }
             int initialWidth = ClientSize.Width;
             GUI.SetFontAndScaling(this);
             float scaleFactorX = (float)ClientSize.Width / initialWidth;
             _columnWidths = new int[lvThreads.Columns.Count];
             for (int iColumn = 0; iColumn < lvThreads.Columns.Count; iColumn++) {
                 ColumnHeader column = lvThreads.Columns[iColumn];
-                if (iColumn < Settings.ColumnWidths.Length) column.Width = Settings.ColumnWidths[iColumn];
-                column.Width = Convert.ToInt32(column.Width * scaleFactorX);
+                column.Width = iColumn < Settings.ColumnWidths.Length ? Settings.ColumnWidths[iColumn] : Convert.ToInt32(column.Width * scaleFactorX);
                 _columnWidths[iColumn] = column.Width != 0 ? column.Width : Settings.DefaultColumnWidths[iColumn];
             }
             GUI.EnableDoubleBuffering(lvThreads);
@@ -123,6 +127,7 @@ namespace JDP {
             btnDownloads.Enabled = false;
             btnSettings.Enabled = false;
             btnAbout.Enabled = false;
+            btnHelp.Enabled = false;
             lvThreads.Enabled = false;
             Application.DoEvents();
 
@@ -140,6 +145,7 @@ namespace JDP {
             btnDownloads.Enabled = true;
             btnSettings.Enabled = true;
             btnAbout.Enabled = true;
+            btnHelp.Enabled = true;
             lvThreads.Enabled = true;
             FocusLastThread();
         }
@@ -473,10 +479,14 @@ namespace JDP {
         }
 
         private void btnAbout_Click(object sender, EventArgs e) {
-            MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}Original Author: JDP (jart1126@yahoo.com){0}http://sites.google.com/site/chanthreadwatch/" +
-                                                "{0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
+            MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}{0}Original Author: JDP (jart1126@yahoo.com){0}http://sites.google.com/site/chanthreadwatch/" +
+                                                "{0}{0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
                 Environment.NewLine, General.Version, General.ReleaseDate, General.ProgramURL), "About",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        
+        private void btnHelp_Click(object sender, EventArgs e) {
+            Process.Start(General.WikiURL);
         }
 
         private void lvThreads_KeyDown(object sender, KeyEventArgs e) {

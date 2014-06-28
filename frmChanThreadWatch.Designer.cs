@@ -59,6 +59,7 @@
             this.miCopyURL = new System.Windows.Forms.MenuItem();
             this.miRemove = new System.Windows.Forms.MenuItem();
             this.miRemoveAndDeleteFolder = new System.Windows.Forms.MenuItem();
+            this.miBlacklist = new System.Windows.Forms.MenuItem();
             this.miCheckNow = new System.Windows.Forms.MenuItem();
             this.miCheckEvery = new System.Windows.Forms.MenuItem();
             this.grpDoubleClick = new System.Windows.Forms.GroupBox();
@@ -71,7 +72,7 @@
             this.btnDownloads = new System.Windows.Forms.Button();
             this.tmrMaintenance = new System.Windows.Forms.Timer(this.components);
             this.miReparse = new System.Windows.Forms.MenuItem();
-            this.miBlacklist = new System.Windows.Forms.MenuItem();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -94,7 +95,7 @@
             this.lvThreads.HideSelection = false;
             this.lvThreads.Location = new System.Drawing.Point(8, 8);
             this.lvThreads.Name = "lvThreads";
-            this.lvThreads.Size = new System.Drawing.Size(620, 196);
+            this.lvThreads.Size = new System.Drawing.Size(744, 287);
             this.lvThreads.TabIndex = 0;
             this.lvThreads.UseCompatibleStateImageBehavior = false;
             this.lvThreads.View = System.Windows.Forms.View.Details;
@@ -150,7 +151,7 @@
             this.grpAddThread.Controls.Add(this.lblURL);
             this.grpAddThread.Controls.Add(this.txtPageURL);
             this.grpAddThread.Controls.Add(this.btnAdd);
-            this.grpAddThread.Location = new System.Drawing.Point(8, 214);
+            this.grpAddThread.Location = new System.Drawing.Point(8, 305);
             this.grpAddThread.Name = "grpAddThread";
             this.grpAddThread.Size = new System.Drawing.Size(360, 183);
             this.grpAddThread.TabIndex = 1;
@@ -162,9 +163,9 @@
             this.chkAutoFollow.AutoSize = true;
             this.chkAutoFollow.Location = new System.Drawing.Point(12, 126);
             this.chkAutoFollow.Name = "chkAutoFollow";
-            this.chkAutoFollow.Size = new System.Drawing.Size(113, 17);
+            this.chkAutoFollow.Size = new System.Drawing.Size(78, 17);
             this.chkAutoFollow.TabIndex = 14;
-            this.chkAutoFollow.Text = "Follow Cross-Links";
+            this.chkAutoFollow.Text = "Auto-follow";
             this.chkAutoFollow.UseVisualStyleBackColor = true;
             // 
             // lblCategory
@@ -299,7 +300,7 @@
             // btnRemoveCompleted
             // 
             this.btnRemoveCompleted.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRemoveCompleted.Location = new System.Drawing.Point(506, 214);
+            this.btnRemoveCompleted.Location = new System.Drawing.Point(630, 305);
             this.btnRemoveCompleted.Name = "btnRemoveCompleted";
             this.btnRemoveCompleted.Size = new System.Drawing.Size(120, 23);
             this.btnRemoveCompleted.TabIndex = 3;
@@ -310,7 +311,7 @@
             // btnAbout
             // 
             this.btnAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAbout.Location = new System.Drawing.Point(568, 378);
+            this.btnAbout.Location = new System.Drawing.Point(626, 469);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(60, 23);
             this.btnAbout.TabIndex = 7;
@@ -321,7 +322,7 @@
             // btnSettings
             // 
             this.btnSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSettings.Location = new System.Drawing.Point(492, 378);
+            this.btnSettings.Location = new System.Drawing.Point(553, 469);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(67, 23);
             this.btnSettings.TabIndex = 6;
@@ -393,6 +394,12 @@
             this.miRemoveAndDeleteFolder.Text = "Remove and Delete Folder";
             this.miRemoveAndDeleteFolder.Click += new System.EventHandler(this.miRemoveAndDeleteFolder_Click);
             // 
+            // miBlacklist
+            // 
+            this.miBlacklist.Index = 8;
+            this.miBlacklist.Text = "Blacklist";
+            this.miBlacklist.Click += new System.EventHandler(this.miBlacklist_Click);
+            // 
             // miCheckNow
             // 
             this.miCheckNow.Index = 9;
@@ -410,7 +417,7 @@
             this.grpDoubleClick.Controls.Add(this.rbEdit);
             this.grpDoubleClick.Controls.Add(this.rbOpenURL);
             this.grpDoubleClick.Controls.Add(this.rbOpenFolder);
-            this.grpDoubleClick.Location = new System.Drawing.Point(374, 210);
+            this.grpDoubleClick.Location = new System.Drawing.Point(374, 301);
             this.grpDoubleClick.Name = "grpDoubleClick";
             this.grpDoubleClick.Size = new System.Drawing.Size(124, 84);
             this.grpDoubleClick.TabIndex = 2;
@@ -455,7 +462,7 @@
             // btnAddFromClipboard
             // 
             this.btnAddFromClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddFromClipboard.Location = new System.Drawing.Point(506, 246);
+            this.btnAddFromClipboard.Location = new System.Drawing.Point(630, 337);
             this.btnAddFromClipboard.Name = "btnAddFromClipboard";
             this.btnAddFromClipboard.Size = new System.Drawing.Size(120, 23);
             this.btnAddFromClipboard.TabIndex = 4;
@@ -472,7 +479,7 @@
             // btnDownloads
             // 
             this.btnDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDownloads.Location = new System.Drawing.Point(400, 378);
+            this.btnDownloads.Location = new System.Drawing.Point(463, 469);
             this.btnDownloads.Name = "btnDownloads";
             this.btnDownloads.Size = new System.Drawing.Size(84, 23);
             this.btnDownloads.TabIndex = 5;
@@ -492,17 +499,23 @@
             this.miReparse.Text = "Reparse";
             this.miReparse.Click += new System.EventHandler(this.miReparse_Click);
             // 
-            // miBlacklist
+            // btnHelp
             // 
-            this.miBlacklist.Index = 8;
-            this.miBlacklist.Text = "Blacklist";
-            this.miBlacklist.Click += new System.EventHandler(this.miBlacklist_Click);
+            this.btnHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHelp.Location = new System.Drawing.Point(692, 469);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(60, 23);
+            this.btnHelp.TabIndex = 8;
+            this.btnHelp.Text = "Help";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // frmChanThreadWatch
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(636, 409);
+            this.ClientSize = new System.Drawing.Size(760, 500);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnDownloads);
             this.Controls.Add(this.btnAddFromClipboard);
             this.Controls.Add(this.grpDoubleClick);
@@ -511,7 +524,7 @@
             this.Controls.Add(this.btnRemoveCompleted);
             this.Controls.Add(this.grpAddThread);
             this.Controls.Add(this.lvThreads);
-            this.MinimumSize = new System.Drawing.Size(644, 300);
+            this.MinimumSize = new System.Drawing.Size(700, 450);
             this.Name = "frmChanThreadWatch";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -579,5 +592,6 @@
         private System.Windows.Forms.CheckBox chkAutoFollow;
         private System.Windows.Forms.MenuItem miReparse;
         private System.Windows.Forms.MenuItem miBlacklist;
+        private System.Windows.Forms.Button btnHelp;
     }
 }

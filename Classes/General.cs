@@ -23,7 +23,11 @@ namespace JDP {
         }
 
         public static string ProgramURL {
-            get { return "https://github.com/SuperGouge/ChanThreadWatch/releases/"; }
+            get { return "https://github.com/SuperGouge/ChanThreadWatch/releases"; }
+        }
+
+        public static string WikiURL {
+            get { return "https://github.com/SuperGouge/ChanThreadWatch/wiki"; }
         }
 
         public static Action DownloadAsync(string url, string auth, string referer, string connectionGroupName, DateTime? cacheLastModifiedTime, Action<HttpWebResponse> onResponse, Action<byte[], int> onDownloadChunk, Action onComplete, Action<Exception> onException) {
