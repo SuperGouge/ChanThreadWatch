@@ -1,6 +1,6 @@
-# ChanThreadWatch
+# Chan Thread Watch
 
-This project is a fork of the discontinued ChanThreadWatch. All credit goes to the original developer.  
+This project is a fork of the discontinued Chan Thread Watch. All credit goes to the original developer.  
 You can DOWNLOAD this program here: [https://github.com/SuperGouge/ChanThreadWatch/releases](https://github.com/SuperGouge/ChanThreadWatch/releases)  
 You can find the original official site here: [https://sites.google.com/site/chanthreadwatch/](https://sites.google.com/site/chanthreadwatch/)
 
