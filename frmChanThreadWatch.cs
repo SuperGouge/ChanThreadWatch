@@ -480,7 +480,7 @@ namespace JDP {
 
         private void btnAbout_Click(object sender, EventArgs e) {
             MessageBox.Show(this, String.Format("Chan Thread Watch{0}Version {1} ({2}){0}{0}Original Author: JDP (jart1126@yahoo.com){0}http://sites.google.com/site/chanthreadwatch/" +
-                                                "{0}{0}Forked by: SuperGouge (https://github.com/SuperGouge){0}{3}",
+                                                "{0}{0}Maintained by: SuperGouge (https://github.com/SuperGouge){0}{3}",
                 Environment.NewLine, General.Version, General.ReleaseDate, General.ProgramURL), "About",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
