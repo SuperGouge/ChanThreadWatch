@@ -443,7 +443,7 @@ namespace JDP {
                     t => HTMLParser.ClassAttributeValueHas(t, "deadlink")), t => _htmlParser.CreateTagRange(t)), r => r != null))
             {
                 string deadLinkInnerHTML = HttpUtility.HtmlDecode(_htmlParser.GetInnerHTML(deadLinkTagRange));
-                if (deadLinkInnerHTML.Contains(">>>")) continue;
+                if (String.IsNullOrEmpty(deadLinkInnerHTML) || deadLinkInnerHTML.Contains(">>>")) continue;
                 string deadLinkID = deadLinkInnerHTML.Substring(2);
                 if (resurrectedPostContainers.ContainsKey("pc" + deadLinkID)) {
                     tempReplaceList.Add(
