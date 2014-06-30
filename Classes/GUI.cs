@@ -61,6 +61,11 @@ namespace JDP {
 
     public static class GUI {
         public static void CenterChildForm(Form parent, Form child) {
+            if (!parent.Visible) {
+                child.StartPosition = FormStartPosition.CenterScreen;
+                return;
+            }
+
             int centerX = ((parent.Left * 2) + parent.Width) / 2;
             int centerY = ((parent.Top * 2) + parent.Height) / 2;
             int formX = ((parent.Left * 2) + parent.Width - child.Width) / 2;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -24,15 +23,12 @@ namespace JDP {
         private static Dictionary<string, ThreadWatcher> _watchers = new Dictionary<string, ThreadWatcher>();
         private static HashSet<string> _blacklist = new HashSet<string>();
 
-        private NotifyIcon _appIcon;
-        private ContextMenu _appContextMenu;
-        private MenuItem _appMenuItem;
-
         // ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
 
         public frmChanThreadWatch() {
             InitializeComponent();
             Icon = Resources.ChanThreadWatchIcon;
+            niTrayIcon.Icon = Resources.ChanThreadWatchIcon;
             Settings.Load();
             string logPath = Path.Combine(Settings.GetSettingsDirectory(), Settings.LogFileName);
             if (!File.Exists(logPath)) {
@@ -91,9 +87,7 @@ namespace JDP {
             if ((Settings.CheckForUpdates == true) && (Settings.LastUpdateCheck ?? DateTime.MinValue) < DateTime.Now.Date) {
                 CheckForUpdates();
             }
-
-            CreateNotifyIcon();
-            _appIcon.Visible = Settings.MinimizeToTray ?? false;
+            niTrayIcon.Visible = Settings.MinimizeToTray ?? false;
         }
 
         public Dictionary<long, DownloadProgressInfo> DownloadProgresses {
@@ -214,6 +208,13 @@ namespace JDP {
             if (url != null) {
                 AddThread(url);
                 _saveThreadList = true;
+            }
+        }
+
+        private void frmChanThreadWatch_Resize(object sender, EventArgs e) {
+            if (Settings.MinimizeToTray != true) return;
+            if (WindowState == FormWindowState.Minimized) {
+                Hide();
             }
         }
 
@@ -473,9 +474,10 @@ namespace JDP {
         private void btnSettings_Click(object sender, EventArgs e) {
             if (_isExiting) return;
             using (frmSettings settingsForm = new frmSettings()) {
+                GUI.CenterChildForm(this, settingsForm);
                 settingsForm.ShowDialog(this);
             }
-            _appIcon.Visible = Settings.MinimizeToTray ?? false;
+            niTrayIcon.Visible = Settings.MinimizeToTray ?? false;
         }
 
         private void btnAbout_Click(object sender, EventArgs e) {
@@ -617,6 +619,19 @@ namespace JDP {
                     _downloadProgresses.Remove(downloadID);
                 }
             }
+        }
+
+        private void niTrayIcon_Click(object sender, EventArgs e) {
+            // Nothing for now
+        }
+
+        private void niTrayIcon_DoubleClick(object sender, EventArgs e) {
+            Show();
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void miExit_Click(object sender, EventArgs e) {
+            Close();
         }
 
         private void ThreadWatcher_DownloadStatus(ThreadWatcher watcher, DownloadStatusEventArgs args) {
@@ -1351,31 +1366,6 @@ namespace JDP {
                 lvThreads.Items[lvThreads.Items.Count - 1].Selected = true;
                 lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
             }
-        }
-
-        private void CreateNotifyIcon() {
-            components = new Container();
-            _appContextMenu = new ContextMenu();
-            _appMenuItem = new MenuItem { Index = 0, Text = "E&xit" };
-
-            _appMenuItem.Click += (sender, args) => Close();
-            _appContextMenu.MenuItems.AddRange(new[] { _appMenuItem });
-
-            _appIcon = new NotifyIcon(components) { Icon = Resources.ChanThreadWatchIcon, ContextMenu = _appContextMenu, Text = "Chan Thread Watch" };
-            _appIcon.DoubleClick += (sender, args) => {
-                Show();
-                WindowState = FormWindowState.Normal;
-            };
-            _appIcon.Click += (sender, args) => {
-                // Nothing for now
-            };
-
-            Resize += (sender, args) => {
-                if (Settings.MinimizeToTray == false) return;
-                if (WindowState == FormWindowState.Minimized) {
-                    Hide();
-                }
-            };
         }
 
         private bool IsBlacklisted(string pageID) {
