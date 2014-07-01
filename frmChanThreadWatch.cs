@@ -151,7 +151,7 @@ namespace JDP {
             Settings.ImageAuth = txtImageAuth.Text;
             Settings.OneTimeDownload = chkOneTime.Checked;
             Settings.AutoFollow = chkAutoFollow.Checked;
-            Settings.CheckEvery = cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue : Int32.Parse(txtCheckEvery.Text);
+            Settings.CheckEvery = pnlCheckEvery.Enabled ? (cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue : Int32.Parse(txtCheckEvery.Text)) : 0;
             Settings.OnThreadDoubleClick = OnThreadDoubleClick;
             Settings.ClientSize = ClientSize;
             try {
