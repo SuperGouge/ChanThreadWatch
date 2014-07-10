@@ -157,14 +157,24 @@ namespace JDP {
             set { Set("LatestUpdateVersion", value); }
         }
 
+        public static bool? BlacklistWildcards {
+            get { return GetBool("BlacklistWildcards"); }
+            set { SetBool("BlacklistWildcards", value); }
+        }
+
         public static bool? MinimizeToTray {
             get { return GetBool("MinimizeToTray"); }
             set {  SetBool("MinimizeToTray", value); }
         }
 
-        public static bool? BlacklistWildcards {
-            get { return GetBool("BlacklistWildcards"); }
-            set { SetBool("BlacklistWildcards", value); }
+        public static bool? BackupThreadList {
+            get { return GetBool("BackupThreadList"); }
+            set { SetBool("BackupThreadList", value); }
+        }
+
+        public static int? BackupEvery {
+            get { return GetInt("BackupEvery"); }
+            set { SetInt("BackupEvery", value); }
         }
 
         public static bool? UseExeDirectoryForSettings { get; set; }

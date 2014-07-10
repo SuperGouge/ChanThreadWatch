@@ -478,6 +478,7 @@ namespace JDP {
                 settingsForm.ShowDialog(this);
             }
             niTrayIcon.Visible = Settings.MinimizeToTray ?? false;
+            tmrBackupThreadList.Interval = (Settings.BackupEvery ?? 1) * 60 * 1000;
         }
 
         private void btnAbout_Click(object sender, EventArgs e) {
@@ -640,6 +641,12 @@ namespace JDP {
             miMonitorRunning.Text = String.Format("    {0} running", running);
             miMonitorDead.Text = String.Format("    {0} dead", dead);
             miMonitorStopped.Text = String.Format("    {0} stopped", stopped);
+        }
+
+        private void tmrBackupThreadList_Tick(object sender, EventArgs e) {
+            if (Settings.BackupThreadList == true) {
+                General.BackupThreadList();
+            }
         }
 
         private void niTrayIcon_Click(object sender, EventArgs e) {

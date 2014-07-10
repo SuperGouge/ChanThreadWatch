@@ -649,5 +649,18 @@ namespace JDP {
             }
             return bytes.Length / 2;
         }
+
+        public static void BackupThreadList() {
+            try {
+                string path = Path.Combine(Settings.GetSettingsDirectory(), Settings.ThreadsFileName);
+                if (!File.Exists(path)) return;
+                string[] lines = File.ReadAllLines(path);
+                if (lines.Length < 1) return;
+                File.WriteAllLines(path + ".bak", lines);
+            }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
+            }
+        }
     }
 }

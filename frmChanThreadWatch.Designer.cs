@@ -79,15 +79,16 @@
             this.miMonitorRunning = new System.Windows.Forms.MenuItem();
             this.miMonitorDead = new System.Windows.Forms.MenuItem();
             this.miMonitorStopped = new System.Windows.Forms.MenuItem();
+            this.miSeparatorMonitorQuickLinks = new System.Windows.Forms.MenuItem();
             this.miAddFromClipboard = new System.Windows.Forms.MenuItem();
             this.miDownloads = new System.Windows.Forms.MenuItem();
             this.miSettings = new System.Windows.Forms.MenuItem();
             this.miAbout = new System.Windows.Forms.MenuItem();
             this.miHelp = new System.Windows.Forms.MenuItem();
+            this.miSeparatorQuickLinksExit = new System.Windows.Forms.MenuItem();
             this.miExit = new System.Windows.Forms.MenuItem();
             this.tmrMonitor = new System.Windows.Forms.Timer(this.components);
-            this.miSeparatorQuickLinksExit = new System.Windows.Forms.MenuItem();
-            this.miSeparatorMonitorQuickLinks = new System.Windows.Forms.MenuItem();
+            this.tmrBackupThreadList = new System.Windows.Forms.Timer(this.components);
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -157,7 +158,6 @@
             this.grpAddThread.Controls.Add(this.lblCategory);
             this.grpAddThread.Controls.Add(this.cboCategory);
             this.grpAddThread.Controls.Add(this.pnlCheckEvery);
-            this.grpAddThread.Controls.Add(this.lblCheckEvery);
             this.grpAddThread.Controls.Add(this.txtImageAuth);
             this.grpAddThread.Controls.Add(this.txtPageAuth);
             this.grpAddThread.Controls.Add(this.chkImageAuth);
@@ -204,14 +204,15 @@
             // 
             this.pnlCheckEvery.Controls.Add(this.txtCheckEvery);
             this.pnlCheckEvery.Controls.Add(this.cboCheckEvery);
-            this.pnlCheckEvery.Location = new System.Drawing.Point(132, 156);
+            this.pnlCheckEvery.Controls.Add(this.lblCheckEvery);
+            this.pnlCheckEvery.Location = new System.Drawing.Point(6, 156);
             this.pnlCheckEvery.Name = "pnlCheckEvery";
-            this.pnlCheckEvery.Size = new System.Drawing.Size(101, 21);
+            this.pnlCheckEvery.Size = new System.Drawing.Size(229, 21);
             this.pnlCheckEvery.TabIndex = 11;
             // 
             // txtCheckEvery
             // 
-            this.txtCheckEvery.Location = new System.Drawing.Point(61, 0);
+            this.txtCheckEvery.Location = new System.Drawing.Point(185, 0);
             this.txtCheckEvery.Name = "txtCheckEvery";
             this.txtCheckEvery.Size = new System.Drawing.Size(40, 20);
             this.txtCheckEvery.TabIndex = 10;
@@ -221,7 +222,7 @@
             // 
             this.cboCheckEvery.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboCheckEvery.FormattingEnabled = true;
-            this.cboCheckEvery.Location = new System.Drawing.Point(0, 0);
+            this.cboCheckEvery.Location = new System.Drawing.Point(124, 0);
             this.cboCheckEvery.Name = "cboCheckEvery";
             this.cboCheckEvery.Size = new System.Drawing.Size(55, 21);
             this.cboCheckEvery.TabIndex = 8;
@@ -230,7 +231,7 @@
             // lblCheckEvery
             // 
             this.lblCheckEvery.AutoSize = true;
-            this.lblCheckEvery.Location = new System.Drawing.Point(11, 160);
+            this.lblCheckEvery.Location = new System.Drawing.Point(3, 3);
             this.lblCheckEvery.Name = "lblCheckEvery";
             this.lblCheckEvery.Size = new System.Drawing.Size(115, 13);
             this.lblCheckEvery.TabIndex = 7;
@@ -572,6 +573,11 @@
             this.miMonitorStopped.Index = 3;
             this.miMonitorStopped.Text = "    0 stopped";
             // 
+            // miSeparatorMonitorQuickLinks
+            // 
+            this.miSeparatorMonitorQuickLinks.Index = 4;
+            this.miSeparatorMonitorQuickLinks.Text = "-";
+            // 
             // miAddFromClipboard
             // 
             this.miAddFromClipboard.Index = 5;
@@ -602,6 +608,11 @@
             this.miHelp.Text = "&Help";
             this.miHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
+            // miSeparatorQuickLinksExit
+            // 
+            this.miSeparatorQuickLinksExit.Index = 10;
+            this.miSeparatorQuickLinksExit.Text = "-";
+            // 
             // miExit
             // 
             this.miExit.Index = 11;
@@ -614,15 +625,11 @@
             this.tmrMonitor.Interval = 1000;
             this.tmrMonitor.Tick += new System.EventHandler(this.tmrMonitor_Tick);
             // 
-            // miSeparatorQuickLinksExit
+            // tmrBackupThreadList
             // 
-            this.miSeparatorQuickLinksExit.Index = 10;
-            this.miSeparatorQuickLinksExit.Text = "-";
-            // 
-            // miSeparatorMonitorQuickLinks
-            // 
-            this.miSeparatorMonitorQuickLinks.Index = 4;
-            this.miSeparatorMonitorQuickLinks.Text = "-";
+            this.tmrBackupThreadList.Enabled = true;
+            this.tmrBackupThreadList.Interval = 60000;
+            this.tmrBackupThreadList.Tick += new System.EventHandler(this.tmrBackupThreadList_Tick);
             // 
             // frmChanThreadWatch
             // 
@@ -723,5 +730,6 @@
         private System.Windows.Forms.MenuItem miMonitorStopped;
         private System.Windows.Forms.MenuItem miSeparatorMonitorQuickLinks;
         private System.Windows.Forms.MenuItem miSeparatorQuickLinksExit;
+        private System.Windows.Forms.Timer tmrBackupThreadList;
     }
 }

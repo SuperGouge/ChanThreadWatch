@@ -33,6 +33,9 @@ namespace JDP {
             chkCheckForUpdates.Checked = Settings.CheckForUpdates ?? false;
             chkBlacklistWildcards.Checked = Settings.BlacklistWildcards ?? false;
             chkMinimizeToTray.Checked = Settings.MinimizeToTray ?? false;
+            chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
+            pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
+            txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
             }
@@ -112,6 +115,8 @@ namespace JDP {
                 Settings.CheckForUpdates = chkCheckForUpdates.Checked;
                 Settings.BlacklistWildcards = chkBlacklistWildcards.Checked;
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
+                Settings.BackupThreadList = chkBackupThreadList.Checked;
+                Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
                 try {
@@ -144,6 +149,10 @@ namespace JDP {
             }
         }
 
+        private void btnBackupThreadList_Click(object sender, EventArgs e) {
+            General.BackupThreadList();
+        }
+
         private void chkRelativePath_CheckedChanged(object sender, EventArgs e) {
             SetDownloadFolderTextBox(txtDownloadFolder.Text.Trim());
         }
@@ -158,6 +167,17 @@ namespace JDP {
 
         private void chkRenameDownloadFolderWithParentThreadDescription_CheckedChanged(object sender, EventArgs e) {
             pnlParentThreadDescriptionFormat.Enabled = chkRenameDownloadFolderWithParentThreadDescription.Checked;
+        }
+
+        private void chkBackupThreadList_CheckedChanged(object sender, EventArgs e) {
+            pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
+        }
+
+        private void txtBackupEvery_Leave(object sender, EventArgs e) {
+            int minutes;
+            if (!Int32.TryParse(txtBackupEvery.Text, out minutes)) {
+                txtBackupEvery.Text = "1";
+            }
         }
 
         private void SetDownloadFolderTextBox(string path) {
