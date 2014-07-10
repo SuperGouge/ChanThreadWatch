@@ -74,18 +74,23 @@
             this.miReparse = new System.Windows.Forms.MenuItem();
             this.btnHelp = new System.Windows.Forms.Button();
             this.niTrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.cmTrayIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.miExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.miAddFromClipboard = new System.Windows.Forms.ToolStripMenuItem();
-            this.sprQuickLinksExit = new System.Windows.Forms.ToolStripSeparator();
-            this.miDownloads = new System.Windows.Forms.ToolStripMenuItem();
-            this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.miHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmTrayIcon = new System.Windows.Forms.ContextMenu();
+            this.miMonitorTotal = new System.Windows.Forms.MenuItem();
+            this.miMonitorRunning = new System.Windows.Forms.MenuItem();
+            this.miMonitorDead = new System.Windows.Forms.MenuItem();
+            this.miMonitorStopped = new System.Windows.Forms.MenuItem();
+            this.miAddFromClipboard = new System.Windows.Forms.MenuItem();
+            this.miDownloads = new System.Windows.Forms.MenuItem();
+            this.miSettings = new System.Windows.Forms.MenuItem();
+            this.miAbout = new System.Windows.Forms.MenuItem();
+            this.miHelp = new System.Windows.Forms.MenuItem();
+            this.miExit = new System.Windows.Forms.MenuItem();
+            this.tmrMonitor = new System.Windows.Forms.Timer(this.components);
+            this.miSeparatorQuickLinksExit = new System.Windows.Forms.MenuItem();
+            this.miSeparatorMonitorQuickLinks = new System.Windows.Forms.MenuItem();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
-            this.cmTrayIcon.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvThreads
@@ -522,70 +527,102 @@
             // 
             // niTrayIcon
             // 
-            this.niTrayIcon.ContextMenuStrip = this.cmTrayIcon;
+            this.niTrayIcon.ContextMenu = this.cmTrayIcon;
             this.niTrayIcon.Text = "Chan Thread Watch";
             this.niTrayIcon.Click += new System.EventHandler(this.niTrayIcon_Click);
             this.niTrayIcon.DoubleClick += new System.EventHandler(this.niTrayIcon_DoubleClick);
             // 
             // cmTrayIcon
             // 
-            this.cmTrayIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmTrayIcon.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.miMonitorTotal,
+            this.miMonitorRunning,
+            this.miMonitorDead,
+            this.miMonitorStopped,
+            this.miSeparatorMonitorQuickLinks,
             this.miAddFromClipboard,
             this.miDownloads,
             this.miSettings,
             this.miAbout,
             this.miHelp,
-            this.sprQuickLinksExit,
+            this.miSeparatorQuickLinksExit,
             this.miExit});
-            this.cmTrayIcon.Name = "cmTrayIcon";
-            this.cmTrayIcon.Size = new System.Drawing.Size(183, 164);
             // 
-            // miExit
+            // miMonitorTotal
             // 
-            this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(182, 22);
-            this.miExit.Text = "E&xit";
-            this.miExit.Click += new System.EventHandler(this.miExit_Click);
+            this.miMonitorTotal.Enabled = false;
+            this.miMonitorTotal.Index = 0;
+            this.miMonitorTotal.Text = "Watching 0 threads";
+            // 
+            // miMonitorRunning
+            // 
+            this.miMonitorRunning.Enabled = false;
+            this.miMonitorRunning.Index = 1;
+            this.miMonitorRunning.Text = "    0 running";
+            // 
+            // miMonitorDead
+            // 
+            this.miMonitorDead.Enabled = false;
+            this.miMonitorDead.Index = 2;
+            this.miMonitorDead.Text = "    0 dead";
+            // 
+            // miMonitorStopped
+            // 
+            this.miMonitorStopped.Enabled = false;
+            this.miMonitorStopped.Index = 3;
+            this.miMonitorStopped.Text = "    0 stopped";
             // 
             // miAddFromClipboard
             // 
-            this.miAddFromClipboard.Name = "miAddFromClipboard";
-            this.miAddFromClipboard.Size = new System.Drawing.Size(182, 22);
+            this.miAddFromClipboard.Index = 5;
             this.miAddFromClipboard.Text = "Add From &Clipboard";
             this.miAddFromClipboard.Click += new System.EventHandler(this.btnAddFromClipboard_Click);
             // 
-            // sprQuickLinksExit
-            // 
-            this.sprQuickLinksExit.Name = "sprQuickLinksExit";
-            this.sprQuickLinksExit.Size = new System.Drawing.Size(179, 6);
-            // 
             // miDownloads
             // 
-            this.miDownloads.Name = "miDownloads";
-            this.miDownloads.Size = new System.Drawing.Size(182, 22);
+            this.miDownloads.Index = 6;
             this.miDownloads.Text = "&Downloads";
             this.miDownloads.Click += new System.EventHandler(this.btnDownloads_Click);
             // 
             // miSettings
             // 
-            this.miSettings.Name = "miSettings";
-            this.miSettings.Size = new System.Drawing.Size(182, 22);
+            this.miSettings.Index = 7;
             this.miSettings.Text = "&Settings";
             this.miSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
             // miAbout
             // 
-            this.miAbout.Name = "miAbout";
-            this.miAbout.Size = new System.Drawing.Size(182, 22);
+            this.miAbout.Index = 8;
             this.miAbout.Text = "A&bout";
             this.miAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
             // miHelp
             // 
-            this.miHelp.Name = "miHelp";
-            this.miHelp.Size = new System.Drawing.Size(182, 22);
+            this.miHelp.Index = 9;
             this.miHelp.Text = "&Help";
             this.miHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            // 
+            // miExit
+            // 
+            this.miExit.Index = 11;
+            this.miExit.Text = "E&xit";
+            this.miExit.Click += new System.EventHandler(this.miExit_Click);
+            // 
+            // tmrMonitor
+            // 
+            this.tmrMonitor.Enabled = true;
+            this.tmrMonitor.Interval = 1000;
+            this.tmrMonitor.Tick += new System.EventHandler(this.tmrMonitor_Tick);
+            // 
+            // miSeparatorQuickLinksExit
+            // 
+            this.miSeparatorQuickLinksExit.Index = 10;
+            this.miSeparatorQuickLinksExit.Text = "-";
+            // 
+            // miSeparatorMonitorQuickLinks
+            // 
+            this.miSeparatorMonitorQuickLinks.Index = 4;
+            this.miSeparatorMonitorQuickLinks.Text = "-";
             // 
             // frmChanThreadWatch
             // 
@@ -616,7 +653,6 @@
             this.pnlCheckEvery.ResumeLayout(false);
             this.pnlCheckEvery.PerformLayout();
             this.grpDoubleClick.ResumeLayout(false);
-            this.cmTrayIcon.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -673,13 +709,19 @@
         private System.Windows.Forms.MenuItem miBlacklist;
         private System.Windows.Forms.Button btnHelp;
         private System.Windows.Forms.NotifyIcon niTrayIcon;
-        private System.Windows.Forms.ContextMenuStrip cmTrayIcon;
-        private System.Windows.Forms.ToolStripMenuItem miExit;
-        private System.Windows.Forms.ToolStripMenuItem miAddFromClipboard;
-        private System.Windows.Forms.ToolStripMenuItem miDownloads;
-        private System.Windows.Forms.ToolStripMenuItem miSettings;
-        private System.Windows.Forms.ToolStripMenuItem miAbout;
-        private System.Windows.Forms.ToolStripMenuItem miHelp;
-        private System.Windows.Forms.ToolStripSeparator sprQuickLinksExit;
+        private System.Windows.Forms.ContextMenu cmTrayIcon;
+        private System.Windows.Forms.MenuItem miExit;
+        private System.Windows.Forms.MenuItem miAddFromClipboard;
+        private System.Windows.Forms.MenuItem miDownloads;
+        private System.Windows.Forms.MenuItem miSettings;
+        private System.Windows.Forms.MenuItem miAbout;
+        private System.Windows.Forms.MenuItem miHelp;
+        private System.Windows.Forms.Timer tmrMonitor;
+        private System.Windows.Forms.MenuItem miMonitorTotal;
+        private System.Windows.Forms.MenuItem miMonitorRunning;
+        private System.Windows.Forms.MenuItem miMonitorDead;
+        private System.Windows.Forms.MenuItem miMonitorStopped;
+        private System.Windows.Forms.MenuItem miSeparatorMonitorQuickLinks;
+        private System.Windows.Forms.MenuItem miSeparatorQuickLinksExit;
     }
 }

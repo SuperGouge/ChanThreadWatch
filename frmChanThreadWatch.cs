@@ -620,6 +620,27 @@ namespace JDP {
                 }
             }
         }
+        
+        private void tmrMonitor_Tick(object sender, EventArgs e) {
+            int running = 0;
+            int dead = 0;
+            int stopped = 0;
+            foreach (ThreadWatcher watcher in ThreadWatchers) {
+                if (watcher.IsRunning || watcher.IsWaiting) {
+                    running++;
+                }
+                else if (watcher.StopReason == StopReason.PageNotFound) {
+                    dead++;
+                }
+                else {
+                    stopped++;
+                }
+            }
+            miMonitorTotal.Text = String.Format("Watching {0} thread{1}", _watchers.Count, _watchers.Count != 1 ? "s" : String.Empty);
+            miMonitorRunning.Text = String.Format("    {0} running", running);
+            miMonitorDead.Text = String.Format("    {0} dead", dead);
+            miMonitorStopped.Text = String.Format("    {0} stopped", stopped);
+        }
 
         private void niTrayIcon_Click(object sender, EventArgs e) {
             // Nothing for now
