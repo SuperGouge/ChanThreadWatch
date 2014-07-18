@@ -1364,6 +1364,7 @@ namespace JDP {
         }
 
         private void lvThreads_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e) {
+            if (_columnWidths == null) return;
             int[] columnWidths = new int[_columnWidths.Length];
             Array.Copy(_columnWidths, columnWidths, _columnWidths.Length);
             columnWidths[e.ColumnIndex] = lvThreads.Columns[e.ColumnIndex].Width;
