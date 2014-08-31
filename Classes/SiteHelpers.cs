@@ -238,8 +238,11 @@ namespace JDP {
 
                 bool isSpoiler = HTMLParser.ClassAttributeValueHas(fileThumbLinkTagRange.StartTag, "imgspoiler");
 
-                string originalFileName = null;
-                if (!isSpoiler) {
+                string originalFileName;
+                if (isSpoiler) {
+                    originalFileName = fileTextDivTagRange.StartTag.GetAttributeValue("title");
+                }
+                else {
                     originalFileName = fileTextLinkStartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(fileTextLinkStartTag));
                 }
 
