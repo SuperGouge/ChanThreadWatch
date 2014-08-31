@@ -19,7 +19,7 @@ namespace JDP {
         }
 
         public static string ReleaseDate {
-            get { return "2014-Jul-10"; }
+            get { return "2014-Aug-31"; }
         }
 
         public static string ProgramURL {
