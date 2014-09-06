@@ -1291,9 +1291,11 @@ namespace JDP {
             var htmlParser = new HTMLParser(html);
             HTMLTagRange labelLatestDivTagRange = htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                 htmlParser.FindStartTags("div"), t => HTMLParser.ClassAttributeValueHas(t, "label-latest"))));
+            if (labelLatestDivTagRange == null) return;
             HTMLTagRange versionSpanTagRange = htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                 htmlParser.FindStartTags(labelLatestDivTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "css-truncate-target"))));
-            string latestStr = htmlParser.GetInnerHTML(versionSpanTagRange).Substring(1);
+            if (versionSpanTagRange == null) return;
+            string latestStr = htmlParser.GetInnerHTML(versionSpanTagRange).Replace("v", "");
             int latest = ParseVersionNumber(latestStr);
             if (latest == -1) return;
             int current = ParseVersionNumber(General.Version);
