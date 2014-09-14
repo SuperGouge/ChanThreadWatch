@@ -177,6 +177,11 @@ namespace JDP {
             set { SetInt("BackupEvery", value); }
         }
 
+        public static bool? BackupCheckSize {
+            get { return GetBool("BackupCheckSize"); }
+            set { SetBool("BackupCheckSize", value); }
+        }
+
         public static long? MaximumBytesPerSecond {
             get { return GetLong("MaximumBytesPerSecond"); }
             set { SetLong("MaximumBytesPerSecond", value); }

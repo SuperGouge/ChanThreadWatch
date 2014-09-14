@@ -648,7 +648,7 @@ namespace JDP {
 
         private void tmrBackupThreadList_Tick(object sender, EventArgs e) {
             if (Settings.BackupThreadList == true) {
-                General.BackupThreadList();
+                General.BackupThreadList(Settings.BackupCheckSize ?? false);
             }
         }
 

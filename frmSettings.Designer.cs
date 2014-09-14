@@ -65,12 +65,15 @@
             this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
+            this.grpBackup = new System.Windows.Forms.GroupBox();
+            this.chkBackupCheckSize = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
             this.grpNamingStructure.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.pnlBackupEvery.SuspendLayout();
+            this.grpBackup.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
@@ -105,7 +108,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(662, 307);
+            this.btnOK.Location = new System.Drawing.Point(662, 345);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(60, 23);
             this.btnOK.TabIndex = 14;
@@ -117,7 +120,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(730, 307);
+            this.btnCancel.Location = new System.Drawing.Point(730, 345);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(68, 23);
             this.btnCancel.TabIndex = 15;
@@ -161,7 +164,7 @@
             // 
             this.lblSettingsLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSettingsLocation.AutoSize = true;
-            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 315);
+            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 353);
             this.lblSettingsLocation.Name = "lblSettingsLocation";
             this.lblSettingsLocation.Size = new System.Drawing.Size(85, 13);
             this.lblSettingsLocation.TabIndex = 11;
@@ -171,7 +174,7 @@
             // 
             this.rbSettingsInAppDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInAppDataFolder.AutoSize = true;
-            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 313);
+            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 351);
             this.rbSettingsInAppDataFolder.Name = "rbSettingsInAppDataFolder";
             this.rbSettingsInAppDataFolder.Size = new System.Drawing.Size(130, 17);
             this.rbSettingsInAppDataFolder.TabIndex = 12;
@@ -183,7 +186,7 @@
             // 
             this.rbSettingsInExeFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInExeFolder.AutoSize = true;
-            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 313);
+            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 351);
             this.rbSettingsInExeFolder.Name = "rbSettingsInExeFolder";
             this.rbSettingsInExeFolder.Size = new System.Drawing.Size(107, 17);
             this.rbSettingsInExeFolder.TabIndex = 13;
@@ -392,9 +395,6 @@
             // 
             this.grpGeneral.Controls.Add(this.txtMaximumKilobytesPerSecond);
             this.grpGeneral.Controls.Add(this.lblMaximumKilobytesPerSecond);
-            this.grpGeneral.Controls.Add(this.btnBackupThreadList);
-            this.grpGeneral.Controls.Add(this.pnlBackupEvery);
-            this.grpGeneral.Controls.Add(this.chkBackupThreadList);
             this.grpGeneral.Controls.Add(this.chkBlacklistWildcards);
             this.grpGeneral.Controls.Add(this.chkMinimizeToTray);
             this.grpGeneral.Controls.Add(this.chkInterBoardAutoFollow);
@@ -404,14 +404,14 @@
             this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
             this.grpGeneral.Location = new System.Drawing.Point(397, 66);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(399, 235);
+            this.grpGeneral.Size = new System.Drawing.Size(399, 206);
             this.grpGeneral.TabIndex = 26;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
             // txtMaximumKilobytesPerSecond
             // 
-            this.txtMaximumKilobytesPerSecond.Location = new System.Drawing.Point(244, 207);
+            this.txtMaximumKilobytesPerSecond.Location = new System.Drawing.Point(244, 178);
             this.txtMaximumKilobytesPerSecond.Name = "txtMaximumKilobytesPerSecond";
             this.txtMaximumKilobytesPerSecond.Size = new System.Drawing.Size(56, 20);
             this.txtMaximumKilobytesPerSecond.TabIndex = 32;
@@ -420,7 +420,7 @@
             // lblMaximumKilobytesPerSecond
             // 
             this.lblMaximumKilobytesPerSecond.AutoSize = true;
-            this.lblMaximumKilobytesPerSecond.Location = new System.Drawing.Point(6, 210);
+            this.lblMaximumKilobytesPerSecond.Location = new System.Drawing.Point(6, 181);
             this.lblMaximumKilobytesPerSecond.Name = "lblMaximumKilobytesPerSecond";
             this.lblMaximumKilobytesPerSecond.Size = new System.Drawing.Size(232, 13);
             this.lblMaximumKilobytesPerSecond.TabIndex = 33;
@@ -428,11 +428,12 @@
             // 
             // btnBackupThreadList
             // 
-            this.btnBackupThreadList.Location = new System.Drawing.Point(313, 176);
+            this.btnBackupThreadList.AutoSize = true;
+            this.btnBackupThreadList.Location = new System.Drawing.Point(289, 47);
             this.btnBackupThreadList.Name = "btnBackupThreadList";
-            this.btnBackupThreadList.Size = new System.Drawing.Size(80, 23);
+            this.btnBackupThreadList.Size = new System.Drawing.Size(84, 23);
             this.btnBackupThreadList.TabIndex = 27;
-            this.btnBackupThreadList.Text = "Backup Now";
+            this.btnBackupThreadList.Text = "Force Backup";
             this.btnBackupThreadList.UseVisualStyleBackColor = true;
             this.btnBackupThreadList.Click += new System.EventHandler(this.btnBackupThreadList_Click);
             // 
@@ -440,7 +441,7 @@
             // 
             this.pnlBackupEvery.Controls.Add(this.lblBackupEvery);
             this.pnlBackupEvery.Controls.Add(this.txtBackupEvery);
-            this.pnlBackupEvery.Location = new System.Drawing.Point(123, 176);
+            this.pnlBackupEvery.Location = new System.Drawing.Point(123, 15);
             this.pnlBackupEvery.Name = "pnlBackupEvery";
             this.pnlBackupEvery.Size = new System.Drawing.Size(177, 26);
             this.pnlBackupEvery.TabIndex = 32;
@@ -465,7 +466,7 @@
             // chkBackupThreadList
             // 
             this.chkBackupThreadList.AutoSize = true;
-            this.chkBackupThreadList.Location = new System.Drawing.Point(6, 180);
+            this.chkBackupThreadList.Location = new System.Drawing.Point(6, 19);
             this.chkBackupThreadList.Name = "chkBackupThreadList";
             this.chkBackupThreadList.Size = new System.Drawing.Size(111, 17);
             this.chkBackupThreadList.TabIndex = 29;
@@ -513,12 +514,36 @@
             this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
+            // grpBackup
+            // 
+            this.grpBackup.Controls.Add(this.chkBackupCheckSize);
+            this.grpBackup.Controls.Add(this.chkBackupThreadList);
+            this.grpBackup.Controls.Add(this.btnBackupThreadList);
+            this.grpBackup.Controls.Add(this.pnlBackupEvery);
+            this.grpBackup.Location = new System.Drawing.Point(12, 266);
+            this.grpBackup.Name = "grpBackup";
+            this.grpBackup.Size = new System.Drawing.Size(379, 76);
+            this.grpBackup.TabIndex = 26;
+            this.grpBackup.TabStop = false;
+            this.grpBackup.Text = "Backup";
+            // 
+            // chkBackupCheckSize
+            // 
+            this.chkBackupCheckSize.AutoSize = true;
+            this.chkBackupCheckSize.Location = new System.Drawing.Point(6, 42);
+            this.chkBackupCheckSize.Name = "chkBackupCheckSize";
+            this.chkBackupCheckSize.Size = new System.Drawing.Size(207, 17);
+            this.chkBackupCheckSize.TabIndex = 33;
+            this.chkBackupCheckSize.Text = "Do not backup if current size is smaller";
+            this.chkBackupCheckSize.UseVisualStyleBackColor = true;
+            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(808, 340);
+            this.ClientSize = new System.Drawing.Size(808, 378);
+            this.Controls.Add(this.grpBackup);
             this.Controls.Add(this.grpGeneral);
             this.Controls.Add(this.grpNamingStructure);
             this.Controls.Add(this.rbSettingsInExeFolder);
@@ -553,6 +578,8 @@
             this.grpGeneral.PerformLayout();
             this.pnlBackupEvery.ResumeLayout(false);
             this.pnlBackupEvery.PerformLayout();
+            this.grpBackup.ResumeLayout(false);
+            this.grpBackup.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -602,5 +629,7 @@
         private System.Windows.Forms.Button btnBackupThreadList;
         private System.Windows.Forms.Label lblMaximumKilobytesPerSecond;
         private System.Windows.Forms.TextBox txtMaximumKilobytesPerSecond;
+        private System.Windows.Forms.GroupBox grpBackup;
+        private System.Windows.Forms.CheckBox chkBackupCheckSize;
     }
 }

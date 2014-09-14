@@ -36,6 +36,8 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
+            chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
+            chkBackupCheckSize.Checked = Settings.BackupCheckSize ?? false;
             txtMaximumKilobytesPerSecond.Text = ((Settings.MaximumBytesPerSecond ?? 0) / 1024).ToString();
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
@@ -118,6 +120,7 @@ namespace JDP {
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
                 Settings.BackupThreadList = chkBackupThreadList.Checked;
                 Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
+                Settings.BackupCheckSize = chkBackupCheckSize.Checked;
                 Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
@@ -173,6 +176,7 @@ namespace JDP {
 
         private void chkBackupThreadList_CheckedChanged(object sender, EventArgs e) {
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
+            chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
         }
 
         private void txtBackupEvery_Leave(object sender, EventArgs e) {
