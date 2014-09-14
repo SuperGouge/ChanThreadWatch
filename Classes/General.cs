@@ -89,7 +89,7 @@ namespace JDP {
                             try {
                                 if (aborting) return;
                                 response = (HttpWebResponse)request.EndGetResponse(requestResultParam);
-                                responseStream = response.GetResponseStream();
+                                responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
                                 onResponse(response);
                                 byte[] buff = new byte[readBufferSize];
                                 AsyncCallback readCallback = null;

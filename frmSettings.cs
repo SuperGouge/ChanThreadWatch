@@ -36,6 +36,7 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
+            txtMaximumKilobytesPerSecond.Text = ((Settings.MaximumBytesPerSecond ?? 0) / 1024).ToString();
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
             }
@@ -117,6 +118,7 @@ namespace JDP {
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
                 Settings.BackupThreadList = chkBackupThreadList.Checked;
                 Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
+                Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
                 try {
@@ -127,7 +129,7 @@ namespace JDP {
                 }
 
                 if (!String.Equals(Settings.AbsoluteDownloadDirectory, oldAbsoluteDownloadFolder, StringComparison.OrdinalIgnoreCase)) {
-                    MessageBox.Show(this, "The new download folder will not affect threads currently being watched until the program is restared.  " +
+                    MessageBox.Show(this, "The new download folder will not affect threads currently being watched until the program is restarted.  " +
                                           "If you are still watching the threads at next run, make sure you have moved their download folders into the new download folder.",
                         "Download Folder Changed", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -175,8 +177,15 @@ namespace JDP {
 
         private void txtBackupEvery_Leave(object sender, EventArgs e) {
             int minutes;
-            if (!Int32.TryParse(txtBackupEvery.Text, out minutes)) {
+            if (!Int32.TryParse(txtBackupEvery.Text, out minutes) || minutes < 1) {
                 txtBackupEvery.Text = "1";
+            }
+        }
+
+        private void txtMaximumKilobytesPerSecond_Leave(object sender, EventArgs e) {
+            long kbps;
+            if (!Int64.TryParse(txtMaximumKilobytesPerSecond.Text, out kbps) || kbps < 0 || kbps > Int64.MaxValue / 1024) {
+                txtMaximumKilobytesPerSecond.Text = "0";
             }
         }
 

@@ -177,6 +177,11 @@ namespace JDP {
             set { SetInt("BackupEvery", value); }
         }
 
+        public static long? MaximumBytesPerSecond {
+            get { return GetLong("MaximumBytesPerSecond"); }
+            set { SetLong("MaximumBytesPerSecond", value); }
+        }
+
         public static bool? UseExeDirectoryForSettings { get; set; }
 
         public static string ExeDirectory {
@@ -292,6 +297,13 @@ namespace JDP {
             return Int32.TryParse(value, out x) ? x : (int?)null;
         }
 
+        private static long? GetLong(string name) {
+            string value = Get(name);
+            if (value == null) return null;
+            long x;
+            return Int64.TryParse(value, out x) ? x : (long?)null;
+        }
+
         private static DateTime? GetDate(string name) {
             string value = Get(name);
             if (value == null) return null;
@@ -316,6 +328,10 @@ namespace JDP {
         }
 
         private static void SetInt(string name, int? value) {
+            Set(name, value.HasValue ? value.Value.ToString() : null);
+        }
+
+        private static void SetLong(string name, long? value) {
             Set(name, value.HasValue ? value.Value.ToString() : null);
         }
 
