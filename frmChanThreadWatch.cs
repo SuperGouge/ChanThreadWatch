@@ -147,6 +147,7 @@ namespace JDP {
         }
 
         private void frmChanThreadWatch_FormClosed(object sender, FormClosedEventArgs e) {
+            if (IsDisposed) return;
             Settings.UsePageAuth = chkPageAuth.Checked;
             Settings.PageAuth = txtPageAuth.Text;
             Settings.UseImageAuth = chkImageAuth.Checked;
