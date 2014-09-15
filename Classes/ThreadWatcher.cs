@@ -440,10 +440,10 @@ namespace JDP {
                         threadDir).Replace(Path.DirectorySeparatorChar, '/');
                 };
                 if (replace.Type == ReplaceType.ImageLinkHref && completedImages.TryGetValue(replace.Tag, out downloadInfo)) {
-                    replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(imageDir)) + "\"";
+                    replace.Value = "href=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(imageDir), false) + "\"";
                 }
                 if (replace.Type == ReplaceType.ImageSrc && completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
-                    replace.Value = "src=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir)) + "\"";
+                    replace.Value = "src=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir), false) + "\"";
                 }
                 if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                     if (watcher._hasInitialized) {
@@ -925,10 +925,10 @@ namespace JDP {
                                         threadDir).Replace(Path.DirectorySeparatorChar, '/');
                                 };
                                 if (replace.Type == ReplaceType.ImageLinkHref && _completedImages.TryGetValue(replace.Tag, out downloadInfo)) {
-                                    replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(imageDir)) + "\"";
+                                    replace.Value = "href=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(imageDir), false) + "\"";
                                 }
                                 if (replace.Type == ReplaceType.ImageSrc && _completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
-                                    replace.Value = "src=\"" + HttpUtility.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir)) + "\"";
+                                    replace.Value = "src=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir), false) + "\"";
                                 }
                                 if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
                                     if (watcher._hasInitialized) {

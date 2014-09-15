@@ -636,6 +636,10 @@ namespace JDP {
             return new string(dst, 0, iDst);
         }
 
+        public static string HtmlAttributeEncode(string s, bool allowHashParameter = true) {
+            return allowHashParameter ? HttpUtility.HtmlAttributeEncode(s) : HttpUtility.HtmlAttributeEncode(s).Replace("#", "%23");
+        }
+
         public static int StrLen(byte[] bytes) {
             for (int i = 0; i < bytes.Length; i++) {
                 if (bytes[i] == 0) return i;
