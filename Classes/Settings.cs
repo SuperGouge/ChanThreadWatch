@@ -213,6 +213,10 @@ namespace JDP {
             get { return "blacklist.txt"; }
         }
 
+        public static string DebugFolderName {
+            get { return "Debug"; }
+        }
+
         public static ThreadDoubleClickAction? OnThreadDoubleClick {
             get {
                 int x = GetInt("OnThreadDoubleClick") ?? -1;
@@ -224,17 +228,29 @@ namespace JDP {
 
         public static string GetSettingsDirectory() {
             if (UseExeDirectoryForSettings == null) {
-                UseExeDirectoryForSettings = File.Exists(Path.Combine(ExeDirectory, SettingsFileName));
+                #if DEBUG
+                    UseExeDirectoryForSettings = File.Exists(Path.Combine(Path.Combine(ExeDirectory, DebugFolderName), SettingsFileName));
+                #else
+                    UseExeDirectoryForSettings = File.Exists(Path.Combine(ExeDirectory, SettingsFileName));
+                #endif
             }
             return GetSettingsDirectory(UseExeDirectoryForSettings.Value);
         }
 
         public static string GetSettingsDirectory(bool useExeDirForSettings) {
             if (useExeDirForSettings) {
-                return ExeDirectory;
+                #if DEBUG
+                    return Path.Combine(ExeDirectory, DebugFolderName);
+                #else
+                    return ExeDirectory;
+                #endif
             }
             else {
-                string dir = AppDataDirectory;
+                #if DEBUG
+                    string dir = Path.Combine(AppDataDirectory, DebugFolderName);
+                #else
+                    string dir = AppDataDirectory;
+                #endif
                 if (!Directory.Exists(dir)) {
                     Directory.CreateDirectory(dir);
                 }
@@ -244,7 +260,11 @@ namespace JDP {
 
         public static string AbsoluteDownloadDirectory {
             get {
-                string dir = DownloadFolder;
+                #if DEBUG
+                    string dir = Path.Combine(DownloadFolder, DebugFolderName);
+                #else
+                    string dir = DownloadFolder;
+                #endif
                 if (!String.IsNullOrEmpty(dir) && (DownloadFolderIsRelative == true)) {
                     dir = General.GetAbsoluteDirectoryPath(dir, ExeDirectory);
                 }
