@@ -40,9 +40,13 @@ namespace JDP {
         }
 
         protected string[] SplitURL() {
-            int pos = _url.IndexOf("://", StringComparison.Ordinal);
+            return SplitURL(_url);
+        }
+
+        protected string[] SplitURL(string url) {
+            int pos = url.IndexOf("://", StringComparison.Ordinal);
             if (pos == -1) return new string[0];
-            return _url.Substring(pos + 3).Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            return url.Substring(pos + 3).Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public virtual string GetSiteName() {
@@ -68,6 +72,14 @@ namespace JDP {
             return String.Empty;
         }
 
+        protected virtual string GetThreadName(SlugType slugType) {
+            return GetThreadName(_url, slugType);
+        }
+
+        protected virtual string GetThreadName(string url, SlugType slugType) {
+            return String.Empty;
+        }
+
         public virtual string GetThreadID() {
             return GetThreadName();
         }
@@ -77,6 +89,10 @@ namespace JDP {
         }
 
         public virtual bool HasSlug() {
+            return HasSlug(_url);
+        }
+
+        protected virtual bool HasSlug(string url) {
             return false;
         }
 
@@ -179,30 +195,44 @@ namespace JDP {
 
     public class SiteHelper_4chan_org : SiteHelper {
         public override string GetThreadName() {
-            string[] urlSplit = SplitURL();
             if (HasSlug()) {
-                if (Settings.UseSlug == true) {
-                    switch (Settings.SlugType) {
-                        case SlugType.First:
-                            return urlSplit[urlSplit.Length - 1] + "_" + urlSplit[urlSplit.Length - 2];
-                        case SlugType.Last:
-                            return urlSplit[urlSplit.Length - 2] + "_" + urlSplit[urlSplit.Length - 1];
-                        case SlugType.Only:
-                            return urlSplit[urlSplit.Length - 1];
-                    }
-                }
-                return urlSplit[urlSplit.Length - 2];
+                return GetThreadName(Settings.SlugType);
             }
-            return base.GetThreadName();
+            if (Settings.UseSlug == true) {
+                try {
+                    HTMLParser parser = new HTMLParser(General.DownloadPageToString(_url));
+                    HTMLTag canonicalLinkTag = Enumerable.FirstOrDefault(Enumerable.Where(parser.FindStartTags(parser.CreateTagRange(parser.FindStartTag("head")), "link"), t => t.GetAttributeValueOrEmpty("rel").Equals("canonical")));
+                    return GetThreadName(canonicalLinkTag.GetAttributeValueOrEmpty("href"), Settings.SlugType);
+                }
+                catch {
+                    return GetThreadID();
+                }
+            }
+            return GetThreadID();
+        }
+
+        protected override string GetThreadName(string url, SlugType slugType) {
+            if (Settings.UseSlug != true || !HasSlug(url)) return GetThreadID();
+            string[] urlSplit = SplitURL(url);
+            switch (slugType) {
+                case SlugType.First:
+                    return urlSplit[urlSplit.Length - 1] + "_" + urlSplit[urlSplit.Length - 2];
+                case SlugType.Last:
+                    return urlSplit[urlSplit.Length - 2] + "_" + urlSplit[urlSplit.Length - 1];
+                case SlugType.Only:
+                    return urlSplit[urlSplit.Length - 1];
+                default:
+                    return urlSplit[urlSplit.Length - 2];
+            }
         }
 
         public override string GetThreadID() {
             string[] urlSplit = SplitURL();
-            return HasSlug() ? urlSplit[urlSplit.Length - 2] : base.GetThreadID();
+            return HasSlug() ? urlSplit[urlSplit.Length - 2] : urlSplit[urlSplit.Length - 1];
         }
 
-        public override bool HasSlug() {
-            return _url.IndexOf(GetBoardName() + "/thread/", StringComparison.Ordinal) > -1 && SplitURL().Length == 5;
+        protected override bool HasSlug(string url) {
+            return url.Contains("/thread/") && SplitURL(url).Length == 5;
         }
 
         protected override string ImageURLKeyword {
