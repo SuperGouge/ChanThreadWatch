@@ -135,6 +135,7 @@
             this.cboCategory.Location = new System.Drawing.Point(61, 3);
             this.cboCategory.Name = "cboCategory";
             this.cboCategory.Size = new System.Drawing.Size(129, 21);
+            this.cboCategory.Sorted = true;
             this.cboCategory.TabIndex = 36;
             // 
             // chkAutoFollow
@@ -142,9 +143,9 @@
             this.chkAutoFollow.AutoSize = true;
             this.chkAutoFollow.Location = new System.Drawing.Point(126, 129);
             this.chkAutoFollow.Name = "chkAutoFollow";
-            this.chkAutoFollow.Size = new System.Drawing.Size(113, 17);
+            this.chkAutoFollow.Size = new System.Drawing.Size(78, 17);
             this.chkAutoFollow.TabIndex = 36;
-            this.chkAutoFollow.Text = "Follow Cross-Links";
+            this.chkAutoFollow.Text = "Auto-follow";
             this.chkAutoFollow.UseVisualStyleBackColor = true;
             // 
             // pnlCheckEvery

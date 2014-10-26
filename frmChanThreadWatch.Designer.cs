@@ -198,6 +198,7 @@
             this.cboCategory.Location = new System.Drawing.Point(219, 122);
             this.cboCategory.Name = "cboCategory";
             this.cboCategory.Size = new System.Drawing.Size(129, 21);
+            this.cboCategory.Sorted = true;
             this.cboCategory.TabIndex = 12;
             // 
             // pnlCheckEvery
