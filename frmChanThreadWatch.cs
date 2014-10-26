@@ -252,7 +252,6 @@ namespace JDP {
                 lvThreads.Sort();
                 return;
             }
-            UpdateCategories(cboCategory.Text);
             FocusLastThread();
             lvThreads.Sort();
             txtPageURL.Clear();
@@ -781,7 +780,6 @@ namespace JDP {
                 siteHelper.SetURL(thread.URL);
                 if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
                 if (AddThread(thread)) {
-                    UpdateCategories(thread.Category);
                     FocusLastThread();
                     lvThreads.Sort();
                     _saveThreadList = true;
@@ -848,6 +846,7 @@ namespace JDP {
                 }
                 newListViewItem.Tag = watcher;
                 lvThreads.Items.Add(newListViewItem);
+                UpdateCategories(watcher.Category);
             }
 
             watcher.PageAuth = thread.PageAuth;
@@ -1196,7 +1195,6 @@ namespace JDP {
                         thread.ExtraData.AddedFrom = String.Empty;
                         thread.Category = String.Empty;
                     }
-                    UpdateCategories(thread.Category);
                     AddThread(thread);
                 }
                 _isLoadingThreadsFromFile = false;
