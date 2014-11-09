@@ -572,4 +572,32 @@ namespace JDP {
             get { return "/files/"; }
         }
     }
+
+    public abstract class FuukaSiteHelper : SiteHelper {
+        protected override string ImageURLKeyword {
+            get { return "/img/"; }
+        }
+    }
+
+    public class SiteHelper_rebeccablacktech_com : FuukaSiteHelper { }
+
+    public class SiteHelper_rbt_asia : FuukaSiteHelper { }
+
+    public class SiteHelper_heinessen_com : FuukaSiteHelper { }
+
+    public class SiteHelper_warosu_org : FuukaSiteHelper { }
+    
+    public abstract class FoolFuukaSiteHelper : SiteHelper {
+        protected override string ImageURLKeyword {
+            get { return "/image/"; }
+        }
+    }
+
+    public class SiteHelper_archive_moe : FoolFuukaSiteHelper { }
+    
+    public class SiteHelper_4plebs_org : FoolFuukaSiteHelper { }
+
+    public class SiteHelper_loveisover_me : FoolFuukaSiteHelper { }
+
+    public class SiteHelper_imcute_yt : FoolFuukaSiteHelper { }
 }
