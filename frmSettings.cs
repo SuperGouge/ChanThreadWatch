@@ -124,12 +124,7 @@ namespace JDP {
                 Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
-                try {
-                    Settings.Save();
-                }
-                catch (Exception ex) {
-                    Logger.Log(ex.ToString());
-                }
+                Settings.Save();
 
                 if (!String.Equals(Settings.AbsoluteDownloadDirectory, oldAbsoluteDownloadFolder, StringComparison.OrdinalIgnoreCase)) {
                     MessageBox.Show(this, "The new download folder will not affect threads currently being watched until the program is restarted.  " +

@@ -274,32 +274,35 @@ namespace JDP {
 
         public static Size? ClientSize {
             get {
-                string value = Get("ClientSize") ?? String.Empty;
-                string[] size = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                int width, height;
-                if (size.Length != 2 || !Int32.TryParse(size[0], out width) || !Int32.TryParse(size[1], out height) || width < 1 || height < 1) return null;
-                return new Size(width, height);
+                int[] size = GetIntArray("ClientSize");
+                if (size.Length != 2 || size[0] < 1 || size[1] < 1) return null;
+                return new Size(size[0], size[1]);
             }
             set { Set("ClientSize", value.HasValue ? value.Value.Width + "," + value.Value.Height : null); }
         }
 
         public static int[] ColumnWidths {
-            get {
-                string value = Get("ColumnWidths") ?? String.Empty;
-                string[] widths = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                int[] val = new int[widths.Length];
-                for (int iWidth = 0; iWidth < widths.Length; iWidth++) {
-                    int width;
-                    Int32.TryParse(widths[iWidth], out width);
-                    val[iWidth] = width >= 0 ? width : 0;
-                }
-                return val;
-            }
-            set { Set("ColumnWidths", value.Length > 0 ? String.Join(",", Array.ConvertAll(value, Convert.ToString)) : null); }
+            get { return GetIntArray("ColumnWidths"); }
+            set { SetIntArray("ColumnWidths", value); }
         }
 
         public static int[] DefaultColumnWidths {
             get { return new[] { 110, 150, 115, 115, 110, 75 }; }
+        }
+
+        public static int[] ColumnIndices {
+            get { return GetIntArray("ColumnIndices"); }
+            set { SetIntArray("ColumnIndices", value); }
+        }
+        
+        public static int? SortColumn {
+            get { return GetInt("SortColumn"); }
+            set { SetInt("SortColumn", value); }
+        }
+
+        public static bool? SortAscending {
+            get { return GetBool("SortAscending"); }
+            set { SetBool("SortAscending", value); }
         }
 
         private static string Get(string name) {
@@ -337,6 +340,17 @@ namespace JDP {
                 DateTimeStyles.None, out x) ? x : (DateTime?)null;
         }
 
+        private static int[] GetIntArray(string name) {
+            string value = Get(name);
+            if (value == null) return new int[0];
+            string[] array = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            int[] values = new int[array.Length];
+            for (int i = 0; i < array.Length; i++) {
+                Int32.TryParse(array[i], out values[i]);
+            }
+            return values;
+        }
+
         private static void Set(string name, string value) {
             lock (_settings) {
                 if (value == null) {
@@ -364,6 +378,10 @@ namespace JDP {
             Set(name, value.HasValue ? value.Value.ToString("yyyyMMdd") : null);
         }
 
+        private static void SetIntArray(string name, int[] value) {
+            Set(name, value.Length > 0 ? String.Join(",", Array.ConvertAll(value, Convert.ToString)) : null);
+        }
+
         public static void Load() {
             string path = Path.Combine(GetSettingsDirectory(), SettingsFileName);
 
@@ -373,32 +391,42 @@ namespace JDP {
                 return;
             }
 
-            using (StreamReader sr = File.OpenText(path)) {
-                string line;
+            try {
+                using (StreamReader sr = File.OpenText(path)) {
+                    string line;
 
-                while ((line = sr.ReadLine()) != null) {
-                    int pos = line.IndexOf('=');
+                    while ((line = sr.ReadLine()) != null) {
+                        int pos = line.IndexOf('=');
 
-                    if (pos != -1) {
-                        string name = line.Substring(0, pos);
-                        string val = line.Substring(pos + 1);
+                        if (pos != -1) {
+                            string name = line.Substring(0, pos);
+                            string val = line.Substring(pos + 1);
 
-                        if (!_settings.ContainsKey(name)) {
-                            _settings.Add(name, val);
+                            if (!_settings.ContainsKey(name)) {
+                                _settings.Add(name, val);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
             }
         }
 
         public static void Save() {
             string path = Path.Combine(GetSettingsDirectory(), SettingsFileName);
-            using (StreamWriter sw = File.CreateText(path)) {
-                lock (_settings) {
-                    foreach (KeyValuePair<string, string> kvp in _settings) {
-                        sw.WriteLine(kvp.Key + "=" + kvp.Value);
+            try {
+                using (StreamWriter sw = File.CreateText(path)) {
+                    lock (_settings) {
+                        foreach (KeyValuePair<string, string> kvp in _settings) {
+                            sw.WriteLine(kvp.Key + "=" + kvp.Value);
+                        }
                     }
                 }
+            }
+            catch (Exception ex) {
+                Logger.Log(ex.ToString());
             }
         }
     }

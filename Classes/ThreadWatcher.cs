@@ -944,8 +944,7 @@ namespace JDP {
                                         }
                                     }
                                     else {
-                                        pageInfo.ReplaceList.RemoveAt(i);
-                                        i--;
+                                        pageInfo.ReplaceList.RemoveAt(i--);
                                     }
                                 }
                             }

@@ -116,7 +116,6 @@
             this.lvThreads.UseCompatibleStateImageBehavior = false;
             this.lvThreads.View = System.Windows.Forms.View.Details;
             this.lvThreads.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvThreads_ColumnClick);
-            this.lvThreads.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.lvThreads_ColumnWidthChanged);
             this.lvThreads.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvThreads_KeyDown);
             this.lvThreads.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvThreads_MouseClick);
             this.lvThreads.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvThreads_MouseDoubleClick);

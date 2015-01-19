@@ -49,8 +49,16 @@ namespace JDP {
             _columnWidths = new int[lvThreads.Columns.Count];
             for (int iColumn = 0; iColumn < lvThreads.Columns.Count; iColumn++) {
                 ColumnHeader column = lvThreads.Columns[iColumn];
-                column.Width = iColumn < Settings.ColumnWidths.Length ? Settings.ColumnWidths[iColumn] : Convert.ToInt32(column.Width * scaleFactorX);
+                if (iColumn < Settings.ColumnWidths.Length) {
+                    column.Width = Settings.ColumnWidths[iColumn] > 0 ? Settings.ColumnWidths[iColumn] : 0;
+                }
+                else {
+                    column.Width = Convert.ToInt32(column.Width * scaleFactorX);
+                }
                 _columnWidths[iColumn] = column.Width != 0 ? column.Width : Settings.DefaultColumnWidths[iColumn];
+                if (iColumn < Settings.ColumnIndices.Length && Settings.ColumnIndices[iColumn] > 0 && Settings.ColumnIndices[iColumn] < lvThreads.Columns.Count) {
+                    column.DisplayIndex = Settings.ColumnIndices[iColumn];
+                }
             }
             GUI.EnableDoubleBuffering(lvThreads);
 
@@ -59,8 +67,7 @@ namespace JDP {
             BuildColumnHeaderMenu();
 
             if ((Settings.DownloadFolder == null) || !Directory.Exists(Settings.AbsoluteDownloadDirectory)) {
-                Settings.DownloadFolder = Path.Combine(Environment.GetFolderPath(
-                    Environment.SpecialFolder.MyDocuments), "Watched Threads");
+                Settings.DownloadFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Watched Threads");
                 Settings.DownloadFolderIsRelative = false;
             }
             if (Settings.CheckEvery == 1) {
@@ -143,6 +150,9 @@ namespace JDP {
             btnAbout.Enabled = true;
             btnHelp.Enabled = true;
             lvThreads.Enabled = true;
+
+            lvThreads.ListViewItemSorter = new ListViewItemSorter(Settings.SortColumn ?? 3) { Ascending = Settings.SortAscending ?? true };
+            lvThreads.Sort();
             FocusLastThread();
         }
 
@@ -157,12 +167,23 @@ namespace JDP {
             Settings.CheckEvery = pnlCheckEvery.Enabled ? (cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue : Int32.Parse(txtCheckEvery.Text)) : 0;
             Settings.OnThreadDoubleClick = OnThreadDoubleClick;
             Settings.ClientSize = ClientSize;
-            try {
-                Settings.Save();
+
+            int[] columnWidths = new int[lvThreads.Columns.Count];
+            int[] columnIndices = new int[lvThreads.Columns.Count];
+            for (int i = 0; i < lvThreads.Columns.Count; i++) {
+                columnWidths[i] = lvThreads.Columns[i].Width;
+                columnIndices[i] = lvThreads.Columns[i].DisplayIndex;
             }
-            catch (Exception ex) {
-                Logger.Log(ex.ToString());
+            Settings.ColumnWidths = columnWidths;
+            Settings.ColumnIndices = columnIndices;
+
+            ListViewItemSorter sorter = (ListViewItemSorter)lvThreads.ListViewItemSorter;
+            if (sorter != null) {
+                Settings.SortColumn = sorter.Column;
+                Settings.SortAscending = sorter.Ascending;
             }
+
+            Settings.Save();
 
             foreach (ThreadWatcher watcher in ThreadWatchers) {
                 watcher.Stop(StopReason.Exiting);
@@ -210,6 +231,7 @@ namespace JDP {
             url = General.CleanPageURL(url);
             if (url != null) {
                 AddThread(url);
+                FocusThread(url);
                 _saveThreadList = true;
             }
         }
@@ -239,21 +261,10 @@ namespace JDP {
             if (!AddThread(pageURL)) {
                 MessageBox.Show(this, "The same thread is already being watched, downloaded or has been blacklisted.", "Cannot Add Thread", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtPageURL.Clear();
-                SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
-                siteHelper.SetURL(pageURL);
-                ThreadWatcher existingWatcher;
-                if (_watchers.TryGetValue(siteHelper.GetPageID(), out existingWatcher)) {
-                    ListViewItem item = ((WatcherExtraData)existingWatcher.Tag).ListViewItem;
-                    lvThreads.SelectedItems.Clear();
-                    lvThreads.Select();
-                    item.Selected = true;
-                    item.EnsureVisible();
-                }
-                lvThreads.Sort();
+                FocusThread(pageURL);
                 return;
             }
-            FocusLastThread();
-            lvThreads.Sort();
+            FocusThread(pageURL);
             txtPageURL.Clear();
             txtPageURL.Focus();
             _saveThreadList = true;
@@ -269,10 +280,25 @@ namespace JDP {
                 return;
             }
             string[] urls = text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            if (urls.Length > 0) {
+                lvThreads.SelectedItems.Clear();
+                lvThreads.Select();
+            }
             for (int iURL = 0; iURL < urls.Length; iURL++) {
                 string url = General.CleanPageURL(urls[iURL]);
                 if (url == null) continue;
                 AddThread(url);
+                if (urls.Length == 1) {
+                    FocusThread(url);
+                }
+                else {
+                    SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(url)).Host);
+                    siteHelper.SetURL(url);
+                    ThreadWatcher watcher;
+                    if (_watchers.TryGetValue(siteHelper.GetPageID(), out watcher)) {
+                        (((WatcherExtraData)watcher.Tag).ListViewItem).Selected = true;
+                    }
+                }
             }
             _saveThreadList = true;
         }
@@ -780,8 +806,6 @@ namespace JDP {
                 siteHelper.SetURL(thread.URL);
                 if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
                 if (AddThread(thread)) {
-                    FocusLastThread();
-                    lvThreads.Sort();
                     _saveThreadList = true;
                 }
             });
@@ -816,7 +840,6 @@ namespace JDP {
             if (_watchers.ContainsKey(pageID)) {
                 watcher = _watchers[pageID];
                 if (watcher.IsRunning) return false;
-                if (thread.ExtraData == null) thread.ExtraData = watcher.Tag as WatcherExtraData;
             }
 
             if (watcher == null) {
@@ -846,6 +869,7 @@ namespace JDP {
                 }
                 newListViewItem.Tag = watcher;
                 lvThreads.Items.Add(newListViewItem);
+                lvThreads.Sort();
                 UpdateCategories(watcher.Category);
             }
 
@@ -998,6 +1022,7 @@ namespace JDP {
             var subItem = item.SubItems[(int)columnIndex];
             if (subItem.Text != text) {
                 subItem.Text = text;
+                lvThreads.Sort();
             }
         }
 
@@ -1241,12 +1266,7 @@ namespace JDP {
                         }
                     }
                     Settings.ChildThreadsAreNewFormat = true;
-                    try {
-                        Settings.Save();
-                    }
-                    catch (Exception ex) {
-                        Logger.Log(ex.ToString());
-                    }
+                    Settings.Save();
 
                     foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                         if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
@@ -1368,14 +1388,6 @@ namespace JDP {
             Category = 5
         }
 
-        private void lvThreads_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e) {
-            if (_columnWidths == null) return;
-            int[] columnWidths = new int[_columnWidths.Length];
-            Array.Copy(_columnWidths, columnWidths, _columnWidths.Length);
-            columnWidths[e.ColumnIndex] = lvThreads.Columns[e.ColumnIndex].Width;
-            Settings.ColumnWidths = columnWidths;
-        }
-
         private void UpdateCategories(string key, bool remove = false) {
             key = key ?? String.Empty;
             if (remove && (_categories.ContainsKey(key) && (--_categories[key] < 1 && !String.IsNullOrEmpty(key)))) {
@@ -1392,13 +1404,27 @@ namespace JDP {
                 }
             }
         }
+        
+        private void FocusThread(string pageURL) {
+            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
+            siteHelper.SetURL(pageURL);
+            ThreadWatcher watcher;
+            if (_watchers.TryGetValue(siteHelper.GetPageID(), out watcher)) {
+                FocusThread(watcher);
+            }
+        }
 
-        private void FocusLastThread() {
+        private void FocusThread(ThreadWatcher watcher) {
+            ListViewItem item = ((WatcherExtraData)watcher.Tag).ListViewItem;
             lvThreads.SelectedItems.Clear();
             lvThreads.Select();
+            item.Selected = true;
+            item.EnsureVisible();
+        }
+
+        private void FocusLastThread() {
             if (lvThreads.Items.Count > 0) {
-                lvThreads.Items[lvThreads.Items.Count - 1].Selected = true;
-                lvThreads.Items[lvThreads.Items.Count - 1].EnsureVisible();
+                FocusThread((ThreadWatcher)lvThreads.Items[lvThreads.Items.Count - 1].Tag);
             }
         }
 
