@@ -104,6 +104,11 @@ namespace JDP {
             get { return "/src/"; }
         }
 
+        protected virtual bool IsImage(HTMLTag linkTag) {
+            string url = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(linkTag.GetAttributeValueOrEmpty("href")));
+            return url != null && url.Contains(ImageURLKeyword);
+        }
+
         public virtual List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
             HashSet<string> imageFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             HashSet<string> thumbnailFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -116,7 +121,7 @@ namespace JDP {
                 attribute = linkTag.GetAttribute("href");
                 if (attribute == null) continue;
                 url = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(attribute.Value));
-                if (url == null || url.IndexOf(ImageURLKeyword, StringComparison.OrdinalIgnoreCase) == -1) continue;
+                if (url == null || !IsImage(linkTag)) continue;
 
                 HTMLTag linkEndTag = _htmlParser.FindCorrespondingEndTag(linkTag);
                 if (linkEndTag == null) continue;
@@ -574,8 +579,8 @@ namespace JDP {
     }
 
     public abstract class FuukaSiteHelper : SiteHelper {
-        protected override string ImageURLKeyword {
-            get { return "/img/"; }
+        protected override bool IsImage(HTMLTag linkTag) {
+            return Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags(_htmlParser.CreateTagRange(linkTag), "img"), t => HTMLParser.ClassAttributeValueHas(t, "thumb"))) != null;
         }
     }
 
@@ -583,13 +588,11 @@ namespace JDP {
 
     public class SiteHelper_rbt_asia : FuukaSiteHelper { }
 
-    public class SiteHelper_heinessen_com : FuukaSiteHelper { }
-
     public class SiteHelper_warosu_org : FuukaSiteHelper { }
     
     public abstract class FoolFuukaSiteHelper : SiteHelper {
-        protected override string ImageURLKeyword {
-            get { return "/image/"; }
+        protected override bool IsImage(HTMLTag linkTag) {
+            return HTMLParser.ClassAttributeValueHas(linkTag, "thread_image_link");
         }
     }
 
