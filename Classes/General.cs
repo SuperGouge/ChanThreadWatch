@@ -637,7 +637,7 @@ namespace JDP {
         }
 
         public static string HtmlAttributeEncode(string s, bool allowHashParameter = true) {
-            return allowHashParameter ? HttpUtility.HtmlAttributeEncode(s) : HttpUtility.HtmlAttributeEncode(s).Replace("#", "%23");
+            return HttpUtility.HtmlAttributeEncode(allowHashParameter ? s : s.Replace("#", "%23"));
         }
 
         public static int StrLen(byte[] bytes) {
