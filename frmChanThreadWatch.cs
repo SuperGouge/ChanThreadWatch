@@ -37,15 +37,15 @@ namespace JDP {
                 try { File.Create(logPath); }
                 catch { }
             }
+            int initialWidth = ClientSize.Width;
+            GUI.SetFontAndScaling(this);
+            float scaleFactorX = (float)ClientSize.Width / initialWidth;
             if (Settings.ClientSize != null) {
                 Size newSize = Settings.ClientSize.Value + Size - ClientSize;
                 if (newSize.Width >= MinimumSize.Width && newSize.Height >= MinimumSize.Height) {
                     ClientSize = Settings.ClientSize.Value;
                 }
             }
-            int initialWidth = ClientSize.Width;
-            GUI.SetFontAndScaling(this);
-            float scaleFactorX = (float)ClientSize.Width / initialWidth;
             _columnWidths = new int[lvThreads.Columns.Count];
             for (int iColumn = 0; iColumn < lvThreads.Columns.Count; iColumn++) {
                 ColumnHeader column = lvThreads.Columns[iColumn];
