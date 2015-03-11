@@ -151,7 +151,7 @@ namespace JDP {
             btnHelp.Enabled = true;
             lvThreads.Enabled = true;
 
-            lvThreads.ListViewItemSorter = new ListViewItemSorter(Settings.SortColumn ?? 3) { Ascending = Settings.SortAscending ?? true };
+            lvThreads.ListViewItemSorter = new ListViewItemSorter(Settings.SortColumn ?? (int)ColumnIndex.AddedOn) { Ascending = Settings.SortAscending ?? true };
             lvThreads.Sort();
             FocusLastThread();
         }
@@ -166,7 +166,9 @@ namespace JDP {
             Settings.AutoFollow = chkAutoFollow.Checked;
             Settings.CheckEvery = pnlCheckEvery.Enabled ? (cboCheckEvery.Enabled ? (int)cboCheckEvery.SelectedValue : Int32.Parse(txtCheckEvery.Text)) : 0;
             Settings.OnThreadDoubleClick = OnThreadDoubleClick;
-            Settings.ClientSize = ClientSize;
+            if (WindowState == FormWindowState.Normal) {
+                Settings.ClientSize = ClientSize;
+            }
 
             int[] columnWidths = new int[lvThreads.Columns.Count];
             int[] columnIndices = new int[lvThreads.Columns.Count];
@@ -237,9 +239,14 @@ namespace JDP {
         }
 
         private void frmChanThreadWatch_Resize(object sender, EventArgs e) {
-            if (Settings.MinimizeToTray != true) return;
-            if (WindowState == FormWindowState.Minimized) {
+            if (WindowState == FormWindowState.Minimized && Settings.MinimizeToTray == true) {
                 Hide();
+            }
+        }
+        
+        private void frmChanThreadWatch_ResizeEnd(object sender, EventArgs e) {
+            if (WindowState == FormWindowState.Normal) {
+                Settings.ClientSize = ClientSize;
             }
         }
 

@@ -652,6 +652,7 @@
             this.Text = "Chan Thread Watch";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmChanThreadWatch_FormClosed);
             this.Shown += new System.EventHandler(this.frmChanThreadWatch_Shown);
+            this.ResizeEnd += new System.EventHandler(this.frmChanThreadWatch_ResizeEnd);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frmChanThreadWatch_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.frmChanThreadWatch_DragEnter);
             this.Resize += new System.EventHandler(this.frmChanThreadWatch_Resize);
