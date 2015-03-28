@@ -137,23 +137,28 @@ namespace JDP {
             lvThreads.Items.Add(new ListViewItem());
             _itemAreaY = lvThreads.GetItemRect(0).Y;
             lvThreads.Items.RemoveAt(0);
+            
+            Thread thread = new Thread(() => {
+                LoadThreadList();
+                LoadBlacklist();
 
-            LoadThreadList();
-            LoadBlacklist();
+                Invoke(() => {
+                    UseWaitCursor = false;
+                    btnAdd.Enabled = true;
+                    btnAddFromClipboard.Enabled = true;
+                    btnRemoveCompleted.Enabled = true;
+                    btnDownloads.Enabled = true;
+                    btnSettings.Enabled = true;
+                    btnAbout.Enabled = true;
+                    btnHelp.Enabled = true;
+                    lvThreads.Enabled = true;
 
-            UseWaitCursor = false;
-            btnAdd.Enabled = true;
-            btnAddFromClipboard.Enabled = true;
-            btnRemoveCompleted.Enabled = true;
-            btnDownloads.Enabled = true;
-            btnSettings.Enabled = true;
-            btnAbout.Enabled = true;
-            btnHelp.Enabled = true;
-            lvThreads.Enabled = true;
-
-            lvThreads.ListViewItemSorter = new ListViewItemSorter(Settings.SortColumn ?? (int)ColumnIndex.AddedOn) { Ascending = Settings.SortAscending ?? true };
-            lvThreads.Sort();
-            FocusLastThread();
+                    lvThreads.ListViewItemSorter = new ListViewItemSorter(Settings.SortColumn ?? (int)ColumnIndex.AddedOn) { Ascending = Settings.SortAscending ?? true };
+                    lvThreads.Sort();
+                    FocusLastThread();
+                });
+            });
+            thread.Start();
         }
 
         private void frmChanThreadWatch_FormClosed(object sender, FormClosedEventArgs e) {
@@ -1029,7 +1034,7 @@ namespace JDP {
             var subItem = item.SubItems[(int)columnIndex];
             if (subItem.Text != text) {
                 subItem.Text = text;
-                lvThreads.Sort();
+                if (!_isLoadingThreadsFromFile) lvThreads.Sort();
             }
         }
 
@@ -1143,6 +1148,7 @@ namespace JDP {
         }
 
         private void SaveThreadList() {
+            if (_isLoadingThreadsFromFile) return;
             try {
                 // Prepare lines before writing file so that an exception can't result
                 // in a partially written file.
@@ -1189,7 +1195,9 @@ namespace JDP {
                 }
                 if (lines.Length < (1 + linesPerThread)) return;
                 _isLoadingThreadsFromFile = true;
-                UpdateCategories(String.Empty);
+                Invoke(() => {
+                    UpdateCategories(String.Empty);
+                });
                 int i = 1;
                 while (i <= lines.Length - linesPerThread) {
                     ThreadInfo thread = new ThreadInfo { ExtraData = new WatcherExtraData() };
@@ -1227,9 +1235,10 @@ namespace JDP {
                         thread.ExtraData.AddedFrom = String.Empty;
                         thread.Category = String.Empty;
                     }
-                    AddThread(thread);
+                    Invoke(() => {
+                        AddThread(thread);
+                    });
                 }
-                _isLoadingThreadsFromFile = false;
                 foreach (ThreadWatcher threadWatcher in ThreadWatchers) {
                     ThreadWatcher parentThread;
                     _watchers.TryGetValue(((WatcherExtraData)threadWatcher.Tag).AddedFrom, out parentThread);
@@ -1237,7 +1246,10 @@ namespace JDP {
                     if (parentThread != null && !parentThread.ChildThreads.ContainsKey(threadWatcher.PageID) && !parentThread.ChildThreads.ContainsKey(parentThread.PageID)) {
                         parentThread.ChildThreads.Add(threadWatcher.PageID, threadWatcher);
                     }
-                    DisplayAddedFrom(threadWatcher);
+                    ThreadWatcher watcher = threadWatcher;
+                    Invoke(() => {
+                        DisplayAddedFrom(watcher);
+                    });
                     if (Settings.ChildThreadsAreNewFormat == true && threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) {
                         threadWatcher.Start();
                     }
@@ -1279,8 +1291,10 @@ namespace JDP {
                         if (threadWatcher.StopReason != StopReason.PageNotFound && threadWatcher.StopReason != StopReason.UserRequest) threadWatcher.Start();
                     }
                 }
+                _isLoadingThreadsFromFile = false;
             }
             catch (Exception ex) {
+                _isLoadingThreadsFromFile = false;
                 Logger.Log(ex.ToString());
             }
         }
@@ -1371,11 +1385,7 @@ namespace JDP {
         }
 
         private IEnumerable<ThreadWatcher> ThreadWatchers {
-            get {
-                foreach (ListViewItem item in lvThreads.Items) {
-                    yield return (ThreadWatcher)item.Tag;
-                }
-            }
+            get { return _watchers.Values; }
         }
 
         private IEnumerable<ThreadWatcher> SelectedThreadWatchers {
