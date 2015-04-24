@@ -575,7 +575,6 @@ namespace JDP {
             foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
                 t => HTMLParser.ClassAttributeValueHas(t, "file")), t => _htmlParser.CreateTagRange(t)), r => r != null))
             {
-                Console.WriteLine("@@@ at: " + _htmlParser.GetInnerHTML(postTagRange));
                 HTMLTagRange fileInfoParTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                     _htmlParser.FindStartTags(postTagRange, "p"), t => HTMLParser.ClassAttributeValueHas(t, "fileinfo"))));
                 if (fileInfoParTagRange == null) continue;
@@ -636,7 +635,6 @@ namespace JDP {
                     Referer = _url
                 };
                 if (thumb.URL == null || thumb.FileName.Length == 0) continue;
-                Console.WriteLine("*** getting " + originalFileName);
 
                 if (replaceList != null)
                 {
