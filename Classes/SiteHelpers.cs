@@ -250,7 +250,7 @@ namespace JDP {
             bool seenSpoiler = false;
 
             foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
-                t => HTMLParser.ClassAttributeValueHas(t, "post")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+                t => HTMLParser.ClassAttributeValueHas(t, "file")), t => _htmlParser.CreateTagRange(t)), r => r != null))
             {
                 HTMLTagRange fileTextDivTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                     _htmlParser.FindStartTags(postTagRange, "div"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
@@ -562,6 +562,142 @@ namespace JDP {
 
         public override bool IsBoardHighTurnover() {
             return String.Equals(GetBoardName(), "b", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    public class SiteHelper_8ch_net : SiteHelper
+    {
+        public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false)
+        {
+            List<ImageInfo> imageList = new List<ImageInfo>();
+            bool seenSpoiler = false;
+
+            foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
+                t => HTMLParser.ClassAttributeValueHas(t, "file")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                Console.WriteLine("@@@ at: " + _htmlParser.GetInnerHTML(postTagRange));
+                HTMLTagRange fileInfoParTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "p"), t => HTMLParser.ClassAttributeValueHas(t, "fileinfo"))));
+                if (fileInfoParTagRange == null) continue;
+
+                HTMLTagRange fileThumbLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "a"), t => t.GetAttributeValueOrEmpty("target") == "_blank")));
+                if (fileThumbLinkTagRange == null) continue;
+
+                HTMLTag fileInfoLinkStartTag = _htmlParser.FindStartTag(fileInfoParTagRange, "a");
+                if (fileInfoLinkStartTag == null) continue;
+
+                HTMLTag fileThumbImageTag = _htmlParser.FindStartTag(fileThumbLinkTagRange, "img");
+                if (fileThumbImageTag == null) continue;
+
+                string imageURL = fileInfoLinkStartTag.GetAttributeValue("href");
+                if (imageURL == null) continue;
+
+                string thumbURL = fileThumbImageTag.GetAttributeValue("src");
+                if (thumbURL == null) continue;
+
+                bool isSpoiler = thumbURL == "/static/spoiler.png";
+
+                string originalFileName = null;
+                HTMLTagRange unimportantSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(fileInfoParTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "unimportant"))));
+                if (unimportantSpanTagRange != null)
+                {
+                    HTMLTag postFileNameSpanTag = _htmlParser.FindStartTag(unimportantSpanTagRange, "span");
+                    if (postFileNameSpanTag != null)
+                    {
+                        originalFileName = postFileNameSpanTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(postFileNameSpanTag));
+                    }
+                }
+                if (originalFileName == null || originalFileName.Length == 0)
+                {
+                    HTMLTagRange fileInfoLinkTagRange = _htmlParser.CreateTagRange(fileInfoLinkStartTag);
+                    originalFileName = _htmlParser.GetInnerHTML(fileInfoLinkTagRange);
+                }
+                if (originalFileName == null) continue;
+
+                string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
+                if (imageMD5 == null) continue;
+
+                ImageInfo image = new ImageInfo
+                {
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
+                    Referer = _url,
+                    OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
+                    HashType = HashType.MD5,
+                    Hash = General.TryBase64Decode(imageMD5),
+                    Poster = String.Empty
+                };
+                if (image.URL.Length == 0 || image.FileName.Length == 0 || image.Hash == null) continue;
+
+                ThumbnailInfo thumb = new ThumbnailInfo
+                {
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
+                    Referer = _url
+                };
+                if (thumb.URL == null || thumb.FileName.Length == 0) continue;
+                Console.WriteLine("*** getting " + originalFileName);
+
+                if (replaceList != null)
+                {
+                    HTMLAttribute attribute;
+
+                    attribute = fileInfoLinkStartTag.GetAttribute("href");
+                    if (attribute != null)
+                    {
+                        replaceList.Add(
+                            new ReplaceInfo
+                            {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageLinkHref,
+                                Tag = image.FileName
+                            });
+                    }
+
+                    attribute = fileThumbLinkTagRange.StartTag.GetAttribute("href");
+                    if (attribute != null)
+                    {
+                        replaceList.Add(
+                            new ReplaceInfo
+                            {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageLinkHref,
+                                Tag = image.FileName
+                            });
+                    }
+
+                    attribute = fileThumbImageTag.GetAttribute("src");
+                    if (attribute != null)
+                    {
+                        replaceList.Add(
+                            new ReplaceInfo
+                            {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageSrc,
+                                Tag = thumb.FileName
+                            });
+                    }
+                }
+
+                imageList.Add(image);
+
+                if (!isSpoiler || !seenSpoiler)
+                {
+                    thumbnailList.Add(thumb);
+                    if (isSpoiler) seenSpoiler = true;
+                }
+            }
+
+            return imageList;
+        }
+
+        public override bool IsBoardHighTurnover()
+        {
+            return String.Equals(GetBoardName(), "b", StringComparison.OrdinalIgnoreCase) ||
+                String.Equals(GetBoardName(), "v", StringComparison.OrdinalIgnoreCase);
         }
     }
 
