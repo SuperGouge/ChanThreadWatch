@@ -387,6 +387,7 @@ namespace JDP {
                     t => HTMLParser.ClassAttributeValueHas(t, "quotelink")))
                 {
                     HTMLAttribute attribute = quoteLinkTag.GetAttribute("href");
+                    if (attribute == null) continue;
                     string href = attribute.Value.Substring(0, attribute.Value.Contains("#") ? attribute.Value.IndexOf('#') : attribute.Value.Length);
                     if (!href.Contains("/thread/") || (!interBoardAutoFollow && GetBoardName() != href.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0])) continue;
                     crossLinks.Add(General.GetAbsoluteURL(_url, href));
