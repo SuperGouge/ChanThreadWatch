@@ -1140,5 +1140,9 @@ namespace JDP {
 
     public class SiteHelper_fgts_jp : FoolFuukaSiteHelper { }
 
-    public class SiteHelper_imcute_yt : FoolFuukaSiteHelper { }
+    public class SiteHelper_not4plebs_org : FoolFuukaSiteHelper { }
+
+    public class SiteHelper_archive_desustorage_org : FoolFuukaSiteHelper { }
+
+    public class SiteHelper_archive8_desustorage_org : FoolFuukaSiteHelper { }
 }
