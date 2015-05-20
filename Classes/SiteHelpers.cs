@@ -624,8 +624,9 @@ namespace JDP {
 
                     HTMLTagRange postFileNameSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                         _htmlParser.FindStartTags(fileInfoParagraphTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "postfilename"))));
+                    if (postFileNameSpanTagRange == null) continue;
 
-                    string originalFileName = _htmlParser.GetInnerHTML(postFileNameSpanTagRange);
+                    string originalFileName = postFileNameSpanTagRange.StartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(postFileNameSpanTagRange);
 
                     string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
                     if (imageMD5 == null) continue;
