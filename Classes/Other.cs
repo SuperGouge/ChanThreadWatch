@@ -71,6 +71,13 @@ namespace JDP {
         public bool AutoFollow { get; set; }
     }
 
+    public class MonitoringInfo {
+        public int TotalThreads { get; set; }
+        public int RunningThreads { get; set; }
+        public int DeadThreads { get; set; }
+        public int StoppedThreads { get; set; }
+    }
+
     public class HTTP404Exception : Exception { }
 
     public class HTTP304Exception : Exception { }
@@ -936,5 +943,13 @@ namespace JDP {
         First = 0,
         Last = 1,
         Only = 2
+    }
+
+    public enum WindowTitleMacro {
+        ApplicationName = 0,
+        TotalThreads = 1,
+        RunningThreads = 2,
+        DeadThreads = 3,
+        StoppedThreads = 4
     }
 }

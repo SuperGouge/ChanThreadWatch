@@ -519,6 +519,7 @@ namespace JDP {
             }
             niTrayIcon.Visible = Settings.MinimizeToTray ?? false;
             tmrBackupThreadList.Interval = (Settings.BackupEvery ?? 1) * 60 * 1000;
+            UpdateWindowTitle(GetMonitoringInfo());
         }
 
         private void btnAbout_Click(object sender, EventArgs e) {
@@ -663,24 +664,12 @@ namespace JDP {
         }
         
         private void tmrMonitor_Tick(object sender, EventArgs e) {
-            int running = 0;
-            int dead = 0;
-            int stopped = 0;
-            foreach (ThreadWatcher watcher in ThreadWatchers) {
-                if (watcher.IsRunning || watcher.IsWaiting) {
-                    running++;
-                }
-                else if (watcher.StopReason == StopReason.PageNotFound) {
-                    dead++;
-                }
-                else {
-                    stopped++;
-                }
-            }
-            miMonitorTotal.Text = String.Format("Watching {0} thread{1}", _watchers.Count, _watchers.Count != 1 ? "s" : String.Empty);
-            miMonitorRunning.Text = String.Format("    {0} running", running);
-            miMonitorDead.Text = String.Format("    {0} dead", dead);
-            miMonitorStopped.Text = String.Format("    {0} stopped", stopped);
+            MonitoringInfo monitoringInfo = GetMonitoringInfo();
+            UpdateWindowTitle(monitoringInfo);
+            miMonitorTotal.Text = String.Format("Watching {0} thread{1}", monitoringInfo.TotalThreads, monitoringInfo.TotalThreads != 1 ? "s" : String.Empty);
+            miMonitorRunning.Text = String.Format("    {0} running", monitoringInfo.RunningThreads);
+            miMonitorDead.Text = String.Format("    {0} dead", monitoringInfo.DeadThreads);
+            miMonitorStopped.Text = String.Format("    {0} stopped", monitoringInfo.StoppedThreads);
         }
 
         private void tmrBackupThreadList_Tick(object sender, EventArgs e) {
@@ -1459,6 +1448,38 @@ namespace JDP {
                 return true;
             }
             return false;
+        }
+
+        private MonitoringInfo GetMonitoringInfo() {
+            int running = 0;
+            int dead = 0;
+            int stopped = 0;
+            foreach (ThreadWatcher watcher in ThreadWatchers) {
+                if (watcher.IsRunning || watcher.IsWaiting) {
+                    running++;
+                }
+                else if (watcher.StopReason == StopReason.PageNotFound) {
+                    dead++;
+                }
+                else {
+                    stopped++;
+                }
+            }
+            return new MonitoringInfo {
+                TotalThreads = _watchers.Count,
+                RunningThreads = running,
+                DeadThreads = dead,
+                StoppedThreads = stopped
+            };
+        }
+
+        private void UpdateWindowTitle(MonitoringInfo monitoringInfo) {
+            Text = (Settings.WindowTitle ?? String.Format("{{{0}}}", WindowTitleMacro.ApplicationName))
+                .Replace(String.Format("{{{0}}}", WindowTitleMacro.ApplicationName), Settings.ApplicationName)
+                .Replace(String.Format("{{{0}}}", WindowTitleMacro.TotalThreads), monitoringInfo.TotalThreads.ToString())
+                .Replace(String.Format("{{{0}}}", WindowTitleMacro.RunningThreads), monitoringInfo.RunningThreads.ToString())
+                .Replace(String.Format("{{{0}}}", WindowTitleMacro.DeadThreads), monitoringInfo.DeadThreads.ToString())
+                .Replace(String.Format("{{{0}}}", WindowTitleMacro.StoppedThreads), monitoringInfo.StoppedThreads.ToString());
         }
     }
 }

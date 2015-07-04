@@ -54,19 +54,25 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
+            this.cboWindowTitle = new System.Windows.Forms.ComboBox();
+            this.txtWindowTitle = new System.Windows.Forms.TextBox();
+            this.lblWindowTitle = new System.Windows.Forms.Label();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
+            this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
+            this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
+            this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
+            this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
             this.btnBackupThreadList = new System.Windows.Forms.Button();
             this.pnlBackupEvery = new System.Windows.Forms.Panel();
             this.lblBackupEvery = new System.Windows.Forms.Label();
             this.txtBackupEvery = new System.Windows.Forms.TextBox();
             this.chkBackupThreadList = new System.Windows.Forms.CheckBox();
-            this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
-            this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
-            this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
-            this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
             this.grpBackup = new System.Windows.Forms.GroupBox();
             this.chkBackupCheckSize = new System.Windows.Forms.CheckBox();
+            this.grpWindow = new System.Windows.Forms.GroupBox();
+            this.pnlWindowTitle = new System.Windows.Forms.Panel();
+            this.btnWindowTitle = new System.Windows.Forms.Button();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
@@ -74,6 +80,8 @@
             this.grpGeneral.SuspendLayout();
             this.pnlBackupEvery.SuspendLayout();
             this.grpBackup.SuspendLayout();
+            this.grpWindow.SuspendLayout();
+            this.pnlWindowTitle.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
@@ -82,7 +90,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDownloadFolder.Location = new System.Drawing.Point(108, 8);
             this.txtDownloadFolder.Name = "txtDownloadFolder";
-            this.txtDownloadFolder.Size = new System.Drawing.Size(506, 20);
+            this.txtDownloadFolder.Size = new System.Drawing.Size(542, 20);
             this.txtDownloadFolder.TabIndex = 1;
             // 
             // lblDownloadFolder
@@ -97,7 +105,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(622, 8);
+            this.btnBrowse.Location = new System.Drawing.Point(658, 8);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(80, 23);
             this.btnBrowse.TabIndex = 2;
@@ -108,7 +116,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(662, 345);
+            this.btnOK.Location = new System.Drawing.Point(698, 359);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(60, 23);
             this.btnOK.TabIndex = 14;
@@ -120,7 +128,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(730, 345);
+            this.btnCancel.Location = new System.Drawing.Point(766, 359);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(68, 23);
             this.btnCancel.TabIndex = 15;
@@ -145,14 +153,14 @@
             this.txtCustomUserAgent.Enabled = false;
             this.txtCustomUserAgent.Location = new System.Drawing.Point(140, 40);
             this.txtCustomUserAgent.Name = "txtCustomUserAgent";
-            this.txtCustomUserAgent.Size = new System.Drawing.Size(656, 20);
+            this.txtCustomUserAgent.Size = new System.Drawing.Size(692, 20);
             this.txtCustomUserAgent.TabIndex = 5;
             // 
             // chkRelativePath
             // 
             this.chkRelativePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkRelativePath.AutoSize = true;
-            this.chkRelativePath.Location = new System.Drawing.Point(710, 12);
+            this.chkRelativePath.Location = new System.Drawing.Point(746, 12);
             this.chkRelativePath.Name = "chkRelativePath";
             this.chkRelativePath.Size = new System.Drawing.Size(89, 17);
             this.chkRelativePath.TabIndex = 3;
@@ -164,7 +172,7 @@
             // 
             this.lblSettingsLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSettingsLocation.AutoSize = true;
-            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 353);
+            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 367);
             this.lblSettingsLocation.Name = "lblSettingsLocation";
             this.lblSettingsLocation.Size = new System.Drawing.Size(85, 13);
             this.lblSettingsLocation.TabIndex = 11;
@@ -174,7 +182,7 @@
             // 
             this.rbSettingsInAppDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInAppDataFolder.AutoSize = true;
-            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 351);
+            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 365);
             this.rbSettingsInAppDataFolder.Name = "rbSettingsInAppDataFolder";
             this.rbSettingsInAppDataFolder.Size = new System.Drawing.Size(130, 17);
             this.rbSettingsInAppDataFolder.TabIndex = 12;
@@ -186,7 +194,7 @@
             // 
             this.rbSettingsInExeFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInExeFolder.AutoSize = true;
-            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 351);
+            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 365);
             this.rbSettingsInExeFolder.Name = "rbSettingsInExeFolder";
             this.rbSettingsInExeFolder.Size = new System.Drawing.Size(107, 17);
             this.rbSettingsInExeFolder.TabIndex = 13;
@@ -404,10 +412,35 @@
             this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
             this.grpGeneral.Location = new System.Drawing.Point(397, 66);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(399, 206);
+            this.grpGeneral.Size = new System.Drawing.Size(437, 204);
             this.grpGeneral.TabIndex = 26;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // cboWindowTitle
+            // 
+            this.cboWindowTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboWindowTitle.FormattingEnabled = true;
+            this.cboWindowTitle.Location = new System.Drawing.Point(71, 29);
+            this.cboWindowTitle.Name = "cboWindowTitle";
+            this.cboWindowTitle.Size = new System.Drawing.Size(128, 21);
+            this.cboWindowTitle.TabIndex = 36;
+            // 
+            // txtWindowTitle
+            // 
+            this.txtWindowTitle.Location = new System.Drawing.Point(71, 3);
+            this.txtWindowTitle.Name = "txtWindowTitle";
+            this.txtWindowTitle.Size = new System.Drawing.Size(351, 20);
+            this.txtWindowTitle.TabIndex = 35;
+            // 
+            // lblWindowTitle
+            // 
+            this.lblWindowTitle.AutoSize = true;
+            this.lblWindowTitle.Location = new System.Drawing.Point(3, 6);
+            this.lblWindowTitle.Name = "lblWindowTitle";
+            this.lblWindowTitle.Size = new System.Drawing.Size(62, 13);
+            this.lblWindowTitle.TabIndex = 34;
+            this.lblWindowTitle.Text = "Title format:";
             // 
             // txtMaximumKilobytesPerSecond
             // 
@@ -425,6 +458,46 @@
             this.lblMaximumKilobytesPerSecond.Size = new System.Drawing.Size(232, 13);
             this.lblMaximumKilobytesPerSecond.TabIndex = 33;
             this.lblMaximumKilobytesPerSecond.Text = "Maximum download speed (kB/s, 0 = unlimited):";
+            // 
+            // chkBlacklistWildcards
+            // 
+            this.chkBlacklistWildcards.AutoSize = true;
+            this.chkBlacklistWildcards.Location = new System.Drawing.Point(6, 134);
+            this.chkBlacklistWildcards.Name = "chkBlacklistWildcards";
+            this.chkBlacklistWildcards.Size = new System.Drawing.Size(147, 17);
+            this.chkBlacklistWildcards.TabIndex = 28;
+            this.chkBlacklistWildcards.Text = "Enable blacklist wildcards";
+            this.chkBlacklistWildcards.UseVisualStyleBackColor = true;
+            // 
+            // chkMinimizeToTray
+            // 
+            this.chkMinimizeToTray.AutoSize = true;
+            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 157);
+            this.chkMinimizeToTray.Name = "chkMinimizeToTray";
+            this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
+            this.chkMinimizeToTray.TabIndex = 27;
+            this.chkMinimizeToTray.Text = "Minimize to tray";
+            this.chkMinimizeToTray.UseVisualStyleBackColor = true;
+            // 
+            // chkInterBoardAutoFollow
+            // 
+            this.chkInterBoardAutoFollow.AutoSize = true;
+            this.chkInterBoardAutoFollow.Location = new System.Drawing.Point(6, 88);
+            this.chkInterBoardAutoFollow.Name = "chkInterBoardAutoFollow";
+            this.chkInterBoardAutoFollow.Size = new System.Drawing.Size(372, 17);
+            this.chkInterBoardAutoFollow.TabIndex = 12;
+            this.chkInterBoardAutoFollow.Text = "Follow threads outside of the current board (only supported for some sites)";
+            this.chkInterBoardAutoFollow.UseVisualStyleBackColor = true;
+            // 
+            // chkRecursiveAutoFollow
+            // 
+            this.chkRecursiveAutoFollow.AutoSize = true;
+            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 65);
+            this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
+            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(343, 17);
+            this.chkRecursiveAutoFollow.TabIndex = 11;
+            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
+            this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
             // btnBackupThreadList
             // 
@@ -474,46 +547,6 @@
             this.chkBackupThreadList.UseVisualStyleBackColor = true;
             this.chkBackupThreadList.CheckedChanged += new System.EventHandler(this.chkBackupThreadList_CheckedChanged);
             // 
-            // chkBlacklistWildcards
-            // 
-            this.chkBlacklistWildcards.AutoSize = true;
-            this.chkBlacklistWildcards.Location = new System.Drawing.Point(6, 134);
-            this.chkBlacklistWildcards.Name = "chkBlacklistWildcards";
-            this.chkBlacklistWildcards.Size = new System.Drawing.Size(147, 17);
-            this.chkBlacklistWildcards.TabIndex = 28;
-            this.chkBlacklistWildcards.Text = "Enable blacklist wildcards";
-            this.chkBlacklistWildcards.UseVisualStyleBackColor = true;
-            // 
-            // chkMinimizeToTray
-            // 
-            this.chkMinimizeToTray.AutoSize = true;
-            this.chkMinimizeToTray.Location = new System.Drawing.Point(6, 157);
-            this.chkMinimizeToTray.Name = "chkMinimizeToTray";
-            this.chkMinimizeToTray.Size = new System.Drawing.Size(98, 17);
-            this.chkMinimizeToTray.TabIndex = 27;
-            this.chkMinimizeToTray.Text = "Minimize to tray";
-            this.chkMinimizeToTray.UseVisualStyleBackColor = true;
-            // 
-            // chkInterBoardAutoFollow
-            // 
-            this.chkInterBoardAutoFollow.AutoSize = true;
-            this.chkInterBoardAutoFollow.Location = new System.Drawing.Point(6, 88);
-            this.chkInterBoardAutoFollow.Name = "chkInterBoardAutoFollow";
-            this.chkInterBoardAutoFollow.Size = new System.Drawing.Size(372, 17);
-            this.chkInterBoardAutoFollow.TabIndex = 12;
-            this.chkInterBoardAutoFollow.Text = "Follow threads outside of the current board (only supported for some sites)";
-            this.chkInterBoardAutoFollow.UseVisualStyleBackColor = true;
-            // 
-            // chkRecursiveAutoFollow
-            // 
-            this.chkRecursiveAutoFollow.AutoSize = true;
-            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 65);
-            this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
-            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(343, 17);
-            this.chkRecursiveAutoFollow.TabIndex = 11;
-            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
-            this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
-            // 
             // grpBackup
             // 
             this.grpBackup.Controls.Add(this.chkBackupCheckSize);
@@ -537,12 +570,45 @@
             this.chkBackupCheckSize.Text = "Do not backup if current size is smaller";
             this.chkBackupCheckSize.UseVisualStyleBackColor = true;
             // 
+            // grpWindow
+            // 
+            this.grpWindow.Controls.Add(this.pnlWindowTitle);
+            this.grpWindow.Location = new System.Drawing.Point(397, 276);
+            this.grpWindow.Name = "grpWindow";
+            this.grpWindow.Size = new System.Drawing.Size(437, 77);
+            this.grpWindow.TabIndex = 34;
+            this.grpWindow.TabStop = false;
+            this.grpWindow.Text = "Window";
+            // 
+            // pnlWindowTitle
+            // 
+            this.pnlWindowTitle.Controls.Add(this.btnWindowTitle);
+            this.pnlWindowTitle.Controls.Add(this.cboWindowTitle);
+            this.pnlWindowTitle.Controls.Add(this.lblWindowTitle);
+            this.pnlWindowTitle.Controls.Add(this.txtWindowTitle);
+            this.pnlWindowTitle.Location = new System.Drawing.Point(6, 16);
+            this.pnlWindowTitle.Name = "pnlWindowTitle";
+            this.pnlWindowTitle.Size = new System.Drawing.Size(425, 54);
+            this.pnlWindowTitle.TabIndex = 32;
+            // 
+            // btnWindowTitle
+            // 
+            this.btnWindowTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnWindowTitle.Location = new System.Drawing.Point(6, 28);
+            this.btnWindowTitle.Name = "btnWindowTitle";
+            this.btnWindowTitle.Size = new System.Drawing.Size(60, 23);
+            this.btnWindowTitle.TabIndex = 35;
+            this.btnWindowTitle.Text = "Insert";
+            this.btnWindowTitle.UseVisualStyleBackColor = true;
+            this.btnWindowTitle.Click += new System.EventHandler(this.btnWindowTitle_Click);
+            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(808, 378);
+            this.ClientSize = new System.Drawing.Size(844, 392);
+            this.Controls.Add(this.grpWindow);
             this.Controls.Add(this.grpBackup);
             this.Controls.Add(this.grpGeneral);
             this.Controls.Add(this.grpNamingStructure);
@@ -580,6 +646,9 @@
             this.pnlBackupEvery.PerformLayout();
             this.grpBackup.ResumeLayout(false);
             this.grpBackup.PerformLayout();
+            this.grpWindow.ResumeLayout(false);
+            this.pnlWindowTitle.ResumeLayout(false);
+            this.pnlWindowTitle.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -631,5 +700,11 @@
         private System.Windows.Forms.TextBox txtMaximumKilobytesPerSecond;
         private System.Windows.Forms.GroupBox grpBackup;
         private System.Windows.Forms.CheckBox chkBackupCheckSize;
+        private System.Windows.Forms.TextBox txtWindowTitle;
+        private System.Windows.Forms.Label lblWindowTitle;
+        private System.Windows.Forms.ComboBox cboWindowTitle;
+        private System.Windows.Forms.GroupBox grpWindow;
+        private System.Windows.Forms.Panel pnlWindowTitle;
+        private System.Windows.Forms.Button btnWindowTitle;
     }
 }

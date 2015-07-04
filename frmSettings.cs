@@ -39,6 +39,9 @@ namespace JDP {
             chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
             chkBackupCheckSize.Checked = Settings.BackupCheckSize ?? false;
             txtMaximumKilobytesPerSecond.Text = ((Settings.MaximumBytesPerSecond ?? 0) / 1024).ToString();
+            txtWindowTitle.Text = Settings.WindowTitle ?? String.Format("{{{0}}}", WindowTitleMacro.ApplicationName);
+            txtWindowTitle.SelectionStart = txtWindowTitle.Text.Length;
+            cboWindowTitle.DataSource = Enum.GetValues(typeof(WindowTitleMacro));
             if (Settings.UseExeDirectoryForSettings == true) {
                 rbSettingsInExeFolder.Checked = true;
             }
@@ -122,6 +125,7 @@ namespace JDP {
                 Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
                 Settings.BackupCheckSize = chkBackupCheckSize.Checked;
                 Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
+                Settings.WindowTitle = txtWindowTitle.Text;
                 Settings.UseExeDirectoryForSettings = rbSettingsInExeFolder.Checked;
 
                 Settings.Save();
@@ -186,6 +190,13 @@ namespace JDP {
             if (!Int64.TryParse(txtMaximumKilobytesPerSecond.Text, out kbps) || kbps < 0 || kbps > Int64.MaxValue / 1024) {
                 txtMaximumKilobytesPerSecond.Text = "0";
             }
+        }
+
+        private void btnWindowTitle_Click(object sender, EventArgs e) {
+            int selectionStart = txtWindowTitle.SelectionStart;
+            string macro = String.Format("{{{0}}}", cboWindowTitle.SelectedValue);
+            txtWindowTitle.Text = txtWindowTitle.Text.Insert(selectionStart, macro);
+            txtWindowTitle.SelectionStart = selectionStart + macro.Length;
         }
 
         private void SetDownloadFolderTextBox(string path) {

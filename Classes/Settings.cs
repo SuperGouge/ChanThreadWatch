@@ -7,9 +7,11 @@ using System.Reflection;
 
 namespace JDP {
     public static class Settings {
-        private const string _appName = "Chan Thread Watch";
-
         private static Dictionary<string, string> _settings;
+
+        public static string ApplicationName {
+            get { return "Chan Thread Watch"; }
+        }
 
         public static bool? UseCustomUserAgent {
             get { return GetBool("UseCustomUserAgent"); }
@@ -186,6 +188,11 @@ namespace JDP {
             get { return GetLong("MaximumBytesPerSecond"); }
             set { SetLong("MaximumBytesPerSecond", value); }
         }
+        
+        public static string WindowTitle {
+            get { return Get("WindowTitle"); }
+            set { Set("WindowTitle", value); }
+        }
 
         public static bool? UseExeDirectoryForSettings { get; set; }
 
@@ -194,7 +201,7 @@ namespace JDP {
         }
 
         public static string AppDataDirectory {
-            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), _appName); }
+            get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationName); }
         }
 
         public static string SettingsFileName {
