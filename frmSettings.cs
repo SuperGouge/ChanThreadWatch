@@ -11,7 +11,11 @@ namespace JDP {
 
         private void frmSettings_Load(object sender, EventArgs e) {
             txtDownloadFolder.Text = Settings.DownloadFolder;
-            chkRelativePath.Checked = Settings.DownloadFolderIsRelative ?? false;
+            chkDownloadFolderRelative.Checked = Settings.DownloadFolderIsRelative ?? false;
+            chkCompletedFolder.Checked = Settings.MoveToCompletedFolder ?? false;
+            txtCompletedFolder.Enabled = btnCompletedFolder.Enabled = chkCompletedFolderRelative.Enabled = chkCompletedFolder.Checked;
+            txtCompletedFolder.Text = Settings.CompletedFolder;
+            chkCompletedFolderRelative.Checked = Settings.CompletedFolderIsRelative ?? false;
             chkCustomUserAgent.Checked = Settings.UseCustomUserAgent ?? false;
             txtCustomUserAgent.Text = Settings.CustomUserAgent ?? String.Empty;
             chkSaveThumbnails.Checked = Settings.SaveThumbnails ?? true;
@@ -66,6 +70,22 @@ namespace JDP {
                     }
                 }
 
+                string completedFolder = txtCompletedFolder.Text.Trim();
+
+                if (chkCompletedFolder.Checked) {
+                    if (completedFolder.Length == 0) {
+                        throw new Exception("You must enter a completed folder.");
+                    }
+                    if (!Directory.Exists(completedFolder)) {
+                        try {
+                            Directory.CreateDirectory(completedFolder);
+                        }
+                        catch {
+                            throw new Exception("Unable to create the completed folder.");
+                        }
+                    }
+                }
+
                 string oldSettingsFolder = Settings.GetSettingsDirectory();
                 string newSettingsFolder = Settings.GetSettingsDirectory(rbSettingsInExeFolder.Checked);
                 if (!String.Equals(newSettingsFolder, oldSettingsFolder, StringComparison.OrdinalIgnoreCase)) {
@@ -95,7 +115,10 @@ namespace JDP {
                 string oldAbsoluteDownloadFolder = Settings.AbsoluteDownloadDirectory;
 
                 Settings.DownloadFolder = downloadFolder;
-                Settings.DownloadFolderIsRelative = chkRelativePath.Checked;
+                Settings.DownloadFolderIsRelative = chkDownloadFolderRelative.Checked;
+                Settings.MoveToCompletedFolder = chkCompletedFolder.Checked;
+                Settings.CompletedFolder = completedFolder;
+                Settings.CompletedFolderIsRelative = chkCompletedFolderRelative.Checked;
                 Settings.UseCustomUserAgent = chkCustomUserAgent.Checked;
                 Settings.CustomUserAgent = txtCustomUserAgent.Text;
                 Settings.SaveThumbnails = chkSaveThumbnails.Checked;
@@ -143,7 +166,7 @@ namespace JDP {
             }
         }
 
-        private void btnBrowse_Click(object sender, EventArgs e) {
+        private void btnDownloadFolder_Click(object sender, EventArgs e) {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog()) {
                 dialog.Description = "Select the download location.";
                 dialog.ShowNewFolderButton = true;
@@ -153,12 +176,30 @@ namespace JDP {
             }
         }
 
+        private void btnCompletedFolder_Click(object sender, EventArgs e) {
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog()) {
+                dialog.Description = "Select the download location.";
+                dialog.ShowNewFolderButton = true;
+                if (dialog.ShowDialog(this) == DialogResult.OK) {
+                    SetCompletedFolderTextBox(dialog.SelectedPath);
+                }
+            }
+        }
+
         private void btnBackupThreadList_Click(object sender, EventArgs e) {
             General.BackupThreadList();
         }
-
-        private void chkRelativePath_CheckedChanged(object sender, EventArgs e) {
+        
+        private void chkDownloadFolderRelative_CheckedChanged(object sender, EventArgs e) {
             SetDownloadFolderTextBox(txtDownloadFolder.Text.Trim());
+        }
+
+        private void chkCompletedFolderRelative_CheckedChanged(object sender, EventArgs e) {
+            SetCompletedFolderTextBox(txtCompletedFolder.Text.Trim());
+        }
+
+        private void chkCompletedFolder_CheckedChanged(object sender, EventArgs e) {
+            txtCompletedFolder.Enabled = btnCompletedFolder.Enabled = chkCompletedFolderRelative.Enabled = chkCompletedFolder.Checked;
         }
 
         private void chkCustomUserAgent_CheckedChanged(object sender, EventArgs e) {
@@ -200,7 +241,13 @@ namespace JDP {
         }
 
         private void SetDownloadFolderTextBox(string path) {
-            txtDownloadFolder.Text = chkRelativePath.Checked ?
+            txtDownloadFolder.Text = chkDownloadFolderRelative.Checked ?
+                General.GetRelativeDirectoryPath(path, Settings.ExeDirectory) :
+                General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
+        }
+
+        private void SetCompletedFolderTextBox(string path) {
+            txtCompletedFolder.Text = chkCompletedFolderRelative.Checked ?
                 General.GetRelativeDirectoryPath(path, Settings.ExeDirectory) :
                 General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
         }

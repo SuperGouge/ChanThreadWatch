@@ -316,7 +316,30 @@ namespace JDP {
         }
 
         private void btnRemoveCompleted_Click(object sender, EventArgs e) {
-            RemoveThreads(true, false);
+            if (Settings.MoveToCompletedFolder != true) {
+                RemoveThreads(true, false);
+            }
+            else {
+                if (!Directory.Exists(Settings.AbsoluteCompletedDirectory)) {
+                    Settings.CompletedFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Completed Threads");
+                    Settings.CompletedFolderIsRelative = false;
+                }
+                RemoveThreads(true, false,
+                        (watcher) => {
+                            string destDir = Path.Combine(Settings.AbsoluteCompletedDirectory, 
+                                General.GetRelativeDirectoryPath(watcher.ThreadDownloadDirectory, watcher.MainDownloadDirectory));
+                            if (Directory.Exists(watcher.ThreadDownloadDirectory)) {
+                                if (Directory.Exists(destDir)) {
+                                    Directory.Delete(destDir);
+                                }
+                                Directory.Move(watcher.ThreadDownloadDirectory, destDir);
+                            }
+                            string categoryPath = General.RemoveLastDirectory(watcher.ThreadDownloadDirectory);
+                            if (categoryPath != watcher.MainDownloadDirectory && Directory.GetFiles(categoryPath).Length == 0 && Directory.GetDirectories(categoryPath).Length == 0) {
+                                Directory.Delete(categoryPath);
+                            }
+                        });
+            }
         }
 
         private void miStop_Click(object sender, EventArgs e) {

@@ -25,12 +25,12 @@
         private void InitializeComponent() {
             this.txtDownloadFolder = new System.Windows.Forms.TextBox();
             this.lblDownloadFolder = new System.Windows.Forms.Label();
-            this.btnBrowse = new System.Windows.Forms.Button();
+            this.btnDownloadFolder = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.chkCustomUserAgent = new System.Windows.Forms.CheckBox();
             this.txtCustomUserAgent = new System.Windows.Forms.TextBox();
-            this.chkRelativePath = new System.Windows.Forms.CheckBox();
+            this.chkDownloadFolderRelative = new System.Windows.Forms.CheckBox();
             this.lblSettingsLocation = new System.Windows.Forms.Label();
             this.rbSettingsInAppDataFolder = new System.Windows.Forms.RadioButton();
             this.rbSettingsInExeFolder = new System.Windows.Forms.RadioButton();
@@ -54,15 +54,15 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
-            this.cboWindowTitle = new System.Windows.Forms.ComboBox();
-            this.txtWindowTitle = new System.Windows.Forms.TextBox();
-            this.lblWindowTitle = new System.Windows.Forms.Label();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
             this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
             this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
+            this.cboWindowTitle = new System.Windows.Forms.ComboBox();
+            this.txtWindowTitle = new System.Windows.Forms.TextBox();
+            this.lblWindowTitle = new System.Windows.Forms.Label();
             this.btnBackupThreadList = new System.Windows.Forms.Button();
             this.pnlBackupEvery = new System.Windows.Forms.Panel();
             this.lblBackupEvery = new System.Windows.Forms.Label();
@@ -73,6 +73,10 @@
             this.grpWindow = new System.Windows.Forms.GroupBox();
             this.pnlWindowTitle = new System.Windows.Forms.Panel();
             this.btnWindowTitle = new System.Windows.Forms.Button();
+            this.txtCompletedFolder = new System.Windows.Forms.TextBox();
+            this.btnCompletedFolder = new System.Windows.Forms.Button();
+            this.chkCompletedFolder = new System.Windows.Forms.CheckBox();
+            this.chkCompletedFolderRelative = new System.Windows.Forms.CheckBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
@@ -90,7 +94,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDownloadFolder.Location = new System.Drawing.Point(108, 8);
             this.txtDownloadFolder.Name = "txtDownloadFolder";
-            this.txtDownloadFolder.Size = new System.Drawing.Size(542, 20);
+            this.txtDownloadFolder.Size = new System.Drawing.Size(544, 20);
             this.txtDownloadFolder.TabIndex = 1;
             // 
             // lblDownloadFolder
@@ -102,21 +106,21 @@
             this.lblDownloadFolder.TabIndex = 0;
             this.lblDownloadFolder.Text = "Download folder:";
             // 
-            // btnBrowse
+            // btnDownloadFolder
             // 
-            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(658, 8);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(80, 23);
-            this.btnBrowse.TabIndex = 2;
-            this.btnBrowse.Text = "Browse...";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.btnDownloadFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadFolder.Location = new System.Drawing.Point(658, 8);
+            this.btnDownloadFolder.Name = "btnDownloadFolder";
+            this.btnDownloadFolder.Size = new System.Drawing.Size(80, 23);
+            this.btnDownloadFolder.TabIndex = 2;
+            this.btnDownloadFolder.Text = "Browse...";
+            this.btnDownloadFolder.UseVisualStyleBackColor = true;
+            this.btnDownloadFolder.Click += new System.EventHandler(this.btnDownloadFolder_Click);
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(698, 359);
+            this.btnOK.Location = new System.Drawing.Point(698, 385);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(60, 23);
             this.btnOK.TabIndex = 14;
@@ -128,7 +132,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(766, 359);
+            this.btnCancel.Location = new System.Drawing.Point(766, 385);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(68, 23);
             this.btnCancel.TabIndex = 15;
@@ -138,7 +142,7 @@
             // chkCustomUserAgent
             // 
             this.chkCustomUserAgent.AutoSize = true;
-            this.chkCustomUserAgent.Location = new System.Drawing.Point(10, 42);
+            this.chkCustomUserAgent.Location = new System.Drawing.Point(10, 66);
             this.chkCustomUserAgent.Name = "chkCustomUserAgent";
             this.chkCustomUserAgent.Size = new System.Drawing.Size(117, 17);
             this.chkCustomUserAgent.TabIndex = 4;
@@ -151,28 +155,28 @@
             this.txtCustomUserAgent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCustomUserAgent.Enabled = false;
-            this.txtCustomUserAgent.Location = new System.Drawing.Point(140, 40);
+            this.txtCustomUserAgent.Location = new System.Drawing.Point(140, 64);
             this.txtCustomUserAgent.Name = "txtCustomUserAgent";
             this.txtCustomUserAgent.Size = new System.Drawing.Size(692, 20);
             this.txtCustomUserAgent.TabIndex = 5;
             // 
-            // chkRelativePath
+            // chkDownloadFolderRelative
             // 
-            this.chkRelativePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkRelativePath.AutoSize = true;
-            this.chkRelativePath.Location = new System.Drawing.Point(746, 12);
-            this.chkRelativePath.Name = "chkRelativePath";
-            this.chkRelativePath.Size = new System.Drawing.Size(89, 17);
-            this.chkRelativePath.TabIndex = 3;
-            this.chkRelativePath.Text = "Relative path";
-            this.chkRelativePath.UseVisualStyleBackColor = true;
-            this.chkRelativePath.CheckedChanged += new System.EventHandler(this.chkRelativePath_CheckedChanged);
+            this.chkDownloadFolderRelative.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkDownloadFolderRelative.AutoSize = true;
+            this.chkDownloadFolderRelative.Location = new System.Drawing.Point(746, 12);
+            this.chkDownloadFolderRelative.Name = "chkDownloadFolderRelative";
+            this.chkDownloadFolderRelative.Size = new System.Drawing.Size(89, 17);
+            this.chkDownloadFolderRelative.TabIndex = 3;
+            this.chkDownloadFolderRelative.Text = "Relative path";
+            this.chkDownloadFolderRelative.UseVisualStyleBackColor = true;
+            this.chkDownloadFolderRelative.CheckedChanged += new System.EventHandler(this.chkDownloadFolderRelative_CheckedChanged);
             // 
             // lblSettingsLocation
             // 
             this.lblSettingsLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSettingsLocation.AutoSize = true;
-            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 367);
+            this.lblSettingsLocation.Location = new System.Drawing.Point(8, 393);
             this.lblSettingsLocation.Name = "lblSettingsLocation";
             this.lblSettingsLocation.Size = new System.Drawing.Size(85, 13);
             this.lblSettingsLocation.TabIndex = 11;
@@ -182,7 +186,7 @@
             // 
             this.rbSettingsInAppDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInAppDataFolder.AutoSize = true;
-            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 365);
+            this.rbSettingsInAppDataFolder.Location = new System.Drawing.Point(108, 391);
             this.rbSettingsInAppDataFolder.Name = "rbSettingsInAppDataFolder";
             this.rbSettingsInAppDataFolder.Size = new System.Drawing.Size(130, 17);
             this.rbSettingsInAppDataFolder.TabIndex = 12;
@@ -194,7 +198,7 @@
             // 
             this.rbSettingsInExeFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rbSettingsInExeFolder.AutoSize = true;
-            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 365);
+            this.rbSettingsInExeFolder.Location = new System.Drawing.Point(252, 391);
             this.rbSettingsInExeFolder.Name = "rbSettingsInExeFolder";
             this.rbSettingsInExeFolder.Size = new System.Drawing.Size(107, 17);
             this.rbSettingsInExeFolder.TabIndex = 13;
@@ -392,7 +396,7 @@
             this.grpNamingStructure.Controls.Add(this.chkSortImagesByPoster);
             this.grpNamingStructure.Controls.Add(this.chkUseSlug);
             this.grpNamingStructure.Controls.Add(this.chkUseOriginalFileNames);
-            this.grpNamingStructure.Location = new System.Drawing.Point(12, 66);
+            this.grpNamingStructure.Location = new System.Drawing.Point(12, 90);
             this.grpNamingStructure.Name = "grpNamingStructure";
             this.grpNamingStructure.Size = new System.Drawing.Size(379, 194);
             this.grpNamingStructure.TabIndex = 25;
@@ -410,37 +414,12 @@
             this.grpGeneral.Controls.Add(this.chkSaveThumbnails);
             this.grpGeneral.Controls.Add(this.chkVerifyImageHashes);
             this.grpGeneral.Controls.Add(this.chkCheckForUpdates);
-            this.grpGeneral.Location = new System.Drawing.Point(397, 66);
+            this.grpGeneral.Location = new System.Drawing.Point(397, 90);
             this.grpGeneral.Name = "grpGeneral";
             this.grpGeneral.Size = new System.Drawing.Size(437, 204);
             this.grpGeneral.TabIndex = 26;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
-            // 
-            // cboWindowTitle
-            // 
-            this.cboWindowTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboWindowTitle.FormattingEnabled = true;
-            this.cboWindowTitle.Location = new System.Drawing.Point(71, 29);
-            this.cboWindowTitle.Name = "cboWindowTitle";
-            this.cboWindowTitle.Size = new System.Drawing.Size(128, 21);
-            this.cboWindowTitle.TabIndex = 36;
-            // 
-            // txtWindowTitle
-            // 
-            this.txtWindowTitle.Location = new System.Drawing.Point(71, 3);
-            this.txtWindowTitle.Name = "txtWindowTitle";
-            this.txtWindowTitle.Size = new System.Drawing.Size(351, 20);
-            this.txtWindowTitle.TabIndex = 35;
-            // 
-            // lblWindowTitle
-            // 
-            this.lblWindowTitle.AutoSize = true;
-            this.lblWindowTitle.Location = new System.Drawing.Point(3, 6);
-            this.lblWindowTitle.Name = "lblWindowTitle";
-            this.lblWindowTitle.Size = new System.Drawing.Size(62, 13);
-            this.lblWindowTitle.TabIndex = 34;
-            this.lblWindowTitle.Text = "Title format:";
             // 
             // txtMaximumKilobytesPerSecond
             // 
@@ -499,6 +478,31 @@
             this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads (only supported for some sites)";
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
+            // cboWindowTitle
+            // 
+            this.cboWindowTitle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboWindowTitle.FormattingEnabled = true;
+            this.cboWindowTitle.Location = new System.Drawing.Point(71, 29);
+            this.cboWindowTitle.Name = "cboWindowTitle";
+            this.cboWindowTitle.Size = new System.Drawing.Size(128, 21);
+            this.cboWindowTitle.TabIndex = 36;
+            // 
+            // txtWindowTitle
+            // 
+            this.txtWindowTitle.Location = new System.Drawing.Point(71, 3);
+            this.txtWindowTitle.Name = "txtWindowTitle";
+            this.txtWindowTitle.Size = new System.Drawing.Size(351, 20);
+            this.txtWindowTitle.TabIndex = 35;
+            // 
+            // lblWindowTitle
+            // 
+            this.lblWindowTitle.AutoSize = true;
+            this.lblWindowTitle.Location = new System.Drawing.Point(3, 6);
+            this.lblWindowTitle.Name = "lblWindowTitle";
+            this.lblWindowTitle.Size = new System.Drawing.Size(62, 13);
+            this.lblWindowTitle.TabIndex = 34;
+            this.lblWindowTitle.Text = "Title format:";
+            // 
             // btnBackupThreadList
             // 
             this.btnBackupThreadList.AutoSize = true;
@@ -553,7 +557,7 @@
             this.grpBackup.Controls.Add(this.chkBackupThreadList);
             this.grpBackup.Controls.Add(this.btnBackupThreadList);
             this.grpBackup.Controls.Add(this.pnlBackupEvery);
-            this.grpBackup.Location = new System.Drawing.Point(12, 266);
+            this.grpBackup.Location = new System.Drawing.Point(12, 290);
             this.grpBackup.Name = "grpBackup";
             this.grpBackup.Size = new System.Drawing.Size(379, 76);
             this.grpBackup.TabIndex = 26;
@@ -573,7 +577,7 @@
             // grpWindow
             // 
             this.grpWindow.Controls.Add(this.pnlWindowTitle);
-            this.grpWindow.Location = new System.Drawing.Point(397, 276);
+            this.grpWindow.Location = new System.Drawing.Point(397, 300);
             this.grpWindow.Name = "grpWindow";
             this.grpWindow.Size = new System.Drawing.Size(437, 77);
             this.grpWindow.TabIndex = 34;
@@ -602,12 +606,60 @@
             this.btnWindowTitle.UseVisualStyleBackColor = true;
             this.btnWindowTitle.Click += new System.EventHandler(this.btnWindowTitle_Click);
             // 
+            // txtCompletedFolder
+            // 
+            this.txtCompletedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCompletedFolder.Location = new System.Drawing.Point(180, 36);
+            this.txtCompletedFolder.Name = "txtCompletedFolder";
+            this.txtCompletedFolder.Size = new System.Drawing.Size(472, 20);
+            this.txtCompletedFolder.TabIndex = 36;
+            // 
+            // btnCompletedFolder
+            // 
+            this.btnCompletedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCompletedFolder.Location = new System.Drawing.Point(658, 34);
+            this.btnCompletedFolder.Name = "btnCompletedFolder";
+            this.btnCompletedFolder.Size = new System.Drawing.Size(80, 23);
+            this.btnCompletedFolder.TabIndex = 37;
+            this.btnCompletedFolder.Text = "Browse...";
+            this.btnCompletedFolder.UseVisualStyleBackColor = true;
+            this.btnCompletedFolder.Click += new System.EventHandler(this.btnCompletedFolder_Click);
+            // 
+            // chkCompletedFolder
+            // 
+            this.chkCompletedFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkCompletedFolder.AutoSize = true;
+            this.chkCompletedFolder.Location = new System.Drawing.Point(10, 39);
+            this.chkCompletedFolder.Name = "chkCompletedFolder";
+            this.chkCompletedFolder.Size = new System.Drawing.Size(164, 17);
+            this.chkCompletedFolder.TabIndex = 38;
+            this.chkCompletedFolder.Text = "Move on Remove Completed";
+            this.chkCompletedFolder.UseVisualStyleBackColor = true;
+            this.chkCompletedFolder.CheckedChanged += new System.EventHandler(this.chkCompletedFolder_CheckedChanged);
+            // 
+            // chkCompletedFolderRelative
+            // 
+            this.chkCompletedFolderRelative.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkCompletedFolderRelative.AutoSize = true;
+            this.chkCompletedFolderRelative.Location = new System.Drawing.Point(746, 38);
+            this.chkCompletedFolderRelative.Name = "chkCompletedFolderRelative";
+            this.chkCompletedFolderRelative.Size = new System.Drawing.Size(89, 17);
+            this.chkCompletedFolderRelative.TabIndex = 39;
+            this.chkCompletedFolderRelative.Text = "Relative path";
+            this.chkCompletedFolderRelative.UseVisualStyleBackColor = true;
+            this.chkCompletedFolderRelative.CheckedChanged += new System.EventHandler(this.chkCompletedFolderRelative_CheckedChanged);
+            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(844, 392);
+            this.ClientSize = new System.Drawing.Size(844, 418);
+            this.Controls.Add(this.chkCompletedFolderRelative);
+            this.Controls.Add(this.chkCompletedFolder);
+            this.Controls.Add(this.btnCompletedFolder);
+            this.Controls.Add(this.txtCompletedFolder);
             this.Controls.Add(this.grpWindow);
             this.Controls.Add(this.grpBackup);
             this.Controls.Add(this.grpGeneral);
@@ -615,12 +667,12 @@
             this.Controls.Add(this.rbSettingsInExeFolder);
             this.Controls.Add(this.rbSettingsInAppDataFolder);
             this.Controls.Add(this.lblSettingsLocation);
-            this.Controls.Add(this.chkRelativePath);
+            this.Controls.Add(this.chkDownloadFolderRelative);
             this.Controls.Add(this.txtCustomUserAgent);
             this.Controls.Add(this.chkCustomUserAgent);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnBrowse);
+            this.Controls.Add(this.btnDownloadFolder);
             this.Controls.Add(this.lblDownloadFolder);
             this.Controls.Add(this.txtDownloadFolder);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -658,12 +710,12 @@
 
         private System.Windows.Forms.TextBox txtDownloadFolder;
         private System.Windows.Forms.Label lblDownloadFolder;
-        private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Button btnDownloadFolder;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.CheckBox chkCustomUserAgent;
         private System.Windows.Forms.TextBox txtCustomUserAgent;
-        private System.Windows.Forms.CheckBox chkRelativePath;
+        private System.Windows.Forms.CheckBox chkDownloadFolderRelative;
         private System.Windows.Forms.Label lblSettingsLocation;
         private System.Windows.Forms.RadioButton rbSettingsInAppDataFolder;
         private System.Windows.Forms.RadioButton rbSettingsInExeFolder;
@@ -706,5 +758,9 @@
         private System.Windows.Forms.GroupBox grpWindow;
         private System.Windows.Forms.Panel pnlWindowTitle;
         private System.Windows.Forms.Button btnWindowTitle;
+        private System.Windows.Forms.TextBox txtCompletedFolder;
+        private System.Windows.Forms.Button btnCompletedFolder;
+        private System.Windows.Forms.CheckBox chkCompletedFolder;
+        private System.Windows.Forms.CheckBox chkCompletedFolderRelative;
     }
 }

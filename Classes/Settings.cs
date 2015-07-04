@@ -68,6 +68,21 @@ namespace JDP {
             set { Set("DownloadFolder", value); }
         }
 
+        public static bool? CompletedFolderIsRelative {
+            get { return GetBool("CompletedFolderIsRelative"); }
+            set { SetBool("CompletedFolderIsRelative", value); }
+        }
+
+        public static string CompletedFolder {
+            get { return Get("CompletedFolder"); }
+            set { Set("CompletedFolder", value); }
+        }
+        
+        public static bool? MoveToCompletedFolder {
+            get { return GetBool("MoveToCompletedFolder"); }
+            set { SetBool("MoveToCompletedFolder", value); }
+        }
+
         public static bool? RenameDownloadFolderWithDescription {
             get { return GetBool("RenameDownloadFolderWithDescription"); }
             set { SetBool("RenameDownloadFolderWithDescription", value); }
@@ -273,6 +288,20 @@ namespace JDP {
                     string dir = DownloadFolder;
                 #endif
                 if (!String.IsNullOrEmpty(dir) && (DownloadFolderIsRelative == true)) {
+                    dir = General.GetAbsoluteDirectoryPath(dir, ExeDirectory);
+                }
+                return dir;
+            }
+        }
+
+        public static string AbsoluteCompletedDirectory {
+            get {
+                #if DEBUG
+                    string dir = Path.Combine(CompletedFolder, DebugFolderName);
+                #else
+                    string dir = CompletedFolder;
+                #endif
+                if (!String.IsNullOrEmpty(dir) && (CompletedFolderIsRelative == true)) {
                     dir = General.GetAbsoluteDirectoryPath(dir, ExeDirectory);
                 }
                 return dir;
