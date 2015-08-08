@@ -359,8 +359,8 @@
             this.miRemoveAndDeleteFolder,
             this.miBlacklist,
             this.miCheckNow,
-            this.miCheckEvery/*,
-            this.miReparse*/});
+            this.miCheckEvery,
+            this.miReparse});
             // 
             // miEdit
             // 
