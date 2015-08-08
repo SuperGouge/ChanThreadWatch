@@ -201,7 +201,7 @@ namespace JDP {
 
             _isExiting = true;
             foreach (ThreadWatcher watcher in ThreadWatchers) {
-                while (!watcher.WaitUntilStopped(10)) {
+                while (!watcher.WaitUntilStopped(10) || !watcher.WaitReparse(10)) {
                     Application.DoEvents();
                 }
             }
@@ -352,7 +352,7 @@ namespace JDP {
         private void miStart_Click(object sender, EventArgs e) {
             if (_isExiting) return;
             foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
-                if (!watcher.IsRunning) {
+                if (!watcher.IsRunning && !watcher.IsReparsing) {
                     watcher.Start();
                 }
             }
@@ -515,8 +515,7 @@ namespace JDP {
         private void miReparse_Click(object sender, EventArgs e) {
             if (_isExiting) return;
             foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
-                if (!watcher.IsRunning && Settings.SaveThumbnails != false) {
-                    //TODO: Prevent program closing when reparsing
+                if (!watcher.IsRunning && !watcher.IsReparsing && Settings.SaveThumbnails != false) {
                     watcher.BeginReparse();
                 }
             }
@@ -578,19 +577,21 @@ namespace JDP {
                 if (selectedCount != 0) {
                     bool anyRunning = false;
                     bool anyStopped = false;
+                    bool anyNotReparsing = false;
                     foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
                         bool isRunning = watcher.IsRunning;
                         anyRunning |= isRunning;
                         anyStopped |= !isRunning;
+                        anyNotReparsing |= !watcher.IsReparsing;
                     }
                     miEdit.Visible = selectedCount == 1;
                     miStop.Visible = anyRunning;
-                    miStart.Visible = anyStopped;
+                    miStart.Visible = anyStopped && anyNotReparsing;
                     miCheckNow.Visible = anyRunning;
                     miCheckEvery.Visible = anyRunning;
-                    miRemove.Visible = anyStopped;
-                    miRemoveAndDeleteFolder.Visible = anyStopped;
-                    miReparse.Visible = anyStopped;
+                    miRemove.Visible = anyStopped && anyNotReparsing;
+                    miRemoveAndDeleteFolder.Visible = anyStopped && anyNotReparsing;
+                    miReparse.Visible = anyStopped && anyNotReparsing;
                     cmThreads.Show(lvThreads, e.Location);
                 }
             }
@@ -937,7 +938,7 @@ namespace JDP {
             int i = 0;
             while (i < lvThreads.Items.Count) {
                 ThreadWatcher watcher = (ThreadWatcher)lvThreads.Items[i].Tag;
-                if ((removeCompleted || (removeSelected && lvThreads.Items[i].Selected)) && !watcher.IsRunning) {
+                if ((removeCompleted || (removeSelected && lvThreads.Items[i].Selected)) && !watcher.IsRunning && !watcher.IsReparsing) {
                     if (preRemoveAction != null) {
                         try { preRemoveAction(watcher); }
                         catch (Exception ex) {
@@ -1155,8 +1156,6 @@ namespace JDP {
             string status = hideDetail ? "Reparsing " + type :
                 String.Format("Reparsing {0}: {1} of {2} completed", type, completeCount, totalCount);
             DisplayStatus(watcher, status);
-            //TODO: Find alternative to Application.DoEvents() (throws StackOverflowException when reparsing a large number of images)
-            //Application.DoEvents();
         }
 
         private void SaveThreadList() {

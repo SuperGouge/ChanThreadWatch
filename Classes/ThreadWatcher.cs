@@ -20,6 +20,7 @@ namespace JDP {
         private bool _hasRun;
         private bool _hasInitialized;
         private ManualResetEvent _checkFinishedEvent = new ManualResetEvent(true);
+        private ManualResetEvent _reparseFinishedEvent = new ManualResetEvent(true);
         private bool _isWaiting;
         private string _pageURL;
         private string _pageAuth;
@@ -306,173 +307,151 @@ namespace JDP {
         }
 
         public void BeginReparse() {
-            //TODO: Find out why UI isn't updated when not using Application.DoEvents() even though we're using a background worker
             _workScheduler.AddItem(TickCount.Now, Reparse);
         }
 
         private void Reparse() {
+            lock (_settingsSync) {
+                _reparseFinishedEvent.Reset();
+            }
+
+            List<PageInfo> pageList = new List<PageInfo> {
+                new PageInfo {
+                    URL = _pageURL
+                }
+            };
+
             string threadDir = ThreadDownloadDirectory;
             string imageDir = ThreadDownloadDirectory;
             string thumbDir = Path.Combine(ThreadDownloadDirectory, "thumbs");
 
-            string path = Path.Combine(threadDir, General.CleanFileName(_threadName) + ".html");
-            if (!File.Exists(path)) return;
+            for (int pageIndex = 0; pageIndex < pageList.Count; pageIndex++) {
+                PageInfo pageInfo = pageList[pageIndex];
+                pageInfo.Path = Path.Combine(threadDir, General.CleanFileName(_threadName) + ((pageIndex == 0) ? String.Empty : ("_" + (pageIndex + 1))) + ".html");
+                if (!File.Exists(pageInfo.Path)) continue;
 
-            Encoding encoding = Encoding.UTF8;
-            try {
-                byte[] bytes = File.ReadAllBytes(path);
-                encoding = General.DetectHTMLEncoding(bytes, null);
-            }
-            catch { }
-
-            string html;
-            try { html = File.ReadAllText(path); }
-            catch { return; }
-            HTMLParser parser = !String.IsNullOrEmpty(html) ? new HTMLParser(html) : null;
-            if (parser == null) return;
-            SiteHelper siteHelper = SiteHelper.GetInstance(PageHost);
-            siteHelper.SetHTMLParser(parser);
-            siteHelper.SetURL(path);
-
-            List<ReplaceInfo> replaceList = new List<ReplaceInfo>();
-            List<ThumbnailInfo> thumbs = new List<ThumbnailInfo>();
-            List<ImageInfo> images = siteHelper.GetImages(replaceList, thumbs, true);
-            if (images.Count == 0) return;
-
-            Dictionary<string, DownloadInfo> completedImages = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
-            Dictionary<string, DownloadInfo> completedThumbs = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
-
-            if (!Directory.Exists(thumbDir)) {
                 try {
-                    Directory.CreateDirectory(thumbDir);
+                    byte[] bytes = File.ReadAllBytes(pageInfo.Path);
+                    pageInfo.Encoding = General.DetectHTMLEncoding(bytes, null);
                 }
-                catch (Exception ex) {
-                    Stop(StopReason.IOError);
-                    Logger.Log(ex.ToString());
+                catch {
+                    pageInfo.Encoding = Encoding.UTF8;
                 }
-            }
 
-            foreach (ThumbnailInfo thumb in thumbs) {
-                completedThumbs[thumb.FileName] = new DownloadInfo {
-                    FileName = thumb.FileName
-                };
-            }
+                string html;
+                try { html = File.ReadAllText(pageInfo.Path); }
+                catch { continue; }
+                HTMLParser parser = !String.IsNullOrEmpty(html) ? new HTMLParser(html) : null;
+                if (parser == null) continue;
+                SiteHelper siteHelper = SiteHelper.GetInstance(PageHost);
+                siteHelper.SetHTMLParser(parser);
+                siteHelper.SetURL(pageInfo.Path);
 
-            int maxFileNameLengthBaseDir = General.GetMaximumFileNameLength(imageDir);
-            foreach (ImageInfo image in images) {
-                OnReparseStatus(new ReparseStatusEventArgs(ReparseType.Image, completedImages.Count, images.Count));
-                string currentPath = new Uri(image.URL).LocalPath;
-                if (!File.Exists(currentPath)) continue;
+                OnReparseStatus(new ReparseStatusEventArgs(ReparseType.Page, pageIndex + 1, pageList.Count));
 
-                string saveFileNameNoExtension;
-                string saveExtension;
-                string savePath;
-                bool pathTooLong = false;
+                pageInfo.ReplaceList = new List<ReplaceInfo>();
+                List<ThumbnailInfo> thumbs = new List<ThumbnailInfo>();
+                List<ImageInfo> images = siteHelper.GetImages(pageInfo.ReplaceList, thumbs, true);
+                if (images.Count == 0) continue;
+                
+                Dictionary<string, DownloadInfo> completedImages = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
+                Dictionary<string, DownloadInfo> completedThumbs = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
 
-                int maxFileNameLength;
-                if (Settings.SortImagesByPoster == true && !String.IsNullOrEmpty(image.Poster)) {
+                if (!Directory.Exists(thumbDir)) {
                     try {
-                        Directory.CreateDirectory(Path.Combine(imageDir, image.Poster));
+                        Directory.CreateDirectory(thumbDir);
                     }
                     catch (Exception ex) {
                         Logger.Log(ex.ToString());
-                        completedImages[image.FileName] = new DownloadInfo {
-                            Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
-                            FileName = Path.GetFileName(currentPath)
-                        };
                         continue;
                     }
-                    maxFileNameLength = General.GetMaximumFileNameLength(Path.Combine(imageDir, image.Poster));
-                }
-                else {
-                    maxFileNameLength = maxFileNameLengthBaseDir;
                 }
 
-                MakeImagePath:
-                if ((Settings.UseOriginalFileNames == true) && !String.IsNullOrEmpty(image.OriginalFileName) && !pathTooLong) {
-                    saveFileNameNoExtension = Path.GetFileNameWithoutExtension(image.OriginalFileName);
-                    saveExtension = Path.GetExtension(image.OriginalFileName);
-                }
-                else {
-                    saveFileNameNoExtension = Path.GetFileNameWithoutExtension(image.FileName);
-                    saveExtension = Path.GetExtension(image.FileName);
+                foreach (ThumbnailInfo thumb in thumbs) {
+                    completedThumbs[thumb.FileName] = new DownloadInfo {
+                        FileName = thumb.FileName
+                    };
                 }
 
-                int iSuffix = 1;
-                string saveFileName;
-                do {
-                    savePath = Path.Combine(Path.Combine(imageDir, Settings.SortImagesByPoster == true ? image.Poster : String.Empty), saveFileNameNoExtension + ((iSuffix == 1) ?
-                        String.Empty : ("_" + iSuffix)) + saveExtension);
-                    saveFileName = Path.GetFileName(savePath);
-                    iSuffix++;
-                } while (currentPath != savePath && File.Exists(savePath));
+                int maxFileNameLengthBaseDir = General.GetMaximumFileNameLength(imageDir);
+                foreach (ImageInfo image in images) {
+                    OnReparseStatus(new ReparseStatusEventArgs(ReparseType.Image, completedImages.Count, images.Count));
+                    string currentPath = new Uri(image.URL).LocalPath;
+                    if (!File.Exists(currentPath)) continue;
 
-                if (saveFileName.Length > maxFileNameLength && !pathTooLong) {
-                    pathTooLong = true;
-                    goto MakeImagePath;
-                }
+                    string saveFileNameNoExtension;
+                    string saveExtension;
+                    string savePath;
+                    bool pathTooLong = false;
 
-                if (String.IsNullOrEmpty(saveFileName)) continue;
-                completedImages[image.FileName] = new DownloadInfo {
-                    Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
-                    FileName = saveFileName
-                };
-
-                try {
-                    File.Move(currentPath, savePath);
-                    string imageFolder = General.RemoveLastDirectory(currentPath);
-                    if (imageFolder != ThreadDownloadDirectory && Directory.GetFiles(imageFolder).Length == 0 && Directory.GetDirectories(imageFolder).Length == 0) {
-                        Directory.Delete(imageFolder);
-                    }
-                }
-                catch (Exception ex) {
-                    Logger.Log(ex.ToString());
-                }
-            }
-
-            OnReparseStatus(new ReparseStatusEventArgs(ReparseType.Page, 0, 1));
-            for (int i = 0; i < replaceList.Count; i++) {
-                ReplaceInfo replace = replaceList[i];
-                DownloadInfo downloadInfo = null;
-                ThreadWatcher watcher;
-                Func<string, string> getRelativeDownloadPath = (fileDownloadDir) => {
-                    return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.Path),
-                        threadDir).Replace(Path.DirectorySeparatorChar, '/');
-                };
-                if (replace.Type == ReplaceType.ImageLinkHref && completedImages.TryGetValue(replace.Tag, out downloadInfo)) {
-                    replace.Value = "href=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(imageDir), false) + "\"";
-                }
-                if (replace.Type == ReplaceType.ImageSrc && completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
-                    replace.Value = "src=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir), false) + "\"";
-                }
-                if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
-                    if (watcher._hasInitialized) {
-                        switch (replace.Type) {
-                            case ReplaceType.QuoteLinkHref:
-                                replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
-                                break;
-                            case ReplaceType.DeadLink:
-                                string[] tagSplit = replace.Tag.Split('/');
-                                string innerHTML = String.Format(">>{0}{1}", _siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
-                                replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
-                                break;
+                    int maxFileNameLength;
+                    if (Settings.SortImagesByPoster == true && !String.IsNullOrEmpty(image.Poster)) {
+                        try {
+                            Directory.CreateDirectory(Path.Combine(imageDir, image.Poster));
                         }
+                        catch (Exception ex) {
+                            Logger.Log(ex.ToString());
+                            completedImages[image.FileName] = new DownloadInfo {
+                                Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
+                                FileName = Path.GetFileName(currentPath)
+                            };
+                            continue;
+                        }
+                        maxFileNameLength = General.GetMaximumFileNameLength(Path.Combine(imageDir, image.Poster));
                     }
                     else {
-                        replaceList.RemoveAt(i);
-                        i--;
+                        maxFileNameLength = maxFileNameLengthBaseDir;
+                    }
+
+                    MakeImagePath:
+                    if ((Settings.UseOriginalFileNames == true) && !String.IsNullOrEmpty(image.OriginalFileName) && !pathTooLong) {
+                        saveFileNameNoExtension = Path.GetFileNameWithoutExtension(image.OriginalFileName);
+                        saveExtension = Path.GetExtension(image.OriginalFileName);
+                    }
+                    else {
+                        saveFileNameNoExtension = Path.GetFileNameWithoutExtension(image.FileName);
+                        saveExtension = Path.GetExtension(image.FileName);
+                    }
+
+                    int iSuffix = 1;
+                    string saveFileName;
+                    do {
+                        savePath = Path.Combine(Path.Combine(imageDir, Settings.SortImagesByPoster == true ? image.Poster : String.Empty), saveFileNameNoExtension + ((iSuffix == 1) ?
+                            String.Empty : ("_" + iSuffix)) + saveExtension);
+                        saveFileName = Path.GetFileName(savePath);
+                        iSuffix++;
+                    } while (currentPath != savePath && File.Exists(savePath));
+
+                    if (saveFileName.Length > maxFileNameLength && !pathTooLong) {
+                        pathTooLong = true;
+                        goto MakeImagePath;
+                    }
+
+                    if (String.IsNullOrEmpty(saveFileName)) continue;
+                    completedImages[image.FileName] = new DownloadInfo {
+                        Folder = Settings.SortImagesByPoster == true ? image.Poster : String.Empty,
+                        FileName = saveFileName
+                    };
+
+                    try {
+                        File.Move(currentPath, savePath);
+                        string imageFolder = General.RemoveLastDirectory(currentPath);
+                        if (imageFolder != ThreadDownloadDirectory && Directory.GetFiles(imageFolder).Length == 0 && Directory.GetDirectories(imageFolder).Length == 0) {
+                            Directory.Delete(imageFolder);
+                        }
+                    }
+                    catch (Exception ex) {
+                        Logger.Log(ex.ToString());
                     }
                 }
+                siteHelper.SetURL(pageInfo.URL);
+                Process(pageInfo, siteHelper, threadDir, imageDir, thumbDir, completedImages, completedThumbs);
+                OnStopStatus(new StopStatusEventArgs(StopReason));
             }
-            //General.AddOtherReplaces(parser, threadDir, replaceList);
-            using (StreamWriter sw = new StreamWriter(path, false, encoding)) {
-                General.WriteReplacedString(parser.PreprocessedHTML, replaceList, sw);
+
+            lock (_settingsSync) {
+                _reparseFinishedEvent.Set();
             }
-            if (parser.FindEndTag("html") != null && File.Exists(path + ".bak")) {
-                try { File.Delete(path + ".bak"); }
-                catch { }
-            }
-            OnStopStatus(new StopStatusEventArgs(StopReason));
         }
 
         public void WaitUntilStopped() {
@@ -481,6 +460,10 @@ namespace JDP {
 
         public bool WaitUntilStopped(int timeout) {
             return _checkFinishedEvent.WaitOne(timeout, false);
+        }
+
+        public bool WaitReparse(int timeout = Timeout.Infinite) {
+            return _reparseFinishedEvent.WaitOne(timeout, false);
         }
 
         public bool IsRunning {
@@ -497,6 +480,14 @@ namespace JDP {
 
         public bool IsStopping {
             get { lock (_settingsSync) { return _isStopping; } }
+        }
+
+        public bool IsReparsing {
+            get {
+                lock (_settingsSync) {
+                    return !_reparseFinishedEvent.WaitOne(0, false);
+                }
+            }
         }
 
         public StopReason StopReason {
@@ -914,47 +905,8 @@ namespace JDP {
 
                     if (!IsStopping || StopReason != StopReason.IOError) {
                         foreach (PageInfo pageInfo in _pageList) {
-                            if (!pageInfo.IsFresh) continue;
-                            HTMLParser htmlParser = siteHelper.GetHTMLParser();
-                            for (int i = 0; i < pageInfo.ReplaceList.Count; i++) {
-                                ReplaceInfo replace = pageInfo.ReplaceList[i];
-                                DownloadInfo downloadInfo = null;
-                                ThreadWatcher watcher;
-                                Func<string, string> getRelativeDownloadPath = (fileDownloadDir) => {
-                                    return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.Path),
-                                        threadDir).Replace(Path.DirectorySeparatorChar, '/');
-                                };
-                                if (replace.Type == ReplaceType.ImageLinkHref && _completedImages.TryGetValue(replace.Tag, out downloadInfo)) {
-                                    replace.Value = "href=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(imageDir), false) + "\"";
-                                }
-                                if (replace.Type == ReplaceType.ImageSrc && _completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
-                                    replace.Value = "src=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir), false) + "\"";
-                                }
-                                if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
-                                    if (watcher._hasInitialized) {
-                                        switch (replace.Type) {
-                                            case ReplaceType.QuoteLinkHref:
-                                                replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
-                                                break;
-                                            case ReplaceType.DeadLink:
-                                                string[] tagSplit = replace.Tag.Split('/');
-                                                string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
-                                                replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
-                                                break;
-                                        }
-                                    }
-                                    else {
-                                        pageInfo.ReplaceList.RemoveAt(i--);
-                                    }
-                                }
-                            }
-                            General.AddOtherReplaces(htmlParser, pageInfo.URL, pageInfo.ReplaceList);
-                            using (StreamWriter sw = new StreamWriter(pageInfo.Path, false, pageInfo.Encoding)) {
-                                General.WriteReplacedString(htmlParser.PreprocessedHTML, pageInfo.ReplaceList, sw);
-                            }
-                            if (htmlParser.FindEndTag("html") != null && File.Exists(pageInfo.Path + ".bak")) {
-                                try { File.Delete(pageInfo.Path + ".bak"); }
-                                catch { }
+                            if (pageInfo.IsFresh) {
+                                Process(pageInfo, siteHelper, threadDir, imageDir, thumbDir, _completedImages, _completedThumbs);
                             }
                         }
                     }
@@ -987,10 +939,55 @@ namespace JDP {
             }
         }
 
+        private void Process(PageInfo pageInfo, SiteHelper siteHelper, string threadDir, string imageDir, string thumbDir, Dictionary<string, DownloadInfo> completedImages, Dictionary<string, DownloadInfo> completedThumbs) {
+            HTMLParser htmlParser = siteHelper.GetHTMLParser();
+            for (int i = 0; i < pageInfo.ReplaceList.Count; i++) {
+                ReplaceInfo replace = pageInfo.ReplaceList[i];
+                DownloadInfo downloadInfo = null;
+                ThreadWatcher watcher;
+                Func<string, string> getRelativeDownloadPath = (fileDownloadDir) => {
+                    return General.GetRelativeFilePath(Path.Combine(fileDownloadDir, downloadInfo.Path),
+                        threadDir).Replace(Path.DirectorySeparatorChar, '/');
+                };
+                if (replace.Type == ReplaceType.ImageLinkHref && completedImages.TryGetValue(replace.Tag, out downloadInfo)) {
+                    replace.Value = "href=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(imageDir), false) + "\"";
+                }
+                if (replace.Type == ReplaceType.ImageSrc && completedThumbs.TryGetValue(replace.Tag, out downloadInfo)) {
+                    replace.Value = "src=\"" + General.HtmlAttributeEncode(getRelativeDownloadPath(thumbDir), false) + "\"";
+                }
+                if (RootThread.DescendantThreads.TryGetValue(replace.Tag, out watcher)) {
+                    if (watcher._hasInitialized) {
+                        switch (replace.Type) {
+                            case ReplaceType.QuoteLinkHref:
+                                replace.Value = "href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\"";
+                                break;
+                            case ReplaceType.DeadLink:
+                                string[] tagSplit = replace.Tag.Split('/');
+                                string innerHTML = String.Format(">>{0}{1}", siteHelper.GetBoardName() != tagSplit[1] ? ">/" + tagSplit[1] + "/" : String.Empty, tagSplit[2]);
+                                replace.Value = "<a class=\"quotelink\" href=\"" + HttpUtility.HtmlAttributeEncode(General.GetRelativeFilePath(Path.Combine(watcher.ThreadDownloadDirectory, General.CleanFileName(watcher.ThreadName) + ".html"), _threadDownloadDirectory)) + "\">" + innerHTML + "</a>";
+                                break;
+                        }
+                    }
+                    else {
+                        pageInfo.ReplaceList.RemoveAt(i--);
+                    }
+                }
+            }
+            General.AddOtherReplaces(htmlParser, pageInfo.URL, pageInfo.ReplaceList);
+            using (StreamWriter sw = new StreamWriter(pageInfo.Path, false, pageInfo.Encoding)) {
+                General.WriteReplacedString(htmlParser.PreprocessedHTML, pageInfo.ReplaceList, sw);
+            }
+            if (htmlParser.FindEndTag("html") != null && File.Exists(pageInfo.Path + ".bak")) {
+                try { File.Delete(pageInfo.Path + ".bak"); }
+                catch { }
+            }
+        }
+
         private void TryRenameThreadDownloadDirectory(bool calledFromCheck) {
             bool renamedDir = false;
             lock (_settingsSync) {
                 if ((!calledFromCheck && !_checkFinishedEvent.WaitOne(0, false)) ||
+                    !_reparseFinishedEvent.WaitOne(0, false) ||
                     String.IsNullOrEmpty(_threadDownloadDirectory) ||
                     String.IsNullOrEmpty(_description) ||
                     (IsStopping && (StopReason == StopReason.IOError || StopReason == StopReason.Exiting)))
