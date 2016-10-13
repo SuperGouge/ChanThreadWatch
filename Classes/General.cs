@@ -437,14 +437,14 @@ namespace JDP {
             char[] separators = new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
             dir = dir.TrimEnd(separators);
             int pos = dir.LastIndexOfAny(separators);
-            return (pos == -1) ? dir : dir.Substring(pos + 1);
+            return (pos == -1) ? String.Empty : dir.Substring(pos + 1);
         }
 
         public static string RemoveLastDirectory(string dir) {
             char[] separators = new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
             dir = dir.TrimEnd(separators);
             int pos = dir.LastIndexOfAny(separators);
-            return (pos == -1) ? String.Empty : dir.Substring(0, pos);
+            return (pos == -1) ? dir : dir.Substring(0, pos);
         }
 
         public static int GetMaximumFileNameLength(string dir) {

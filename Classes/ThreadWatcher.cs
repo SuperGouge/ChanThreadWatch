@@ -140,10 +140,12 @@ namespace JDP {
         private bool ThreadDownloadDirectoryPendingCategoryRename {
             get {
                 lock (_settingsSync) {
+                    if (String.IsNullOrEmpty(_threadDownloadDirectory) || Settings.RenameDownloadFolderWithCategory != true) {
+                        return false;
+                    }
                     string categoryPath = General.RemoveLastDirectory(_threadDownloadDirectory);
-                    return !String.IsNullOrEmpty(_threadDownloadDirectory) &&
-                           Settings.RenameDownloadFolderWithCategory == true &&
-                           !String.Equals(categoryPath != _mainDownloadDirectory ? General.GetLastDirectory(categoryPath) : String.Empty, General.CleanFileName(_category), StringComparison.Ordinal);
+                    string categoryName = categoryPath != _mainDownloadDirectory ? General.GetLastDirectory(categoryPath) : String.Empty;
+                    return !String.Equals(categoryName, General.CleanFileName(_category), StringComparison.Ordinal);
                 }
             }
         }
