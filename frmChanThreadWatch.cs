@@ -304,7 +304,7 @@ namespace JDP {
                     FocusThread(url);
                 }
                 else {
-                    SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(url)).Host);
+                    SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(url)).Host);
                     siteHelper.SetURL(url);
                     ThreadWatcher watcher;
                     if (_watchers.TryGetValue(siteHelper.GetPageID(), out watcher)) {
@@ -827,7 +827,7 @@ namespace JDP {
                     Category = watcher.Category,
                     AutoFollow = Settings.RecursiveAutoFollow != false
                 };
-                SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
+                SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(thread.URL)).Host);
                 siteHelper.SetURL(thread.URL);
                 if (_watchers.ContainsKey(siteHelper.GetPageID())) return;
                 if (AddThread(thread)) {
@@ -857,7 +857,7 @@ namespace JDP {
             ThreadWatcher watcher = null;
             ThreadWatcher parentThread = null;
             ListViewItem newListViewItem = null;
-            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(thread.URL)).Host);
+            SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(thread.URL)).Host);
             siteHelper.SetURL(thread.URL);
             string pageID = siteHelper.GetPageID();
             if (IsBlacklisted(pageID)) return false;
@@ -1434,7 +1434,7 @@ namespace JDP {
         }
         
         private void FocusThread(string pageURL) {
-            SiteHelper siteHelper = SiteHelper.GetInstance((new Uri(pageURL)).Host);
+            SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(pageURL)).Host);
             siteHelper.SetURL(pageURL);
             ThreadWatcher watcher;
             if (_watchers.TryGetValue(siteHelper.GetPageID(), out watcher)) {

@@ -8,25 +8,49 @@ using System.Text.RegularExpressions;
 using System.Web;
 
 namespace JDP {
-    public class SiteHelper {
-        protected string _url = String.Empty;
-        protected HTMLParser _htmlParser;
+    public static class SiteHelpers {
+        private static readonly Dictionary<string, Type> _siteHelpers = new Dictionary<string, Type> {
+            { "4chan.org", typeof(FourChanSiteHelper) },
+            { "8ch.net", typeof(InfinitechanSiteHelper) },
+            { "krautchan.net", typeof(KrautchanSiteHelper) },
+
+            { "archive.rebeccablacktech.com", typeof(FuukaSiteHelper) },
+            { "rbt.asia", typeof(FuukaSiteHelper) },
+            { "warosu.org", typeof(FuukaSiteHelper) },
+
+            { "4plebs.org", typeof(FoolFuukaSiteHelper) },
+            { "archive.nyafuu.org", typeof(FoolFuukaSiteHelper) },
+            { "desuarchive.org", typeof(FoolFuukaSiteHelper) },
+            { "boards.fireden.net", typeof(FoolFuukaSiteHelper) },
+            { "arch.b4k.co", typeof(FoolFuukaSiteHelper) },
+            { "archive.loveisover.me", typeof(FoolFuukaSiteHelper) },
+            { "archived.moe", typeof(FoolFuukaSiteHelper) },
+            { "thebarchive.com", typeof(FoolFuukaSiteHelper) },
+            { "archiveofsins.com", typeof(FoolFuukaSiteHelper) },
+
+            { "archive.b-stats.org", typeof(FourChanLookAlikeSiteHelper) },
+            { "4chanarchives.cu.cc", typeof(FourChanLookAlikeSiteHelper) }
+        };
 
         public static SiteHelper GetInstance(string host) {
             Type type = null;
-            try {
-                string ns = (typeof(SiteHelper)).Namespace;
-                string[] hostSplit = host.ToLower(CultureInfo.InvariantCulture).Split('.');
-                for (int i = 0; i < hostSplit.Length - 1; i++) {
-                    type = Assembly.GetExecutingAssembly().GetType(ns + ".SiteHelper_" +
-                                                                   String.Join("_", hostSplit, i, hostSplit.Length - i));
-                    if (type != null) break;
+            string[] hostSplit = host.ToLower(CultureInfo.InvariantCulture).Split('.');
+            for (int i = hostSplit.Length - 1; i >= 0; i--) {
+                string domain = String.Join(".", hostSplit, i, hostSplit.Length - i);
+                if (_siteHelpers.ContainsKey(domain)) {
+                    type = _siteHelpers[domain];
                 }
             }
-            catch { }
-            if (type == null) type = typeof(SiteHelper);
-            return (SiteHelper)Activator.CreateInstance(type);
+            if (type != null && type.IsSubclassOf(typeof(SiteHelper))) {
+                return (SiteHelper)Activator.CreateInstance(type);
+            }
+            return new SiteHelper();
         }
+    }
+
+    public class SiteHelper {
+        protected string _url = String.Empty;
+        protected HTMLParser _htmlParser;
 
         public void SetURL(string url) {
             _url = url;
@@ -199,7 +223,7 @@ namespace JDP {
         }
     }
 
-    public class SiteHelper_4chan_org : SiteHelper {
+    public class FourChanSiteHelper : SiteHelper {
         public override string GetThreadName() {
             if (HasSlug()) {
                 return GetThreadName(Settings.SlugType);
@@ -566,7 +590,137 @@ namespace JDP {
         }
     }
 
-    public class SiteHelper_8ch_net : SiteHelper {
+    public class FourChanLookAlikeSiteHelper : SiteHelper {
+        public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
+            List<ImageInfo> imageList = new List<ImageInfo>();
+            bool seenSpoiler = false;
+
+            foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
+                t => HTMLParser.ClassAttributeValueHas(t, "post")), t => _htmlParser.CreateTagRange(t)), r => r != null))
+            {
+                HTMLTagRange fileTextDivTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "div", "span"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
+                if (fileTextDivTagRange == null) continue;
+
+                HTMLTagRange fileThumbLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "a"), t => HTMLParser.ClassAttributeValueHas(t, "fileThumb"))));
+                if (fileThumbLinkTagRange == null) continue;
+
+                HTMLTag fileTextLinkStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "a");
+                if (fileTextLinkStartTag == null) continue;
+
+                HTMLTag fileThumbImageTag = _htmlParser.FindStartTag(fileThumbLinkTagRange, "img");
+                if (fileThumbImageTag == null) continue;
+
+                string imageURL = fileTextLinkStartTag.GetAttributeValue("href");
+                if (imageURL == null) continue;
+
+                string thumbURL = fileThumbImageTag.GetAttributeValue("src");
+                if (thumbURL == null) continue;
+
+                bool isSpoiler = HTMLParser.ClassAttributeValueHas(fileThumbLinkTagRange.StartTag, "imgspoiler");
+
+                string originalFileName;
+                if (isSpoiler) {
+                    originalFileName = fileTextDivTagRange.StartTag.GetAttributeValue("title");
+                }
+                else {
+                    originalFileName = fileTextLinkStartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(fileTextLinkStartTag));
+                }
+
+                string poster = String.Empty;
+                HTMLTagRange nameBlockSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                    _htmlParser.FindStartTags(postTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "nameBlock"))));
+
+                if (nameBlockSpanTagRange != null) {
+                    HTMLTagRange nameSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "name"))));
+
+                    HTMLTagRange posterTripSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "postertrip"))));
+
+                    HTMLTagRange idSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
+                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "hand"))));
+
+                    if (idSpanTagRange != null) {
+                        poster = _htmlParser.GetInnerHTML(idSpanTagRange);
+                    }
+                    else if (nameSpanTagRange != null) {
+                        string name = _htmlParser.GetInnerHTML(nameSpanTagRange);
+                        if (posterTripSpanTagRange != null) {
+                            poster = name + _htmlParser.GetInnerHTML(posterTripSpanTagRange);
+                        }
+                        else if (name != "Anonymous") {
+                            poster = name;
+                        }
+                    }
+                }
+
+                ImageInfo image = new ImageInfo {
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
+                    Referer = _url,
+                    OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
+                    Poster = General.CleanFileName(poster)
+                };
+                if (image.URL.Length == 0 || image.FileName.Length == 0) continue;
+
+                ThumbnailInfo thumb = new ThumbnailInfo {
+                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
+                    Referer = _url
+                };
+                if (thumb.URL == null || thumb.FileName.Length == 0) continue;
+
+                if (replaceList != null) {
+                    HTMLAttribute attribute;
+
+                    attribute = fileTextLinkStartTag.GetAttribute("href");
+                    if (attribute != null) {
+                        replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageLinkHref,
+                                Tag = image.FileName
+                            });
+                    }
+
+                    attribute = fileThumbLinkTagRange.StartTag.GetAttribute("href");
+                    if (attribute != null) {
+                        replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageLinkHref,
+                                Tag = image.FileName
+                            });
+                    }
+
+                    attribute = fileThumbImageTag.GetAttribute("src");
+                    if (attribute != null) {
+                        replaceList.Add(
+                            new ReplaceInfo {
+                                Offset = attribute.Offset,
+                                Length = attribute.Length,
+                                Type = ReplaceType.ImageSrc,
+                                Tag = thumb.FileName
+                            });
+                    }
+                }
+
+                imageList.Add(image);
+
+                if (!isSpoiler || !seenSpoiler) {
+                    thumbnailList.Add(thumb);
+                    if (isSpoiler)
+                        seenSpoiler = true;
+                }
+            }
+
+            return imageList;
+        }
+    }
+
+    public class InfinitechanSiteHelper : SiteHelper {
         public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
             List<ImageInfo> imageList = new List<ImageInfo>();
             bool seenSpoiler = false;
@@ -847,7 +1001,7 @@ namespace JDP {
         }
     }
 
-    public class SiteHelper_krautchan_net : SiteHelper {
+    public class KrautchanSiteHelper : SiteHelper {
         public override string GetThreadName() {
             string threadName = base.GetThreadName();
             if (threadName.StartsWith("thread-", StringComparison.OrdinalIgnoreCase)) {
@@ -861,7 +1015,7 @@ namespace JDP {
         }
     }
 
-    public abstract class FuukaSiteHelper : SiteHelper {
+    public class FuukaSiteHelper : SiteHelper {
         protected override bool IsImage(HTMLTag linkTag) {
             return Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags(_htmlParser.CreateTagRange(linkTag), "img"), t => HTMLParser.ClassAttributeValueHas(t, "thumb"))) != null;
         }
@@ -978,14 +1132,8 @@ namespace JDP {
             return imageList;
         }
     }
-
-    public class SiteHelper_archive_rebeccablacktech_com : FuukaSiteHelper { }
-
-    public class SiteHelper_rbt_asia : FuukaSiteHelper { }
-
-    public class SiteHelper_warosu_org : FuukaSiteHelper { }
     
-    public abstract class FoolFuukaSiteHelper : SiteHelper {
+    public class FoolFuukaSiteHelper : SiteHelper {
         public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
             List<ImageInfo> imageList = new List<ImageInfo>();
 
@@ -1130,20 +1278,4 @@ namespace JDP {
             return imageList;
         }
     }
-
-    public class SiteHelper_archive_moe : FoolFuukaSiteHelper { }
-    
-    public class SiteHelper_4plebs_org : FoolFuukaSiteHelper { }
-    
-    public class SiteHelper_archive_nyafuu_org : FoolFuukaSiteHelper { }
-
-    public class SiteHelper_archive_loveisover_me : FoolFuukaSiteHelper { }
-
-    public class SiteHelper_fgts_jp : FoolFuukaSiteHelper { }
-
-    public class SiteHelper_not4plebs_org : FoolFuukaSiteHelper { }
-
-    public class SiteHelper_archive_desustorage_org : FoolFuukaSiteHelper { }
-
-    public class SiteHelper_archive8_desustorage_org : FoolFuukaSiteHelper { }
 }

@@ -52,7 +52,7 @@ namespace JDP {
 
         public ThreadWatcher(string pageURL) {
             _pageURL = pageURL;
-            _siteHelper = SiteHelper.GetInstance(PageHost);
+            _siteHelper = SiteHelpers.GetInstance(PageHost);
             _siteHelper.SetURL(PageURL);
             _pageID = _siteHelper.GetPageID();
             _threadName = _siteHelper.GetThreadName();
@@ -346,7 +346,7 @@ namespace JDP {
                 catch { continue; }
                 HTMLParser parser = !String.IsNullOrEmpty(html) ? new HTMLParser(html) : null;
                 if (parser == null) continue;
-                SiteHelper siteHelper = SiteHelper.GetInstance(PageHost);
+                SiteHelper siteHelper = SiteHelpers.GetInstance(PageHost);
                 siteHelper.SetHTMLParser(parser);
                 siteHelper.SetURL(pageInfo.Path);
 
@@ -588,7 +588,7 @@ namespace JDP {
 
         private void Check() {
             try {
-                SiteHelper siteHelper = SiteHelper.GetInstance(PageHost);
+                SiteHelper siteHelper = SiteHelpers.GetInstance(PageHost);
 
                 try {
                     lock (_settingsSync) {
@@ -687,7 +687,7 @@ namespace JDP {
 
                         if (AutoFollow) {
                             foreach (string crossLink in siteHelper.GetCrossLinks(pageInfo.ReplaceList, Settings.InterBoardAutoFollow != false)) {
-                                SiteHelper crossLinkSiteHelper = SiteHelper.GetInstance((new Uri(crossLink)).Host);
+                                SiteHelper crossLinkSiteHelper = SiteHelpers.GetInstance((new Uri(crossLink)).Host);
                                 crossLinkSiteHelper.SetURL(crossLink);
                                 string crossLinkID = crossLinkSiteHelper.GetPageID();
                                 if (!RootThread.DescendantThreads.ContainsKey(crossLinkID) && RootThread.PageID != crossLinkID) OnAddThread(new AddThreadEventArgs(crossLink));
