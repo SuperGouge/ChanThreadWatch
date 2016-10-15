@@ -225,7 +225,7 @@ namespace JDP {
         }
     }
 
-    public class FourChanSiteHelper : SiteHelper {
+    public class FourChanSiteHelper : FourChanLookAlikeSiteHelper {
         public override string GetThreadName() {
             if (HasSlug()) {
                 return GetThreadName(Settings.SlugType);
@@ -265,142 +265,6 @@ namespace JDP {
 
         protected override bool HasSlug(string url) {
             return url.Contains("/thread/") && SplitURL(url).Length == 5;
-        }
-
-        protected override string ImageURLKeyword {
-            get { return "//i.4cdn.org/"; }
-        }
-
-        public override List<ImageInfo> GetImages(List<ReplaceInfo> replaceList, List<ThumbnailInfo> thumbnailList, bool local = false) {
-            List<ImageInfo> imageList = new List<ImageInfo>();
-            bool seenSpoiler = false;
-
-            foreach (HTMLTagRange postTagRange in Enumerable.Where(Enumerable.Select(Enumerable.Where(_htmlParser.FindStartTags("div"),
-                t => HTMLParser.ClassAttributeValueHas(t, "post")), t => _htmlParser.CreateTagRange(t)), r => r != null))
-            {
-                HTMLTagRange fileTextDivTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                    _htmlParser.FindStartTags(postTagRange, "div"), t => HTMLParser.ClassAttributeValueHas(t, "fileText"))));
-                if (fileTextDivTagRange == null) continue;
-
-                HTMLTagRange fileThumbLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                    _htmlParser.FindStartTags(postTagRange, "a"), t => HTMLParser.ClassAttributeValueHas(t, "fileThumb"))));
-                if (fileThumbLinkTagRange == null) continue;
-
-                HTMLTag fileTextLinkStartTag = _htmlParser.FindStartTag(fileTextDivTagRange, "a");
-                if (fileTextLinkStartTag == null) continue;
-
-                HTMLTag fileThumbImageTag = _htmlParser.FindStartTag(fileThumbLinkTagRange, "img");
-                if (fileThumbImageTag == null) continue;
-
-                string imageURL = fileTextLinkStartTag.GetAttributeValue("href");
-                if (imageURL == null || (!local && imageURL.IndexOf(ImageURLKeyword, StringComparison.OrdinalIgnoreCase) == -1)) continue;
-
-                string thumbURL = fileThumbImageTag.GetAttributeValue("src");
-                if (thumbURL == null) continue;
-
-                bool isSpoiler = HTMLParser.ClassAttributeValueHas(fileThumbLinkTagRange.StartTag, "imgspoiler");
-
-                string originalFileName;
-                if (isSpoiler) {
-                    originalFileName = fileTextDivTagRange.StartTag.GetAttributeValue("title");
-                }
-                else {
-                    originalFileName = fileTextLinkStartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(fileTextLinkStartTag));
-                }
-
-                string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
-                if (imageMD5 == null) continue;
-
-                string poster = String.Empty;
-                HTMLTagRange nameBlockSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                    _htmlParser.FindStartTags(postTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "nameBlock"))));
-
-                if (nameBlockSpanTagRange != null) {
-                    HTMLTagRange nameSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "name"))));
-
-                    HTMLTagRange posterTripSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "postertrip"))));
-
-                    HTMLTagRange idSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
-                        _htmlParser.FindStartTags(nameBlockSpanTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "hand"))));
-                    
-                    if (idSpanTagRange != null) {
-                        poster = _htmlParser.GetInnerHTML(idSpanTagRange);
-                    }
-                    else if (nameSpanTagRange != null) {
-                        string name = _htmlParser.GetInnerHTML(nameSpanTagRange);
-                        if (posterTripSpanTagRange != null) {
-                            poster = name + _htmlParser.GetInnerHTML(posterTripSpanTagRange);
-                        }
-                        else if (name != "Anonymous") {
-                            poster = name;
-                        }
-                    }
-                }
-                
-                ImageInfo image = new ImageInfo {
-                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
-                    Referer = _url,
-                    OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
-                    HashType = HashType.MD5,
-                    Hash = General.TryBase64Decode(imageMD5),
-                    Poster = General.CleanFileName(poster)
-                };
-                if (image.URL.Length == 0 || image.FileName.Length == 0 || image.Hash == null) continue;
-
-                ThumbnailInfo thumb = new ThumbnailInfo {
-                    URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
-                    Referer = _url
-                };
-                if (thumb.URL == null || thumb.FileName.Length == 0) continue;
-
-                if (replaceList != null) {
-                    HTMLAttribute attribute;
-
-                    attribute = fileTextLinkStartTag.GetAttribute("href");
-                    if (attribute != null) {
-                        replaceList.Add(
-                            new ReplaceInfo {
-                                Offset = attribute.Offset,
-                                Length = attribute.Length,
-                                Type = ReplaceType.ImageLinkHref,
-                                Tag = image.FileName
-                            });
-                    }
-
-                    attribute = fileThumbLinkTagRange.StartTag.GetAttribute("href");
-                    if (attribute != null) {
-                        replaceList.Add(
-                            new ReplaceInfo {
-                                Offset = attribute.Offset,
-                                Length = attribute.Length,
-                                Type = ReplaceType.ImageLinkHref,
-                                Tag = image.FileName
-                            });
-                    }
-
-                    attribute = fileThumbImageTag.GetAttribute("src");
-                    if (attribute != null) {
-                        replaceList.Add(
-                            new ReplaceInfo {
-                                Offset = attribute.Offset,
-                                Length = attribute.Length,
-                                Type = ReplaceType.ImageSrc,
-                                Tag = thumb.FileName
-                            });
-                    }
-                }
-
-                imageList.Add(image);
-
-                if (!isSpoiler || !seenSpoiler) {
-                    thumbnailList.Add(thumb);
-                    if (isSpoiler) seenSpoiler = true;
-                }
-            }
-
-            return imageList;
         }
 
         public override HashSet<string> GetCrossLinks(List<ReplaceInfo> replaceList, bool interBoardAutoFollow) {
@@ -630,6 +494,8 @@ namespace JDP {
                     originalFileName = fileTextLinkStartTag.GetAttributeValue("title") ?? _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(fileTextLinkStartTag));
                 }
 
+                string imageMD5 = fileThumbImageTag.GetAttributeValue("data-md5");
+
                 string poster = String.Empty;
                 HTMLTagRange nameBlockSpanTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(
                     _htmlParser.FindStartTags(postTagRange, "span"), t => HTMLParser.ClassAttributeValueHas(t, "nameBlock"))));
@@ -661,10 +527,12 @@ namespace JDP {
                 ImageInfo image = new ImageInfo {
                     URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(imageURL)),
                     Referer = _url,
+                    HashType = imageMD5 != null ? HashType.MD5 : HashType.None,
+                    Hash = imageMD5 != null ? General.TryBase64Decode(imageMD5) : null,
                     OriginalFileName = General.CleanFileName(HttpUtility.HtmlDecode(originalFileName) ?? ""),
                     Poster = General.CleanFileName(poster)
                 };
-                if (image.URL.Length == 0 || image.FileName.Length == 0) continue;
+                if (image.URL.Length == 0 || image.FileName.Length == 0 || (image.HashType != HashType.None && image.Hash == null)) continue;
 
                 ThumbnailInfo thumb = new ThumbnailInfo {
                     URL = General.GetAbsoluteURL(_url, HttpUtility.HtmlDecode(thumbURL)),
@@ -713,8 +581,7 @@ namespace JDP {
 
                 if (!isSpoiler || !seenSpoiler) {
                     thumbnailList.Add(thumb);
-                    if (isSpoiler)
-                        seenSpoiler = true;
+                    if (isSpoiler) seenSpoiler = true;
                 }
             }
 
