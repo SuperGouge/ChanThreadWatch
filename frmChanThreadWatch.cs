@@ -1165,6 +1165,8 @@ namespace JDP {
                 // in a partially written file.
                 List<string> lines = new List<string>();
                 lines.Add("4"); // File version
+                lines.Add("");
+                lines.Add("--------------------"); // Creating separation between file version and threads for cleanliness
                 foreach (ThreadWatcher watcher in ThreadWatchers) {
                     WatcherExtraData extraData = (WatcherExtraData)watcher.Tag;
                     lines.Add(watcher.PageURL);
