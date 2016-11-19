@@ -1165,6 +1165,8 @@ namespace JDP {
                 // in a partially written file.
                 List<string> lines = new List<string>();
                 lines.Add("4"); // File version
+                lines.Add("");
+                lines.Add("--------------------"); // Creating separation between file version and threads for cleanliness
                 foreach (ThreadWatcher watcher in ThreadWatchers) {
                     WatcherExtraData extraData = (WatcherExtraData)watcher.Tag;
                     lines.Add(watcher.PageURL);
@@ -1180,6 +1182,7 @@ namespace JDP {
                     lines.Add(extraData.AddedFrom);
                     lines.Add(watcher.Category);
                     lines.Add(watcher.AutoFollow ? "1" : "0");
+                    lines.Add("--------------------"); // Creating separation between threads for cleanliness
                 }
                 string path = Path.Combine(Settings.GetSettingsDirectory(), Settings.ThreadsFileName);
                 File.WriteAllLines(path, lines.ToArray());
@@ -1198,10 +1201,10 @@ namespace JDP {
                 int fileVersion = Int32.Parse(lines[0]);
                 int linesPerThread;
                 switch (fileVersion) {
-                    case 1: linesPerThread = 6; break;
-                    case 2: linesPerThread = 7; break;
-                    case 3: linesPerThread = 10; break;
-                    case 4: linesPerThread = 13; break;
+                    case 1: linesPerThread = 7; break;
+                    case 2: linesPerThread = 8; break;
+                    case 3: linesPerThread = 11; break;
+                    case 4: linesPerThread = 14; break;
                     default: return;
                 }
                 if (lines.Length < (1 + linesPerThread)) return;
