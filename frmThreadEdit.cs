@@ -58,8 +58,6 @@ namespace JDP {
                 chkAutoFollow.Enabled = false;
                 pnlCheckEvery.Enabled = false;
             }
-            cboCheckEvery.SelectedIndexChanged += cboCheckEvery_SelectedIndexChanged;
-            txtCheckEvery.TextChanged += txtCheckEvery_TextChanged;
         }
 
         public string Description {
@@ -113,12 +111,7 @@ namespace JDP {
         private void cboCheckEvery_SelectedIndexChanged(object sender, EventArgs e) {
             if (cboCheckEvery.SelectedIndex == -1) return;
             if (cboCheckEvery.Focused) txtCheckEvery.Clear();
-            if (_cboCheckEveryLastValue == null && (int)cboCheckEvery.SelectedValue == 0) {
-                _cboCheckEveryLastValue = 3;
-            }
-            else {
-                _cboCheckEveryLastValue = cboCheckEvery.SelectedValue;
-            }
+            _cboCheckEveryLastValue = cboCheckEvery.SelectedValue;
         }
 
         private void chkOneTime_CheckedChanged(object sender, EventArgs e) {

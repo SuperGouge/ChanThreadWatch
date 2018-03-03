@@ -164,6 +164,7 @@
             this.txtCheckEvery.Name = "txtCheckEvery";
             this.txtCheckEvery.Size = new System.Drawing.Size(40, 20);
             this.txtCheckEvery.TabIndex = 10;
+            this.txtCheckEvery.TextChanged += new System.EventHandler(this.txtCheckEvery_TextChanged);
             // 
             // cboCheckEvery
             // 
@@ -173,6 +174,7 @@
             this.cboCheckEvery.Name = "cboCheckEvery";
             this.cboCheckEvery.Size = new System.Drawing.Size(55, 21);
             this.cboCheckEvery.TabIndex = 8;
+            this.cboCheckEvery.SelectedIndexChanged += new System.EventHandler(this.cboCheckEvery_SelectedIndexChanged);
             // 
             // lblCheckEvery
             // 
