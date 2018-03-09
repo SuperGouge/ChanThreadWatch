@@ -34,6 +34,7 @@ namespace JDP {
             const int readBufferSize = 8192;
             const int requestTimeoutMS = 60000;
             const int readTimeoutMS = 60000;
+            string metaRedirectHtml;
             object sync = new object();
             bool aborting = false;
             HttpWebRequest request = null;
@@ -89,7 +90,37 @@ namespace JDP {
                             try {
                                 if (aborting) return;
                                 response = (HttpWebResponse)request.EndGetResponse(requestResultParam);
-                                responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                if (response.ContentType == ContentType.TextHtml) {
+                                    MemoryStream memoryStream = new MemoryStream();
+                                    CopyStream(response.GetResponseStream(), memoryStream);
+                                    memoryStream.Position = 0;
+                                    byte[] redirectPageBytes = memoryStream.ToArray();
+                                    Encoding pageEncoding = DetectHTMLEncoding(redirectPageBytes, response.ContentType);
+                                    metaRedirectHtml = pageEncoding.GetString(redirectPageBytes);
+                                    memoryStream.Position = 0;
+                                    responseStream = memoryStream;
+                                    if (IsMetaRefresh(metaRedirectHtml)) {
+                                        HttpWebRequest redirectionRequest = null;
+                                        redirectionRequest = (HttpWebRequest)WebRequest.Create(GetRefreshUrl(metaRedirectHtml));
+                                        if (connectionGroupName != null) {
+                                            redirectionRequest.ConnectionGroupName = connectionGroupName;
+                                        }
+                                        redirectionRequest.UserAgent = (Settings.UseCustomUserAgent == true) ? Settings.CustomUserAgent : ("Chan Thread Watch " + Version);
+                                        redirectionRequest.Referer = string.Empty; // 4Chan actively blocks some Referers such as Archived.Moe
+                                        if (cacheLastModifiedTime != null) {
+                                            redirectionRequest.IfModifiedSince = cacheLastModifiedTime.Value;
+                                        }
+                                        if (!String.IsNullOrEmpty(auth)) {
+                                            Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+                                            redirectionRequest.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(encoding.GetBytes(auth)));
+                                        }
+                                        response = (HttpWebResponse)redirectionRequest.GetResponse();
+                                        responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                    }
+                                }
+                                else {
+                                    responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                }
                                 onResponse(response);
                                 byte[] buff = new byte[readBufferSize];
                                 AsyncCallback readCallback = null;
@@ -206,6 +237,33 @@ namespace JDP {
                 catch { }
             }
             return lastModified;
+        }
+
+        public static bool IsMetaRefresh(string html) {
+            foreach (HTMLTag a in new HTMLParser(html).FindStartTags("meta")) {
+                if (a.GetAttribute("http-equiv") != null) {
+                    if (a.GetAttribute("http-equiv").Value == "Refresh" & a.GetAttribute("Content") != null) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static string GetRefreshUrl(string html) {
+            try {
+                foreach (HTMLTag a in new HTMLParser(html).FindStartTags("meta")) {
+                    if (a.GetAttribute("http-equiv") != null) {
+                        if (a.GetAttribute("http-equiv").Value == "Refresh" & a.GetAttribute("Content") != null) {
+                            return a.GetAttribute("Content").Value.Replace("0; url=", "");
+                        }
+                    }
+                }
+                return null;
+            }
+            catch {
+                return null;
+            }
         }
 
         public static Encoding DetectHTMLEncoding(byte[] bytes, string httpContentType) {
