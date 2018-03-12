@@ -13,9 +13,7 @@ namespace JDP {
             { "4chan.org", typeof(FourChanSiteHelper) },
             { "8ch.net", typeof(InfinitechanSiteHelper) },
             { "krautchan.net", typeof(KrautchanSiteHelper) },
-
-            { "archive.rebeccablacktech.com", typeof(FuukaSiteHelper) },
-            { "rbt.asia", typeof(FuukaSiteHelper) },
+            
             { "warosu.org", typeof(FuukaSiteHelper) },
 
             { "4plebs.org", typeof(FoolFuukaSiteHelper) },
@@ -27,6 +25,8 @@ namespace JDP {
             { "archived.moe", typeof(FoolFuukaSiteHelper) },
             { "thebarchive.com", typeof(FoolFuukaSiteHelper) },
             { "archiveofsins.com", typeof(FoolFuukaSiteHelper) },
+            { "archive.rebeccablacktech.com", typeof(FoolFuukaSiteHelper) },
+            { "rbt.asia", typeof(FoolFuukaSiteHelper) },
 
             { "endchan.xyz", typeof(LynxChanSiteHelper) },
 
@@ -898,6 +898,9 @@ namespace JDP {
                 HTMLTagRange labelTagRange = _htmlParser.CreateTagRange(_htmlParser.FindStartTag(postTagRange, "label"));
                 if (labelTagRange == null) continue;
 
+                HTMLTagRange postHeaderRange = _htmlParser.CreateTagRange(_htmlParser.FindStartTag(postTagRange, "span"));
+                if (postHeaderRange == null) continue;
+
                 HTMLTagRange imageLinkTagRange = _htmlParser.CreateTagRange(Enumerable.FirstOrDefault(Enumerable.Where(_htmlParser.FindStartTags(postTagRange, "a"), IsImage)));
                 if (imageLinkTagRange == null) continue;
 
@@ -913,7 +916,7 @@ namespace JDP {
                 HTMLTagRange fileInfoTagRange = _htmlParser.CreateTagRange(_htmlParser.FindStartTag(labelTagRange.EndTag, null, "span"));
                 if (fileInfoTagRange == null) continue;
 
-                string[] fileInfoSplit = _htmlParser.GetInnerHTML(fileInfoTagRange).Split(new[] { ',' }, 3);
+                string[] fileInfoSplit = _htmlParser.GetInnerHTML(postHeaderRange).Split(new[] { ',' }, 3);
                 if (fileInfoSplit.Length < 3) continue;
                 
                 string originalFileName;
@@ -943,7 +946,7 @@ namespace JDP {
                     
                 string poster = String.Empty;
                 if (posterNameSpanTagRange != null) {
-                    string name = _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(_htmlParser.FindStartTag(posterNameSpanTagRange, "a")) ?? posterNameSpanTagRange).Replace("\r", "").Replace("\n", "").Replace("&nbsp;", "").Trim();
+                    string name = _htmlParser.GetInnerHTML(_htmlParser.CreateTagRange(_htmlParser.FindStartTag(posterNameSpanTagRange, "span")) ?? posterNameSpanTagRange).Replace("\r", "").Replace("\n", "").Replace("&nbsp;", "").Trim();
                     if (posterTripSpanTagRange != null) {
                         poster = name + _htmlParser.GetInnerHTML(posterTripSpanTagRange).Replace("&nbsp;", "").Trim();
                     }
