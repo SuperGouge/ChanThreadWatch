@@ -930,7 +930,7 @@ namespace JDP {
                 else {
                     originalFileName = fileInfo;
                     HTMLTag similarImageLinkStartTag = Enumerable.FirstOrDefault(Enumerable.Where(
-                        _htmlParser.FindStartTags(fileInfoTagRange.EndTag, imageLinkTagRange.StartTag, "a"), t => t.GetAttributeValueOrEmpty("href").Contains("/image/")));
+                        _htmlParser.FindStartTags(postHeaderRange.EndTag, imageLinkTagRange.StartTag, "a"), t => t.GetAttributeValueOrEmpty("href").Contains("/image/")));
                     if (similarImageLinkStartTag != null) {
                         string[] hrefSplit = similarImageLinkStartTag.GetAttributeValueOrEmpty("href").Split('/');
                         imageMD5 = hrefSplit[hrefSplit.Length - 1].Replace('-', '+').Replace('_', '/');
