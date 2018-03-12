@@ -862,10 +862,6 @@ namespace JDP {
         }
     }
 
-    public class ContentType {
-        public const string TextHtml = "text/html; charset=UTF-8";
-    }
-
     public delegate void EventHandler<TSender, TArgs>(TSender sender, TArgs e) where TArgs : EventArgs;
 
     public delegate void DownloadFileEndCallback(DownloadResult result);
