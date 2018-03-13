@@ -913,9 +913,6 @@ namespace JDP {
                 string thumbURL = thumbImageTag.GetAttributeValue("src");
                 if (thumbURL == null) continue;
 
-                HTMLTagRange fileInfoTagRange = _htmlParser.CreateTagRange(_htmlParser.FindStartTag(labelTagRange.EndTag, null, "span"));
-                if (fileInfoTagRange == null) continue;
-
                 string[] fileInfoSplit = _htmlParser.GetInnerHTML(postHeaderRange).Split(new[] { ',' }, 3);
                 if (fileInfoSplit.Length < 3) continue;
                 
