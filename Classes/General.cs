@@ -158,8 +158,7 @@ namespace JDP {
             return abortDownload;
         }
 
-        public static string GetRedirectUrl(string html, string currentPage)
-        {
+        public static string GetRedirectUrl(string html, string currentPage) {
             try {
                 HTMLParser parser = new HTMLParser(html);
                 foreach (HTMLTag metaTag in parser.FindStartTags(parser.CreateTagRange(parser.FindStartTag("head")), "meta")) {
@@ -173,55 +172,39 @@ namespace JDP {
                     int currentPosition = 0;
                     currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
                     StringBuilder timeString = new StringBuilder();
-                    while (metaContent.Length > currentPosition && (metaContent[currentPosition] >= 48 && metaContent[currentPosition] <= 57 || metaContent[currentPosition] == 46))
-                    {
-                        timeString.Append(metaContent[currentPosition]);
-                        currentPosition++;
+                    while (metaContent.Length > currentPosition && (metaContent[currentPosition] >= 48 && metaContent[currentPosition] <= 57 || metaContent[currentPosition] == 46)) {
+                        timeString.Append(metaContent[currentPosition++]);
                     }
                     int time;
                     int.TryParse(timeString.ToString(), out time);
-                    if (time < 0)
-                    {
+                    if (time < 0) {
                         return null;
                     }
                     currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
-                    if (!IsCharacterMatch(metaContent[currentPosition], '\u003B'))
-                    {
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u003B')) {
                         return null;
                     }
-                    currentPosition++;
                     currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
-                    if (!IsCharacterMatch(metaContent[currentPosition], '\u0055'))
-                    {
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u0055')) {
                         return null;
                     }
-                    currentPosition++;
-                    if (!IsCharacterMatch(metaContent[currentPosition], '\u0052'))
-                    {
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u0052')) {
                         return null;
                     }
-                    currentPosition++;
-                    if (!IsCharacterMatch(metaContent[currentPosition], '\u004C'))
-                    {
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u004C')) {
                         return null;
                     }
-                    currentPosition++;
                     currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
-                    if (!IsCharacterMatch(metaContent[currentPosition], '\u003D'))
-                    {
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u003D')) {
                         return null;
                     }
-                    currentPosition++;
                     currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
                     char quote = new char();
-                    if (IsCharacterMatch(metaContent[currentPosition], '\u0027') || IsCharacterMatch(metaContent[currentPosition], '\u0022'))
-                    {
-                        quote = metaContent[currentPosition];
-                        currentPosition++;
+                    if (IsCharacterMatch(metaContent[currentPosition], '\u0027') || IsCharacterMatch(metaContent[currentPosition], '\u0022')) {
+                        quote = metaContent[currentPosition++];
                     }
                     string redirectUrl = metaContent.Substring(currentPosition);
-                    if (!string.IsNullOrEmpty(quote.ToString()))
-                    {
+                    if (!string.IsNullOrEmpty(quote.ToString())) {
                         redirectUrl = redirectUrl.TrimEnd(quote);
                     }
                     redirectUrl = redirectUrl.TrimEnd('\u0020', '\u0009', '\u000A', '\u000C', '\u000D');
@@ -231,8 +214,7 @@ namespace JDP {
                 }
                 return null;
             }
-            catch
-            {
+            catch {
                 return null;
             }
         }
@@ -264,8 +246,7 @@ namespace JDP {
             }
         }
 
-        private static HttpWebRequest BuildWebRequest(string url, string auth = null, string connectionGroupName = null, string referer = null, DateTime? cacheLastModifiedTime = null)
-        {
+        private static HttpWebRequest BuildWebRequest(string url, string auth = null, string connectionGroupName = null, string referer = null, DateTime? cacheLastModifiedTime = null) {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             if (connectionGroupName != null) {
                 request.ConnectionGroupName = connectionGroupName;
@@ -312,8 +293,7 @@ namespace JDP {
             return lastModified;
         }
 
-        public static int GetNextNonWhiteSpaceCharacterPosition(string str, int currentPosition)
-        {
+        public static int GetNextNonWhiteSpaceCharacterPosition(string str, int currentPosition) {
             while (char.IsWhiteSpace(str[currentPosition])) {
                 currentPosition++;
             }
