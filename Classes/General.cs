@@ -70,26 +70,32 @@ namespace JDP {
             };
             lock (sync) {
                 try {
-                    request = (HttpWebRequest)WebRequest.Create(url);
-                    if (connectionGroupName != null) {
-                        request.ConnectionGroupName = connectionGroupName;
-                    }
-                    request.UserAgent = (Settings.UseCustomUserAgent == true) ? Settings.CustomUserAgent : ("Chan Thread Watch " + Version);
-                    request.Referer = referer;
-                    if (cacheLastModifiedTime != null) {
-                        request.IfModifiedSince = cacheLastModifiedTime.Value;
-                    }
-                    if (!String.IsNullOrEmpty(auth)) {
-                        Encoding encoding = Encoding.GetEncoding("iso-8859-1");
-                        request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(encoding.GetBytes(auth)));
-                    }
+                    request = BuildWebRequest(url: url, auth: auth, connectionGroupName: connectionGroupName, cacheLastModifiedTime: cacheLastModifiedTime, referer: referer);
                     // Unfortunately BeginGetResponse blocks until the DNS lookup has finished
                     IAsyncResult requestResult = request.BeginGetResponse((requestResultParam) => {
                         lock (sync) {
                             try {
                                 if (aborting) return;
                                 response = (HttpWebResponse)request.EndGetResponse(requestResultParam);
-                                responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                if (GetMIMETypeFromContentType(response.ContentType) == "text/html") {
+                                    var memoryStream = new MemoryStream();
+                                    CopyStream(new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite), memoryStream);
+                                    memoryStream.Position = 0;
+                                    byte[] redirectPageBytes = memoryStream.ToArray();
+                                    Encoding pageEncoding = DetectHTMLEncoding(redirectPageBytes, response.ContentType);
+                                    string metaRedirectHtml = pageEncoding.GetString(redirectPageBytes);
+                                    memoryStream.Position = 0;
+                                    responseStream = memoryStream;
+                                    string redirectUrl = GetRedirectUrl(metaRedirectHtml, response.ResponseUri.AbsoluteUri);
+                                    if (!string.IsNullOrEmpty(redirectUrl)) {
+                                        HttpWebRequest redirectionRequest = BuildWebRequest(url: redirectUrl, auth: auth, connectionGroupName: connectionGroupName, cacheLastModifiedTime: cacheLastModifiedTime);
+                                        response = (HttpWebResponse)redirectionRequest.GetResponse();
+                                        responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                    }
+                                }
+                                else {
+                                    responseStream = new ThrottledStream(response.GetResponseStream(), Settings.MaximumBytesPerSecond ?? ThrottledStream.Infinite);
+                                }
                                 onResponse(response);
                                 byte[] buff = new byte[readBufferSize];
                                 AsyncCallback readCallback = null;
@@ -152,9 +158,69 @@ namespace JDP {
             return abortDownload;
         }
 
+        public static string GetRedirectUrl(string html, string currentPage) {
+            try {
+                HTMLParser parser = new HTMLParser(html);
+                foreach (HTMLTag metaTag in parser.FindStartTags(parser.CreateTagRange(parser.FindStartTag("head")), "meta")) {
+                    if (!string.Equals(metaTag.GetAttributeValueOrEmpty("http-equiv"), "Refresh", StringComparison.OrdinalIgnoreCase)) {
+                        continue;
+                    }
+                    string metaContent = metaTag.GetAttributeValueOrEmpty("Content");
+                    if (string.IsNullOrEmpty(metaContent)) {
+                        continue;
+                    }
+                    int currentPosition = 0;
+                    currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
+                    StringBuilder timeString = new StringBuilder();
+                    while (metaContent.Length > currentPosition && (metaContent[currentPosition] >= 48 && metaContent[currentPosition] <= 57 || metaContent[currentPosition] == 46)) {
+                        timeString.Append(metaContent[currentPosition++]);
+                    }
+                    int time;
+                    int.TryParse(timeString.ToString(), out time);
+                    if (time < 0) {
+                        return null;
+                    }
+                    currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u003B')) {
+                        return null;
+                    }
+                    currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u0055')) {
+                        return null;
+                    }
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u0052')) {
+                        return null;
+                    }
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u004C')) {
+                        return null;
+                    }
+                    currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
+                    if (!IsCharacterMatch(metaContent[currentPosition++], '\u003D')) {
+                        return null;
+                    }
+                    currentPosition = GetNextNonWhiteSpaceCharacterPosition(metaContent, currentPosition);
+                    char quote = new char();
+                    if (IsCharacterMatch(metaContent[currentPosition], '\u0027') || IsCharacterMatch(metaContent[currentPosition], '\u0022')) {
+                        quote = metaContent[currentPosition++];
+                    }
+                    string redirectUrl = metaContent.Substring(currentPosition);
+                    if (!string.IsNullOrEmpty(quote.ToString())) {
+                        redirectUrl = redirectUrl.TrimEnd(quote);
+                    }
+                    redirectUrl = redirectUrl.TrimEnd('\u0020', '\u0009', '\u000A', '\u000C', '\u000D');
+                    redirectUrl = redirectUrl.Replace('\u0009', '\0').Replace('\u000A', '\0').Replace('\u000D', '\0');
+                    redirectUrl = GetAbsoluteURL(currentPage, redirectUrl);
+                    return redirectUrl;
+                }
+                return null;
+            }
+            catch {
+                return null;
+            }
+        }
+
         public static string DownloadPageToString(string url) {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.UserAgent = "Chan Thread Watch " + Version;
+            HttpWebRequest request = BuildWebRequest(url: url);
             HttpWebResponse response = null;
             Stream responseStream = null;
             MemoryStream memoryStream = null;
@@ -178,6 +244,25 @@ namespace JDP {
                     try { memoryStream.Close(); }
                     catch { }
             }
+        }
+
+        private static HttpWebRequest BuildWebRequest(string url, string auth = null, string connectionGroupName = null, string referer = null, DateTime? cacheLastModifiedTime = null) {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            if (connectionGroupName != null) {
+                request.ConnectionGroupName = connectionGroupName;
+            }
+            request.UserAgent = (Settings.UseCustomUserAgent == true) ? Settings.CustomUserAgent : ("Chan Thread Watch " + Version);
+            if (cacheLastModifiedTime != null) {
+                request.IfModifiedSince = cacheLastModifiedTime.Value;
+            }
+            if (!String.IsNullOrEmpty(auth)) {
+                Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+                request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(encoding.GetBytes(auth)));
+            }
+            if (!String.IsNullOrEmpty(auth)) {
+                request.Referer = referer;
+            }
+            return request;
         }
 
         private static void CopyStream(Stream srcStream, params Stream[] dstStreams) {
@@ -206,6 +291,17 @@ namespace JDP {
                 catch { }
             }
             return lastModified;
+        }
+
+        public static int GetNextNonWhiteSpaceCharacterPosition(string str, int currentPosition) {
+            while (char.IsWhiteSpace(str[currentPosition])) {
+                currentPosition++;
+            }
+            return currentPosition;
+        }
+
+        public static bool IsCharacterMatch(char inputChar, char comparisonCharacter) {
+            return char.ToUpperInvariant(inputChar).Equals(char.ToUpperInvariant(comparisonCharacter));
         }
 
         public static Encoding DetectHTMLEncoding(byte[] bytes, string httpContentType) {
