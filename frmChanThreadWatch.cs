@@ -1418,18 +1418,18 @@ namespace JDP {
 
         private void UpdateCategories(string key, bool remove = false) {
             key = key ?? String.Empty;
-            if (remove && (_categories.ContainsKey(key) && (--_categories[key] < 1 && !String.IsNullOrEmpty(key)))) {
-                _categories.Remove(key);
-                cboCategory.Items.Remove(key);
+            bool hasKey = _categories.TryGetValue(key, out int count);
+            int newCount = Math.Max(0, remove ? count - 1 : count + 1);
+            _categories[key] = newCount;
+
+            if (newCount == 0) {
+                if (!String.IsNullOrEmpty(key)) {
+                    _categories.Remove(key);
+                    cboCategory.Items.Remove(key);
+                }
             }
-            else {
-                if (_categories.ContainsKey(key)) {
-                    ++_categories[key];
-                }
-                else {
-                    _categories.Add(key, 1);
-                    cboCategory.Items.Add(key);
-                }
+            else if (!hasKey) {
+                cboCategory.Items.Add(key);
             }
         }
         
