@@ -779,6 +779,24 @@ namespace JDP {
             return default(TSource);
         }
 
+        public static bool Any<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate) {
+            foreach (TSource item in source) {
+                if (predicate(item)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool All<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate) {
+            foreach (TSource item in source) {
+                if (!predicate(item)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static IEnumerable<TResult> Select<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TResult> selector) {
             foreach (TSource item in source) {
                 yield return selector(item);

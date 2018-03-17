@@ -1,5 +1,5 @@
 ﻿namespace JDP {
-    partial class frmThreadEdit {
+    sealed partial class frmThreadEdit {
         /// <summary>
         /// Required designer variable.
         /// </summary>

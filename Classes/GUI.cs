@@ -59,6 +59,41 @@ namespace JDP {
         }
     }
 
+    public class EditField<TValue> {
+        private readonly Func<TValue> _valueGetter;
+
+        public EditField(Func<TValue> valueGetter, params Control[] controls) {
+            _valueGetter = valueGetter ?? throw new ArgumentNullException(nameof(valueGetter));
+
+            if (controls == null) {
+                throw new ArgumentNullException(nameof(controls));
+            }
+
+            foreach (var control in controls) {
+                switch (control) {
+                    case CheckBox chk:
+                        chk.CheckedChanged += (sender, args) => IsDirty = true;
+                        break;
+                    case ComboBox cbo:
+                        cbo.SelectedValueChanged += (sender, args) => IsDirty = true;
+                        if (cbo.DropDownStyle != ComboBoxStyle.DropDownList) {
+                            cbo.TextChanged += (sender, args) => IsDirty = true;
+                        }
+                        break;
+                    case null:
+                        break;
+                    default:
+                        control.TextChanged += (sender, args) => IsDirty = true;
+                        break;
+                }
+            }
+        }
+
+        public bool IsDirty { get; private set; }
+
+        public TValue Value => _valueGetter.Invoke();
+    }
+
     public static class GUI {
         public static void CenterChildForm(Form parent, Form child) {
             if (!parent.Visible) {

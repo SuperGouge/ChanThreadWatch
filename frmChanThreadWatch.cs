@@ -361,27 +361,41 @@ namespace JDP {
 
         private void miEdit_Click(object sender, EventArgs e) {
             if (_isExiting) return;
-            foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
-                using (frmThreadEdit editForm = new frmThreadEdit(watcher, _categories)) {
-                    if (editForm.ShowDialog(this) == DialogResult.OK) {
-                        watcher.Description = editForm.Description;
-                        if (watcher.Category != editForm.Category) {
-                            UpdateCategories(watcher.Category, true);
-                            UpdateCategories(editForm.Category);
+            var selectedThreadWatchers = new List<ThreadWatcher>(SelectedThreadWatchers);
+            if (selectedThreadWatchers.Count == 0) return;
+
+            using (frmThreadEdit editForm = new frmThreadEdit(selectedThreadWatchers, _categories)) {
+                if (editForm.ShowDialog(this) == DialogResult.OK && editForm.IsDirty) {
+                    foreach (ThreadWatcher watcher in selectedThreadWatchers) {
+                        if (editForm.Description.IsDirty) {
+                            watcher.Description = editForm.Description.Value;
                         }
-                        watcher.Category = editForm.Category;
+                        if (editForm.Category.IsDirty) {
+                            UpdateCategories(watcher.Category, true);
+                            UpdateCategories(editForm.Category.Value);
+                            watcher.Category = editForm.Category.Value;
+                        }
+                        if (editForm.CheckIntervalSeconds.IsDirty) {
+                            watcher.CheckIntervalSeconds = editForm.CheckIntervalSeconds.Value;
+                        }
                         if (!watcher.IsRunning) {
-                            watcher.PageAuth = editForm.PageAuth;
-                            watcher.ImageAuth = editForm.ImageAuth;
-                            watcher.CheckIntervalSeconds = editForm.CheckIntervalSeconds;
-                            watcher.OneTimeDownload = editForm.OneTimeDownload;
-                            watcher.AutoFollow = editForm.AutoFollow;
+                            if (editForm.PageAuth.IsDirty) {
+                                watcher.PageAuth = editForm.PageAuth.Value;
+                            }
+                            if (editForm.ImageAuth.IsDirty) {
+                                watcher.ImageAuth = editForm.ImageAuth.Value;
+                            }
+                            if (editForm.OneTimeDownload.IsDirty) {
+                                watcher.OneTimeDownload = editForm.OneTimeDownload.Value;
+                            }
+                            if (editForm.AutoFollow.IsDirty) {
+                                watcher.AutoFollow = editForm.AutoFollow.Value;
+                            }
                         }
                         DisplayData(watcher);
-                        _saveThreadList = true;
                     }
+                    _saveThreadList = true;
                 }
-                break;
             }
         }
 
@@ -584,7 +598,6 @@ namespace JDP {
                         anyStopped |= !isRunning;
                         anyNotReparsing |= !watcher.IsReparsing;
                     }
-                    miEdit.Visible = selectedCount == 1;
                     miStop.Visible = anyRunning;
                     miStart.Visible = anyStopped && anyNotReparsing;
                     miCheckNow.Visible = anyRunning;
