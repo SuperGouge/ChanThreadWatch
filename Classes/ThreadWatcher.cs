@@ -1003,9 +1003,19 @@ namespace JDP {
                         Path.Combine(_mainDownloadDirectory, Settings.RenameDownloadFolderWithCategory == true ? General.CleanFileName(_category) : String.Empty),
                         General.CleanFileName(_description + ParentThreadFormattedDescription));
                     if (String.Equals(destDir, _threadDownloadDirectory, StringComparison.Ordinal)) return;
+
+                    int count = 2;
+                    string checkDir = destDir;
+                    while (Directory.Exists(checkDir)) {
+                        checkDir = $"{destDir} ({count++})";
+                        if (String.Equals(checkDir, _threadDownloadDirectory, StringComparison.Ordinal)) return;
+                    }
+                    destDir = checkDir;
+
                     if (String.Equals(destDir, _threadDownloadDirectory, StringComparison.OrdinalIgnoreCase)) {
-                        Directory.Move(_threadDownloadDirectory, destDir + " Temp");
-                        _threadDownloadDirectory = destDir + " Temp";
+                        string tempDir = $"{destDir} {Guid.NewGuid()}";
+                        Directory.Move(_threadDownloadDirectory, tempDir);
+                        _threadDownloadDirectory = tempDir;
                         renamedDir = true;
                     }
                     if (!Directory.Exists(General.RemoveLastDirectory(destDir))) Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
