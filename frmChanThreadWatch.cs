@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -419,8 +420,12 @@ namespace JDP {
                             });
                         }
                         else {
-                            Process.Start(dir);
-                        }
+							if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+								Process.Start($"file://{Uri.EscapeUriString(dir)}"); // xdg-open fails on spaces
+							} else {
+								Process.Start(dir);
+							}
+						}
                     }
                     catch (Exception ex) {
                         Logger.Log(ex.ToString());
