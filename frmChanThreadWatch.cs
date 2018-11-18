@@ -420,12 +420,8 @@ namespace JDP {
                             });
                         }
                         else {
-							if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
-								Process.Start($"file://{Uri.EscapeUriString(dir)}"); // xdg-open fails on spaces
-							} else {
-								Process.Start(dir);
-							}
-						}
+                            Process.Start(dir);
+                        }
                     }
                     catch (Exception ex) {
                         Logger.Log(ex.ToString());
