@@ -197,8 +197,10 @@ namespace JDP {
 
         public void Release() {
             lock (_mainSync) {
-                if (_currentCount >= _maximumCount) {
-                    throw new SemaphoreFullException();
+                if (_currentCount >= _maximumCount) { // Workaround for Mono
+                    Type semaphoreException = Type.GetType("System.Threading.SemaphoreFullException");
+                    object exception = Activator.CreateInstance(semaphoreException);
+                    throw (SystemException)exception;
                 }
                 CheckQueue:
                 if (_queueSyncs.Count == 0) {
