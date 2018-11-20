@@ -11,6 +11,7 @@ namespace JDP {
     public static class SiteHelpers {
         private static readonly Dictionary<string, Type> _siteHelpers = new Dictionary<string, Type> {
             { "4chan.org", typeof(FourChanSiteHelper) },
+            { "4channel.org", typeof(FourChanSiteHelper) },
             { "8ch.net", typeof(InfinitechanSiteHelper) },
             { "krautchan.net", typeof(KrautchanSiteHelper) },
             
