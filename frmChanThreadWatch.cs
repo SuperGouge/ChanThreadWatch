@@ -23,8 +23,6 @@ namespace JDP {
         private static Dictionary<string, ThreadWatcher> _watchers = new Dictionary<string, ThreadWatcher>();
         private static HashSet<string> _blacklist = new HashSet<string>();
 
-        public static int ConcurrentDownloads { get; set; }
-
         // ReleaseDate property and version in AssemblyInfo.cs should be updated for each release.
 
         public frmChanThreadWatch() {
@@ -800,7 +798,6 @@ namespace JDP {
             info.TotalSize = args.TotalSize;
             lock (_downloadProgresses) {
                 _downloadProgresses[args.DownloadID] = info;
-                ConcurrentDownloads += 1;
             }
         }
 
@@ -821,7 +818,6 @@ namespace JDP {
                 info.DownloadedSize = args.DownloadedSize;
                 info.TotalSize = args.DownloadedSize;
                 _downloadProgresses[args.DownloadID] = info;
-                ConcurrentDownloads -= 1;
             }
         }
 

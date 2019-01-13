@@ -638,44 +638,53 @@ namespace JDP {
     public class ThrottledStream : Stream {
         public const long Infinite = 0;
 
+        private static int _concurrentDownloads;
+        private static readonly object _downloadsSync = new object();
+
         private Stream _baseStream;
         private long _maximumBytesPerSecond;
         private long _byteCount;
         private long _start;
+        private bool _hasStarted;
+        private readonly object _throttleSync = new object();
 
         protected long CurrentMilliseconds {
             get { return Environment.TickCount; }
         }
 
-        public long MaximumBytesPerSecond {
-            get { return _maximumBytesPerSecond; }
-            set {
-                if (MaximumBytesPerSecond != value) {
-                    _maximumBytesPerSecond = value;
-                    Reset();
-                }
-            }
-        }
-
-        public override bool CanRead {
-            get { return _baseStream.CanRead; }
-        }
-
-        public override bool CanSeek {
-            get { return _baseStream.CanSeek; }
-        }
-
-        public override bool CanWrite {
-            get { return _baseStream.CanWrite; }
+        public override long Position {
+            get { return _baseStream.Position; }
+            set { _baseStream.Position = value; }
         }
 
         public override long Length {
             get { return _baseStream.Length; }
         }
 
-        public override long Position {
-            get { return _baseStream.Position; }
-            set { _baseStream.Position = value; }
+        public override bool CanWrite {
+            get { return _baseStream.CanWrite; }
+        }
+
+        public override bool CanTimeout {
+            get { return _baseStream.CanTimeout; }
+        }
+
+        public override bool CanSeek {
+            get { return _baseStream.CanSeek; }
+        }
+
+        public override bool CanRead {
+            get { return _baseStream.CanRead; }
+        }
+
+        public override int ReadTimeout {
+            get { return _baseStream.ReadTimeout; }
+            set { _baseStream.ReadTimeout = value; }
+        }
+
+        public override int WriteTimeout {
+            get { return _baseStream.WriteTimeout; }
+            set { _baseStream.WriteTimeout = value; }
         }
 
         public ThrottledStream(Stream baseStream, long maximumBytesPerSecond = Infinite) {
@@ -693,6 +702,36 @@ namespace JDP {
             _byteCount = 0;
         }
 
+        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state) {
+            Throttle(count);
+            return _baseStream.BeginRead(buffer, offset, count, callback, state);
+        }
+
+        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state) {
+            Throttle(count);
+            return _baseStream.BeginWrite(buffer, offset, count, callback, state);
+        }
+
+        public override void Close() {
+            try {
+                _baseStream.Close();
+            } finally {
+                if (_hasStarted) {
+                    lock (_downloadsSync) {
+                        _concurrentDownloads -= 1;
+                    }
+                }
+            }
+        }
+
+        public override int EndRead(IAsyncResult asyncResult) {
+            return _baseStream.EndRead(asyncResult);
+        }
+
+        public override void EndWrite(IAsyncResult asyncResult) {
+            _baseStream.EndWrite(asyncResult);
+        }
+
         public override void Flush() {
             _baseStream.Flush();
         }
@@ -702,15 +741,8 @@ namespace JDP {
             return _baseStream.Read(buffer, offset, count);
         }
 
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            Throttle(count);
-            return _baseStream.BeginRead(buffer, offset, count, callback, state);
-        }
-        
-        public override int EndRead(IAsyncResult asyncResult)
-        {
-            return _baseStream.EndRead(asyncResult);
+        public override int ReadByte() {
+            return _baseStream.ReadByte();
         }
 
         public override long Seek(long offset, SeekOrigin origin) {
@@ -726,31 +758,52 @@ namespace JDP {
             _baseStream.Write(buffer, offset, count);
         }
 
-        public override string ToString() {
-            return _baseStream.ToString();
+        public override void WriteByte(byte value) {
+            _baseStream.WriteByte(value);
         }
 
         protected void Throttle(int bufferSizeInBytes) {
-            if (_maximumBytesPerSecond <= 0 || bufferSizeInBytes <= 0) {
-                return;
-            }
-            MaximumBytesPerSecond = Settings.MaximumBytesPerSecond ?? Infinite;
+            lock (_throttleSync) {
+                if (bufferSizeInBytes <= 0) {
+                    return;
+                }
 
-            _byteCount += bufferSizeInBytes;
-            long weightedMaximumBytesPerSecond = _maximumBytesPerSecond / frmChanThreadWatch.ConcurrentDownloads;
-            long elapsedMilliseconds = CurrentMilliseconds - _start;
+                var maximumBytesPerSecond = Settings.MaximumBytesPerSecond ?? Infinite;
+                if (_maximumBytesPerSecond != maximumBytesPerSecond) {
+                    _maximumBytesPerSecond = maximumBytesPerSecond;
+                    Reset();
+                }
 
-            if (elapsedMilliseconds > 0) {
-                long bps = _byteCount * 1000L / elapsedMilliseconds;
+                if (_maximumBytesPerSecond <= 0) {
+                    return;
+                }
 
-                if (bps > weightedMaximumBytesPerSecond) {
-                    long wakeElapsed = _byteCount * 1000L / weightedMaximumBytesPerSecond;
-                    int toSleep = (int)(wakeElapsed - elapsedMilliseconds);
+                if (!_hasStarted) {
+                    lock (_downloadsSync) {
+                        _concurrentDownloads += 1;
+                    }
+                    _hasStarted = true;
+                }
 
-                    if (toSleep > 1) {
-                        try { Thread.Sleep(toSleep); }
-                        catch (ThreadAbortException) { }
-                        Reset();
+                _byteCount += bufferSizeInBytes;
+
+                long weightedMaximumBytesPerSecond;
+                lock (_downloadsSync) {
+                    weightedMaximumBytesPerSecond = _maximumBytesPerSecond / _concurrentDownloads;
+                }
+
+                long elapsedMilliseconds = CurrentMilliseconds - _start;
+                if (elapsedMilliseconds > 0) {
+                    long bps = _byteCount * 1000L / elapsedMilliseconds;
+                    if (bps > weightedMaximumBytesPerSecond) {
+                        long wakeElapsed = _byteCount * 1000L / weightedMaximumBytesPerSecond;
+
+                        int toSleep = (int)(wakeElapsed - elapsedMilliseconds);
+                        if (toSleep > 1) {
+                            try { Thread.Sleep(toSleep); }
+                            catch (ThreadAbortException) { }
+                            Reset();
+                        }
                     }
                 }
             }
@@ -762,6 +815,11 @@ namespace JDP {
                 _byteCount = 0;
                 _start = CurrentMilliseconds;
             }
+        }
+
+        protected override void Dispose(bool disposing) {
+            _baseStream.Dispose();
+            base.Dispose(disposing);
         }
     }
 
