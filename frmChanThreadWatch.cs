@@ -330,6 +330,9 @@ namespace JDP {
                                 if (Directory.Exists(destDir)) {
                                     Directory.Delete(destDir);
                                 }
+                                if (watcher.Category.Length != 0) {
+                                    Directory.CreateDirectory(General.RemoveLastDirectory(destDir));
+                                }
                                 Directory.Move(watcher.ThreadDownloadDirectory, destDir);
                             }
                             string categoryPath = General.RemoveLastDirectory(watcher.ThreadDownloadDirectory);
