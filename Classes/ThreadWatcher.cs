@@ -48,6 +48,9 @@ namespace JDP {
 
             // Ignore invalid certificates (workaround for Mono)
             ServicePointManager.ServerCertificateValidationCallback = (s, cert, chain, errors) => true;
+
+            // Enable TLS 1.2 on supported environments
+            ServicePointManager.SecurityProtocol |= (SecurityProtocolType)3072;
         }
 
         public ThreadWatcher(string pageURL) {
