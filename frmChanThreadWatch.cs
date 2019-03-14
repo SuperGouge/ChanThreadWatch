@@ -1123,6 +1123,9 @@ namespace JDP {
 
         private void SetWaitStatus(ThreadWatcher watcher) {
             int remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
+            if (remainingSeconds > 600) {
+                if (remainingSeconds % 15 != 0) { return; };
+            }
             DisplayStatus(watcher, String.Format("Waiting {0} seconds", remainingSeconds));
         }
 
