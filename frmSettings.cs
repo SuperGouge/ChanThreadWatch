@@ -261,9 +261,11 @@ namespace JDP {
         private void ThreadStatusBox_SelectedIndexChanged(object sender, EventArgs e) {
             if (ThreadStatusBox.Text == "Minutes") {
                 txtThreadStatusBoxThreshold.Enabled = true;
+                txtThreadStatusBoxThreshold_tooltip.ForeColor = System.Drawing.Color.Black;
             }
             else {
                 txtThreadStatusBoxThreshold.Enabled = false;
+                txtThreadStatusBoxThreshold_tooltip.ForeColor = System.Drawing.Color.Gray;
             }
         }
 

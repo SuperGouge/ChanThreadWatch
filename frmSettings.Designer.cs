@@ -54,6 +54,7 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
+            this.txtThreadStatusBoxThreshold_tooltip = new System.Windows.Forms.Label();
             this.txtThreadStatusBoxThreshold = new System.Windows.Forms.TextBox();
             this.ThreadStatusBox = new System.Windows.Forms.ComboBox();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
@@ -407,6 +408,7 @@
             // 
             // grpGeneral
             // 
+            this.grpGeneral.Controls.Add(this.txtThreadStatusBoxThreshold_tooltip);
             this.grpGeneral.Controls.Add(this.txtThreadStatusBoxThreshold);
             this.grpGeneral.Controls.Add(this.ThreadStatusBox);
             this.grpGeneral.Controls.Add(this.txtMaximumKilobytesPerSecond);
@@ -426,9 +428,20 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
+            // txtThreadStatusBoxThreshold_tooltip
+            // 
+            this.txtThreadStatusBoxThreshold_tooltip.AutoSize = true;
+            this.txtThreadStatusBoxThreshold_tooltip.Location = new System.Drawing.Point(225, 154);
+            this.txtThreadStatusBoxThreshold_tooltip.Name = "txtThreadStatusBoxThreshold_tooltip";
+            this.txtThreadStatusBoxThreshold_tooltip.Size = new System.Drawing.Size(109, 13);
+            this.txtThreadStatusBoxThreshold_tooltip.TabIndex = 39;
+            this.txtThreadStatusBoxThreshold_tooltip.Text = "Threshold of Minutes:";
+            // 
             // txtThreadStatusBoxThreshold
             // 
-            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(225, 152);
+            this.txtThreadStatusBoxThreshold.AccessibleDescription = "";
+            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(340, 151);
+            this.txtThreadStatusBoxThreshold.MaxLength = 4;
             this.txtThreadStatusBoxThreshold.Name = "txtThreadStatusBoxThreshold";
             this.txtThreadStatusBoxThreshold.Size = new System.Drawing.Size(56, 20);
             this.txtThreadStatusBoxThreshold.TabIndex = 38;
@@ -789,5 +802,6 @@
         private System.Windows.Forms.CheckBox chkCompletedFolderRelative;
         private System.Windows.Forms.ComboBox ThreadStatusBox;
         private System.Windows.Forms.TextBox txtThreadStatusBoxThreshold;
+        private System.Windows.Forms.Label txtThreadStatusBoxThreshold_tooltip;
     }
 }
