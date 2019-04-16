@@ -40,6 +40,9 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
+            ThreadStatusBox.SelectedIndex = Settings.ThreadStatusSimple == true ? 1 : 0;
+            txtThreadStatusBoxThreshold.Enabled = Settings.ThreadStatusSimple == true ? true : false;
+            txtThreadStatusBoxThreshold.Text = (Settings.ThreadStatusThreshold ?? 10).ToString();
             chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
             chkBackupCheckSize.Checked = Settings.BackupCheckSize ?? false;
             txtMaximumKilobytesPerSecond.Text = ((Settings.MaximumBytesPerSecond ?? 0) / 1024).ToString();
@@ -146,6 +149,9 @@ namespace JDP {
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
                 Settings.BackupThreadList = chkBackupThreadList.Checked;
                 Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
+                Settings.ThreadStatusSimple = txtThreadStatusBoxThreshold.Enabled;
+                Int32.TryParse(txtThreadStatusBoxThreshold.Text, out int tmpThreadStatusThreshold);
+                Settings.ThreadStatusThreshold = tmpThreadStatusThreshold;
                 Settings.BackupCheckSize = chkBackupCheckSize.Checked;
                 Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
                 Settings.WindowTitle = txtWindowTitle.Text;
@@ -250,6 +256,22 @@ namespace JDP {
             txtCompletedFolder.Text = chkCompletedFolderRelative.Checked ?
                 General.GetRelativeDirectoryPath(path, Settings.ExeDirectory) :
                 General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
+        }
+
+        private void ThreadStatusBox_SelectedIndexChanged(object sender, EventArgs e) {
+            if (ThreadStatusBox.Text == "Minutes") {
+                txtThreadStatusBoxThreshold.Enabled = true;
+            }
+            else {
+                txtThreadStatusBoxThreshold.Enabled = false;
+            }
+        }
+
+        private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
+            int threshold;
+            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out threshold) || threshold < 30) {
+                txtThreadStatusBoxThreshold.Text = "10";
+            }
         }
     }
 }

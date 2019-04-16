@@ -522,7 +522,7 @@ namespace JDP {
                 foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
                     watcher.CheckIntervalSeconds = checkIntervalSeconds;
                 }
-                UpdateWaitingWatcherStatuses();
+                UpdateWaitingWatcherStatuses(true);
             }
             _saveThreadList = true;
         }
@@ -1046,10 +1046,10 @@ namespace JDP {
             }
         }
 
-        private void UpdateWaitingWatcherStatuses() {
+        private void UpdateWaitingWatcherStatuses(bool forceUpdate = false) {
             foreach (ThreadWatcher watcher in ThreadWatchers) {
                 if (watcher.IsWaiting) {
-                    SetWaitStatus(watcher);
+                    SetWaitStatus(watcher, forceUpdate);
                 }
             }
         }
@@ -1121,12 +1121,22 @@ namespace JDP {
             DisplayStatus(watcher, status);
         }
 
-        private void SetWaitStatus(ThreadWatcher watcher) {
-            int remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
-            if (remainingSeconds > 600) {
-                if (remainingSeconds % 15 != 0) { return; };
+        private void SetWaitStatus(ThreadWatcher watcher, bool forceUpdate = false) {
+            var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
+            var remainingMinutes = remainingSeconds / 60;
+            var statusStringOut = "";
+            if (Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold) {
+                statusStringOut = $"Waiting {remainingMinutes:D2} minutes";
+                if (forceUpdate) {
+                    DisplayStatus(watcher, statusStringOut);
+                    return;
+                }
+                if (remainingSeconds % 60 != 0) { return; };
             }
-            DisplayStatus(watcher, String.Format("Waiting {0} seconds", remainingSeconds));
+            else {
+                statusStringOut = $"Waiting {remainingSeconds} seconds";
+            }
+            DisplayStatus(watcher, statusStringOut);
         }
 
         private void SetStopStatus(ThreadWatcher watcher, StopReason stopReason) {
