@@ -117,4 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="frmSettingsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="ThreadStatusBox.ToolTip" xml:space="preserve">
+    <value>Select the "Thread Status Threshold"
+The dropdown allows for always showing the number of seconds remaining in the thread status,
+or the number minutes remaining, until a specified threshold, at which seconds begin to be shown again.
+(Acceptable values: any number greater than 0)
+(Default, "Seconds" - remaining seconds will always be shown under the status of threads)</value>
+  </data>
+  <data name="txtThreadStatusBoxThreshold.ToolTip" xml:space="preserve">
+    <value>Select the "Thread Status Threshold"
+The dropdown allows for always showing the number of seconds remaining in the thread status,
+or the number minutes remaining, until a specified threshold, at which seconds begin to be shown again.
+(Acceptable values: any number greater than 0)
+(Default, "Seconds" - remaining seconds will always be shown under the status of threads)</value>
+  </data>
+  <data name="groupBox1.ToolTip" xml:space="preserve">
+    <value>Select the "Thread Status Threshold"
+The dropdown allows for always showing the number of seconds remaining in the thread status,
+or the number minutes remaining, until a specified threshold, at which seconds begin to be shown again.
+(Acceptable values: any number greater than 0)
+(Default, "Seconds" - remaining seconds will always be shown under the status of threads)</value>
+  </data>
 </root>
