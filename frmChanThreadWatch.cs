@@ -1049,7 +1049,7 @@ namespace JDP {
         private void UpdateWaitingWatcherStatuses(bool forceUpdate = false) {
             foreach (ThreadWatcher watcher in ThreadWatchers) {
                 if (watcher.IsWaiting) {
-                    SetWaitStatus(watcher, forceUpdate);
+                    SetWaitStatus(watcher);
                 }
             }
         }
@@ -1121,20 +1121,18 @@ namespace JDP {
             DisplayStatus(watcher, status);
         }
 
-        private void SetWaitStatus(ThreadWatcher watcher, bool forceUpdate = false) {
+        private void SetWaitStatus(ThreadWatcher watcher) {
             var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
             var remainingMinutes = remainingSeconds / 60;
-            var statusStringOut = "";
-            if (Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold) {
-                statusStringOut = $"Waiting {remainingMinutes:D2} minutes";
-                if (forceUpdate) {
-                    DisplayStatus(watcher, statusStringOut);
-                    return;
-                }
-                if (remainingSeconds % 60 != 0) { return; };
+            var threadStatusMatchesSettings = watcher.threadstatustype == Settings.ThreadStatusSimple;
+            var statusStringOut = Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold ? $"Waiting {remainingMinutes:D2} minutes" : $"Waiting {remainingSeconds} seconds";
+            if (!threadStatusMatchesSettings) {
+                DisplayStatus(watcher, statusStringOut);
+                watcher.threadstatustype = Settings.ThreadStatusSimple;
+                return;
             }
-            else {
-                statusStringOut = $"Waiting {remainingSeconds} seconds";
+            if (watcher.threadstatustype == true) {
+                if (remainingSeconds % 60 != 0) { return; };
             }
             DisplayStatus(watcher, statusStringOut);
         }

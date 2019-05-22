@@ -261,18 +261,17 @@ namespace JDP {
         private void ThreadStatusBox_SelectedIndexChanged(object sender, EventArgs e) {
             if (ThreadStatusBox.Text == "Minutes") {
                 txtThreadStatusBoxThreshold.Enabled = true;
-                txtThreadStatusBoxThreshold_tooltip.ForeColor = System.Drawing.Color.Black;
             }
             else {
                 txtThreadStatusBoxThreshold.Enabled = false;
-                txtThreadStatusBoxThreshold_tooltip.ForeColor = System.Drawing.Color.Gray;
             }
         }
 
         private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
-            int threshold;
-            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out threshold) || threshold < 30) {
-                txtThreadStatusBoxThreshold.Text = "10";
+            long tmpThreadStatusThreshold;
+            if (!Int64.TryParse(txtThreadStatusBoxThreshold.Text, out tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0 || tmpThreadStatusThreshold > Int64.MaxValue)
+            {
+                txtThreadStatusBoxThreshold.Text = Settings.ThreadStatusThreshold.ToString();
             }
         }
     }

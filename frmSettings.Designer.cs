@@ -23,6 +23,8 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSettings));
             this.txtDownloadFolder = new System.Windows.Forms.TextBox();
             this.lblDownloadFolder = new System.Windows.Forms.Label();
             this.btnDownloadFolder = new System.Windows.Forms.Button();
@@ -54,11 +56,10 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
-            this.txtThreadStatusBoxThreshold_tooltip = new System.Windows.Forms.Label();
+            this.lblSupportedSitesNote = new System.Windows.Forms.Label();
             this.txtThreadStatusBoxThreshold = new System.Windows.Forms.TextBox();
             this.ThreadStatusBox = new System.Windows.Forms.ComboBox();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
-            this.lblWindowTitle = new System.Windows.Forms.Label();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
             this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
             this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
@@ -80,6 +81,8 @@
             this.btnCompletedFolder = new System.Windows.Forms.Button();
             this.chkCompletedFolder = new System.Windows.Forms.CheckBox();
             this.chkCompletedFolderRelative = new System.Windows.Forms.CheckBox();
+            this.frmSettingsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
@@ -89,6 +92,7 @@
             this.grpBackup.SuspendLayout();
             this.grpWindow.SuspendLayout();
             this.pnlWindowTitle.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
@@ -214,9 +218,10 @@
             this.chkUseOriginalFileNames.AutoSize = true;
             this.chkUseOriginalFileNames.Location = new System.Drawing.Point(6, 115);
             this.chkUseOriginalFileNames.Name = "chkUseOriginalFileNames";
-            this.chkUseOriginalFileNames.Size = new System.Drawing.Size(273, 17);
+            this.chkUseOriginalFileNames.Size = new System.Drawing.Size(135, 17);
             this.chkUseOriginalFileNames.TabIndex = 8;
-            this.chkUseOriginalFileNames.Text = "Use original filenames (only supported for some sites)";
+            this.chkUseOriginalFileNames.Text = "Use original filenames *";
+            this.frmSettingsToolTip.SetToolTip(this.chkUseOriginalFileNames, "Only supported for some sites");
             this.chkUseOriginalFileNames.UseVisualStyleBackColor = true;
             // 
             // chkVerifyImageHashes
@@ -227,16 +232,17 @@
             this.chkVerifyImageHashes.Size = new System.Drawing.Size(127, 17);
             this.chkVerifyImageHashes.TabIndex = 9;
             this.chkVerifyImageHashes.Text = "Verify image hashes *";
+            this.frmSettingsToolTip.SetToolTip(this.chkVerifyImageHashes, "Only supported for some sites");
             this.chkVerifyImageHashes.UseVisualStyleBackColor = true;
             // 
             // chkCheckForUpdates
             // 
             this.chkCheckForUpdates.AutoSize = true;
-            this.chkCheckForUpdates.Location = new System.Drawing.Point(144, 19);
+            this.chkCheckForUpdates.Location = new System.Drawing.Point(206, 42);
             this.chkCheckForUpdates.Name = "chkCheckForUpdates";
-            this.chkCheckForUpdates.Size = new System.Drawing.Size(219, 30);
+            this.chkCheckForUpdates.Size = new System.Drawing.Size(197, 30);
             this.chkCheckForUpdates.TabIndex = 10;
-            this.chkCheckForUpdates.Text = "Automatically check for and\r\nnotify of updated versions of this program";
+            this.chkCheckForUpdates.Text = "Automatically check for and notify of\r\nupdated versions of this program";
             this.chkCheckForUpdates.UseVisualStyleBackColor = true;
             // 
             // chkSaveThumbnails
@@ -244,9 +250,9 @@
             this.chkSaveThumbnails.AutoSize = true;
             this.chkSaveThumbnails.Location = new System.Drawing.Point(6, 19);
             this.chkSaveThumbnails.Name = "chkSaveThumbnails";
-            this.chkSaveThumbnails.Size = new System.Drawing.Size(128, 30);
+            this.chkSaveThumbnails.Size = new System.Drawing.Size(190, 30);
             this.chkSaveThumbnails.TabIndex = 6;
-            this.chkSaveThumbnails.Text = "Save thumbnails and \r\nPost-Process HTML";
+            this.chkSaveThumbnails.Text = "Save thumbnails and Post-Process\r\nHTML";
             this.chkSaveThumbnails.UseVisualStyleBackColor = true;
             // 
             // chkRenameDownloadFolderWithDescription
@@ -264,9 +270,10 @@
             this.chkUseSlug.AutoSize = true;
             this.chkUseSlug.Location = new System.Drawing.Point(6, 138);
             this.chkUseSlug.Name = "chkUseSlug";
-            this.chkUseSlug.Size = new System.Drawing.Size(285, 17);
+            this.chkUseSlug.Size = new System.Drawing.Size(147, 17);
             this.chkUseSlug.TabIndex = 16;
-            this.chkUseSlug.Text = "Use slug in thread name (only supported for some sites)";
+            this.chkUseSlug.Text = "Use slug in thread name *";
+            this.frmSettingsToolTip.SetToolTip(this.chkUseSlug, "Only supported for some sites");
             this.chkUseSlug.UseVisualStyleBackColor = true;
             this.chkUseSlug.CheckedChanged += new System.EventHandler(this.chkUseSlug_CheckedChanged);
             // 
@@ -276,7 +283,7 @@
             this.pnlSlug.Controls.Add(this.rbSlugOnly);
             this.pnlSlug.Controls.Add(this.rbSlugLast);
             this.pnlSlug.Controls.Add(this.rbSlugFirst);
-            this.pnlSlug.Location = new System.Drawing.Point(6, 154);
+            this.pnlSlug.Location = new System.Drawing.Point(6, 161);
             this.pnlSlug.Name = "pnlSlug";
             this.pnlSlug.Size = new System.Drawing.Size(308, 26);
             this.pnlSlug.TabIndex = 17;
@@ -365,9 +372,10 @@
             this.chkSortImagesByPoster.AutoSize = true;
             this.chkSortImagesByPoster.Location = new System.Drawing.Point(6, 92);
             this.chkSortImagesByPoster.Name = "chkSortImagesByPoster";
-            this.chkSortImagesByPoster.Size = new System.Drawing.Size(272, 17);
+            this.chkSortImagesByPoster.Size = new System.Drawing.Size(134, 17);
             this.chkSortImagesByPoster.TabIndex = 23;
-            this.chkSortImagesByPoster.Text = "Sort images by poster (only supported for some sites)";
+            this.chkSortImagesByPoster.Text = "Sort images by poster *";
+            this.frmSettingsToolTip.SetToolTip(this.chkSortImagesByPoster, "Only supported for some sites");
             this.chkSortImagesByPoster.UseVisualStyleBackColor = true;
             // 
             // grpThreadFolderNaming
@@ -408,11 +416,8 @@
             // 
             // grpGeneral
             // 
-            this.grpGeneral.Controls.Add(this.txtThreadStatusBoxThreshold_tooltip);
-            this.grpGeneral.Controls.Add(this.txtThreadStatusBoxThreshold);
-            this.grpGeneral.Controls.Add(this.ThreadStatusBox);
+            this.grpGeneral.Controls.Add(this.groupBox1);
             this.grpGeneral.Controls.Add(this.txtMaximumKilobytesPerSecond);
-            this.grpGeneral.Controls.Add(this.lblWindowTitle);
             this.grpGeneral.Controls.Add(this.lblMaximumKilobytesPerSecond);
             this.grpGeneral.Controls.Add(this.chkBlacklistWildcards);
             this.grpGeneral.Controls.Add(this.chkMinimizeToTray);
@@ -428,59 +433,55 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
-            // txtThreadStatusBoxThreshold_tooltip
+            // lblSupportedSitesNote
             // 
-            this.txtThreadStatusBoxThreshold_tooltip.AutoSize = true;
-            this.txtThreadStatusBoxThreshold_tooltip.Location = new System.Drawing.Point(225, 154);
-            this.txtThreadStatusBoxThreshold_tooltip.Name = "txtThreadStatusBoxThreshold_tooltip";
-            this.txtThreadStatusBoxThreshold_tooltip.Size = new System.Drawing.Size(109, 13);
-            this.txtThreadStatusBoxThreshold_tooltip.TabIndex = 39;
-            this.txtThreadStatusBoxThreshold_tooltip.Text = "Threshold of Minutes:";
+            this.lblSupportedSitesNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblSupportedSitesNote.AutoSize = true;
+            this.lblSupportedSitesNote.Location = new System.Drawing.Point(394, 390);
+            this.lblSupportedSitesNote.Name = "lblSupportedSitesNote";
+            this.lblSupportedSitesNote.Size = new System.Drawing.Size(152, 13);
+            this.lblSupportedSitesNote.TabIndex = 40;
+            this.lblSupportedSitesNote.Text = "* Only supported for some sites";
             // 
             // txtThreadStatusBoxThreshold
             // 
             this.txtThreadStatusBoxThreshold.AccessibleDescription = "";
-            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(340, 151);
+            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(86, 19);
             this.txtThreadStatusBoxThreshold.MaxLength = 4;
             this.txtThreadStatusBoxThreshold.Name = "txtThreadStatusBoxThreshold";
-            this.txtThreadStatusBoxThreshold.Size = new System.Drawing.Size(56, 20);
+            this.txtThreadStatusBoxThreshold.Size = new System.Drawing.Size(96, 20);
             this.txtThreadStatusBoxThreshold.TabIndex = 38;
+            this.frmSettingsToolTip.SetToolTip(this.txtThreadStatusBoxThreshold, resources.GetString("txtThreadStatusBoxThreshold.ToolTip"));
+            this.txtThreadStatusBoxThreshold.Leave += new System.EventHandler(this.txtThreadStatusBoxThreshold_Leave);
             // 
             // ThreadStatusBox
             // 
             this.ThreadStatusBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ThreadStatusBox.DropDownWidth = 95;
             this.ThreadStatusBox.FormattingEnabled = true;
+            this.ThreadStatusBox.ItemHeight = 13;
             this.ThreadStatusBox.Items.AddRange(new object[] {
             "Seconds (Default)",
             "Minutes"});
-            this.ThreadStatusBox.Location = new System.Drawing.Point(124, 151);
+            this.ThreadStatusBox.Location = new System.Drawing.Point(6, 19);
             this.ThreadStatusBox.Name = "ThreadStatusBox";
-            this.ThreadStatusBox.Size = new System.Drawing.Size(95, 21);
+            this.ThreadStatusBox.Size = new System.Drawing.Size(74, 21);
             this.ThreadStatusBox.TabIndex = 37;
+            this.frmSettingsToolTip.SetToolTip(this.ThreadStatusBox, resources.GetString("ThreadStatusBox.ToolTip"));
             this.ThreadStatusBox.SelectedIndexChanged += new System.EventHandler(this.ThreadStatusBox_SelectedIndexChanged);
             // 
             // txtMaximumKilobytesPerSecond
             // 
-            this.txtMaximumKilobytesPerSecond.Location = new System.Drawing.Point(234, 180);
+            this.txtMaximumKilobytesPerSecond.Location = new System.Drawing.Point(241, 178);
             this.txtMaximumKilobytesPerSecond.Name = "txtMaximumKilobytesPerSecond";
             this.txtMaximumKilobytesPerSecond.Size = new System.Drawing.Size(56, 20);
             this.txtMaximumKilobytesPerSecond.TabIndex = 32;
             this.txtMaximumKilobytesPerSecond.Leave += new System.EventHandler(this.txtMaximumKilobytesPerSecond_Leave);
             // 
-            // lblWindowTitle
-            // 
-            this.lblWindowTitle.AutoSize = true;
-            this.lblWindowTitle.Location = new System.Drawing.Point(6, 154);
-            this.lblWindowTitle.Name = "lblWindowTitle";
-            this.lblWindowTitle.Size = new System.Drawing.Size(112, 13);
-            this.lblWindowTitle.TabIndex = 34;
-            this.lblWindowTitle.Text = "Thread Status Format:";
-            // 
             // lblMaximumKilobytesPerSecond
             // 
             this.lblMaximumKilobytesPerSecond.AutoSize = true;
-            this.lblMaximumKilobytesPerSecond.Location = new System.Drawing.Point(3, 183);
+            this.lblMaximumKilobytesPerSecond.Location = new System.Drawing.Point(3, 181);
             this.lblMaximumKilobytesPerSecond.Name = "lblMaximumKilobytesPerSecond";
             this.lblMaximumKilobytesPerSecond.Size = new System.Drawing.Size(232, 13);
             this.lblMaximumKilobytesPerSecond.TabIndex = 33;
@@ -489,7 +490,7 @@
             // chkBlacklistWildcards
             // 
             this.chkBlacklistWildcards.AutoSize = true;
-            this.chkBlacklistWildcards.Location = new System.Drawing.Point(144, 55);
+            this.chkBlacklistWildcards.Location = new System.Drawing.Point(206, 78);
             this.chkBlacklistWildcards.Name = "chkBlacklistWildcards";
             this.chkBlacklistWildcards.Size = new System.Drawing.Size(147, 17);
             this.chkBlacklistWildcards.TabIndex = 28;
@@ -511,19 +512,21 @@
             this.chkInterBoardAutoFollow.AutoSize = true;
             this.chkInterBoardAutoFollow.Location = new System.Drawing.Point(6, 78);
             this.chkInterBoardAutoFollow.Name = "chkInterBoardAutoFollow";
-            this.chkInterBoardAutoFollow.Size = new System.Drawing.Size(132, 30);
+            this.chkInterBoardAutoFollow.Size = new System.Drawing.Size(161, 30);
             this.chkInterBoardAutoFollow.TabIndex = 12;
-            this.chkInterBoardAutoFollow.Text = "Follow threads outside\r\nof the current board (*)";
+            this.chkInterBoardAutoFollow.Text = "Follow threads outside of the\r\ncurrent board *";
+            this.frmSettingsToolTip.SetToolTip(this.chkInterBoardAutoFollow, "Only supported for some sites");
             this.chkInterBoardAutoFollow.UseVisualStyleBackColor = true;
             // 
             // chkRecursiveAutoFollow
             // 
             this.chkRecursiveAutoFollow.AutoSize = true;
-            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(6, 114);
+            this.chkRecursiveAutoFollow.Location = new System.Drawing.Point(206, 19);
             this.chkRecursiveAutoFollow.Name = "chkRecursiveAutoFollow";
-            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(135, 30);
+            this.chkRecursiveAutoFollow.Size = new System.Drawing.Size(205, 17);
             this.chkRecursiveAutoFollow.TabIndex = 11;
-            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow\r\nchild threads (*)";
+            this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads *";
+            this.frmSettingsToolTip.SetToolTip(this.chkRecursiveAutoFollow, "Only supported for some sites");
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
             // 
             // cboWindowTitle
@@ -557,7 +560,7 @@
             // 
             this.pnlBackupEvery.Controls.Add(this.lblBackupEvery);
             this.pnlBackupEvery.Controls.Add(this.txtBackupEvery);
-            this.pnlBackupEvery.Location = new System.Drawing.Point(123, 15);
+            this.pnlBackupEvery.Location = new System.Drawing.Point(196, 15);
             this.pnlBackupEvery.Name = "pnlBackupEvery";
             this.pnlBackupEvery.Size = new System.Drawing.Size(177, 26);
             this.pnlBackupEvery.TabIndex = 32;
@@ -582,7 +585,7 @@
             // chkBackupThreadList
             // 
             this.chkBackupThreadList.AutoSize = true;
-            this.chkBackupThreadList.Location = new System.Drawing.Point(6, 19);
+            this.chkBackupThreadList.Location = new System.Drawing.Point(6, 24);
             this.chkBackupThreadList.Name = "chkBackupThreadList";
             this.chkBackupThreadList.Size = new System.Drawing.Size(111, 17);
             this.chkBackupThreadList.TabIndex = 29;
@@ -606,7 +609,7 @@
             // chkBackupCheckSize
             // 
             this.chkBackupCheckSize.AutoSize = true;
-            this.chkBackupCheckSize.Location = new System.Drawing.Point(6, 42);
+            this.chkBackupCheckSize.Location = new System.Drawing.Point(6, 47);
             this.chkBackupCheckSize.Name = "chkBackupCheckSize";
             this.chkBackupCheckSize.Size = new System.Drawing.Size(207, 17);
             this.chkBackupCheckSize.TabIndex = 33;
@@ -688,12 +691,25 @@
             this.chkCompletedFolderRelative.UseVisualStyleBackColor = true;
             this.chkCompletedFolderRelative.CheckedChanged += new System.EventHandler(this.chkCompletedFolderRelative_CheckedChanged);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.ThreadStatusBox);
+            this.groupBox1.Controls.Add(this.txtThreadStatusBoxThreshold);
+            this.groupBox1.Location = new System.Drawing.Point(6, 114);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(200, 52);
+            this.groupBox1.TabIndex = 41;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Thread Status Format";
+            this.frmSettingsToolTip.SetToolTip(this.groupBox1, resources.GetString("groupBox1.ToolTip"));
+            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(844, 418);
+            this.Controls.Add(this.lblSupportedSitesNote);
             this.Controls.Add(this.chkCompletedFolderRelative);
             this.Controls.Add(this.chkCompletedFolder);
             this.Controls.Add(this.btnCompletedFolder);
@@ -739,6 +755,8 @@
             this.grpWindow.ResumeLayout(false);
             this.pnlWindowTitle.ResumeLayout(false);
             this.pnlWindowTitle.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -791,7 +809,6 @@
         private System.Windows.Forms.GroupBox grpBackup;
         private System.Windows.Forms.CheckBox chkBackupCheckSize;
         private System.Windows.Forms.TextBox txtWindowTitle;
-        private System.Windows.Forms.Label lblWindowTitle;
         private System.Windows.Forms.ComboBox cboWindowTitle;
         private System.Windows.Forms.GroupBox grpWindow;
         private System.Windows.Forms.Panel pnlWindowTitle;
@@ -801,7 +818,9 @@
         private System.Windows.Forms.CheckBox chkCompletedFolder;
         private System.Windows.Forms.CheckBox chkCompletedFolderRelative;
         private System.Windows.Forms.ComboBox ThreadStatusBox;
+        private System.Windows.Forms.Label lblSupportedSitesNote;
         private System.Windows.Forms.TextBox txtThreadStatusBoxThreshold;
-        private System.Windows.Forms.Label txtThreadStatusBoxThreshold_tooltip;
+        private System.Windows.Forms.ToolTip frmSettingsToolTip;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

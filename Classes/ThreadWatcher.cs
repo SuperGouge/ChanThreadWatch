@@ -28,6 +28,7 @@ namespace JDP {
         private bool _oneTimeDownload;
         private int _checkIntervalSeconds;
         private int _minCheckIntervalSeconds;
+        private bool? _threadstatustype = Settings.ThreadStatusSimple;
         private string _mainDownloadDirectory = Settings.AbsoluteDownloadDirectory;
         private string _threadDownloadDirectory;
         private long _nextCheckTicks;
@@ -114,6 +115,11 @@ namespace JDP {
                     NextCheckTicks += changeAmount * 1000;
                 }
             }
+        }
+
+        public bool? threadstatustype {
+            get { lock (_settingsSync) { return _threadstatustype; } }
+            set { _threadstatustype = value; }
         }
 
         public string MainDownloadDirectory {
