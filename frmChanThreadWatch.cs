@@ -522,7 +522,7 @@ namespace JDP {
                 foreach (ThreadWatcher watcher in SelectedThreadWatchers) {
                     watcher.CheckIntervalSeconds = checkIntervalSeconds;
                 }
-                UpdateWaitingWatcherStatuses(true);
+                UpdateWaitingWatcherStatuses();
             }
             _saveThreadList = true;
         }
@@ -1046,7 +1046,7 @@ namespace JDP {
             }
         }
 
-        private void UpdateWaitingWatcherStatuses(bool forceUpdate = false) {
+        private void UpdateWaitingWatcherStatuses() {
             foreach (ThreadWatcher watcher in ThreadWatchers) {
                 if (watcher.IsWaiting) {
                     SetWaitStatus(watcher);
