@@ -259,8 +259,7 @@ namespace JDP {
         }
 
         private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
-            int tmpThreadStatusThreshold;
-            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0) {
+            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out int tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0) {
                 txtThreadStatusBoxThreshold.Text = Settings.ThreadStatusThreshold.ToString();
             }
         }

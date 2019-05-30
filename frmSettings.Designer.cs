@@ -56,8 +56,8 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
-            this.chkThreadStatus = new System.Windows.Forms.CheckBox();
             this.grpThreadStatus = new System.Windows.Forms.GroupBox();
+            this.chkThreadStatus = new System.Windows.Forms.CheckBox();
             this.txtThreadStatusBoxThreshold = new System.Windows.Forms.TextBox();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
@@ -433,18 +433,6 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
-            // chkThreadStatus
-            // 
-            this.chkThreadStatus.AutoSize = true;
-            this.chkThreadStatus.Location = new System.Drawing.Point(6, 19);
-            this.chkThreadStatus.Name = "chkThreadStatus";
-            this.chkThreadStatus.Size = new System.Drawing.Size(93, 17);
-            this.chkThreadStatus.TabIndex = 42;
-            this.chkThreadStatus.Text = "Show Minutes";
-            this.frmSettingsToolTip.SetToolTip(this.chkThreadStatus, resources.GetString("chkThreadStatus.ToolTip"));
-            this.chkThreadStatus.UseVisualStyleBackColor = true;
-            this.chkThreadStatus.CheckedChanged += new System.EventHandler(this.chkThreadStatus_CheckedChanged);
-            // 
             // grpThreadStatus
             // 
             this.grpThreadStatus.Controls.Add(this.chkThreadStatus);
@@ -456,6 +444,18 @@
             this.grpThreadStatus.TabStop = false;
             this.grpThreadStatus.Text = "Thread Status Format";
             this.frmSettingsToolTip.SetToolTip(this.grpThreadStatus, resources.GetString("grpThreadStatus.ToolTip"));
+            // 
+            // chkThreadStatus
+            // 
+            this.chkThreadStatus.AutoSize = true;
+            this.chkThreadStatus.Location = new System.Drawing.Point(6, 19);
+            this.chkThreadStatus.Name = "chkThreadStatus";
+            this.chkThreadStatus.Size = new System.Drawing.Size(93, 17);
+            this.chkThreadStatus.TabIndex = 42;
+            this.chkThreadStatus.Text = "Show Minutes";
+            this.frmSettingsToolTip.SetToolTip(this.chkThreadStatus, resources.GetString("chkThreadStatus.ToolTip"));
+            this.chkThreadStatus.UseVisualStyleBackColor = true;
+            this.chkThreadStatus.CheckedChanged += new System.EventHandler(this.chkThreadStatus_CheckedChanged);
             // 
             // txtThreadStatusBoxThreshold
             // 

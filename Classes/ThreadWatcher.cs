@@ -29,6 +29,7 @@ namespace JDP {
         private int _checkIntervalSeconds;
         private int _minCheckIntervalSeconds;
         private bool? _threadStatusSimple = Settings.ThreadStatusSimple;
+        private int? _threadStatusThreshold = Settings.ThreadStatusThreshold;
         private string _mainDownloadDirectory = Settings.AbsoluteDownloadDirectory;
         private string _threadDownloadDirectory;
         private long _nextCheckTicks;
@@ -120,6 +121,11 @@ namespace JDP {
         public bool? ThreadStatusSimple {
             get { lock (_settingsSync) { return _threadStatusSimple; } }
             set { _threadStatusSimple = value; }
+        }
+
+        public int? ThreadStatusThreshold {
+            get { lock (_settingsSync) { return _threadStatusThreshold; } }
+            set { _threadStatusThreshold = value; }
         }
 
         public string MainDownloadDirectory {
