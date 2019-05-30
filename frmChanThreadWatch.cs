@@ -1132,7 +1132,7 @@ namespace JDP {
                 return;
             }
             if (watcher.ThreadStatusSimple == true) {
-                if (remainingSeconds % 60 != 0) { return; };
+                if (remainingMinutes > Settings.ThreadStatusThreshold && remainingSeconds % 60 != 0) { return; };
             }
             DisplayStatus(watcher, statusStringOut);
         }
