@@ -56,15 +56,16 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
-            this.lblSupportedSitesNote = new System.Windows.Forms.Label();
+            this.grpThreadStatus = new System.Windows.Forms.GroupBox();
+            this.cboThreadStatus = new System.Windows.Forms.ComboBox();
             this.txtThreadStatusBoxThreshold = new System.Windows.Forms.TextBox();
-            this.ThreadStatusBox = new System.Windows.Forms.ComboBox();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
             this.chkBlacklistWildcards = new System.Windows.Forms.CheckBox();
             this.chkMinimizeToTray = new System.Windows.Forms.CheckBox();
             this.chkInterBoardAutoFollow = new System.Windows.Forms.CheckBox();
             this.chkRecursiveAutoFollow = new System.Windows.Forms.CheckBox();
+            this.lblSupportedSitesNote = new System.Windows.Forms.Label();
             this.cboWindowTitle = new System.Windows.Forms.ComboBox();
             this.txtWindowTitle = new System.Windows.Forms.TextBox();
             this.btnBackupThreadList = new System.Windows.Forms.Button();
@@ -82,17 +83,16 @@
             this.chkCompletedFolder = new System.Windows.Forms.CheckBox();
             this.chkCompletedFolderRelative = new System.Windows.Forms.CheckBox();
             this.frmSettingsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pnlSlug.SuspendLayout();
             this.grpThreadFolderNaming.SuspendLayout();
             this.pnlParentThreadDescriptionFormat.SuspendLayout();
             this.grpNamingStructure.SuspendLayout();
             this.grpGeneral.SuspendLayout();
+            this.grpThreadStatus.SuspendLayout();
             this.pnlBackupEvery.SuspendLayout();
             this.grpBackup.SuspendLayout();
             this.grpWindow.SuspendLayout();
             this.pnlWindowTitle.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadFolder
@@ -416,7 +416,7 @@
             // 
             // grpGeneral
             // 
-            this.grpGeneral.Controls.Add(this.groupBox1);
+            this.grpGeneral.Controls.Add(this.grpThreadStatus);
             this.grpGeneral.Controls.Add(this.txtMaximumKilobytesPerSecond);
             this.grpGeneral.Controls.Add(this.lblMaximumKilobytesPerSecond);
             this.grpGeneral.Controls.Add(this.chkBlacklistWildcards);
@@ -433,15 +433,33 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
-            // lblSupportedSitesNote
+            // grpThreadStatus
             // 
-            this.lblSupportedSitesNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblSupportedSitesNote.AutoSize = true;
-            this.lblSupportedSitesNote.Location = new System.Drawing.Point(394, 390);
-            this.lblSupportedSitesNote.Name = "lblSupportedSitesNote";
-            this.lblSupportedSitesNote.Size = new System.Drawing.Size(152, 13);
-            this.lblSupportedSitesNote.TabIndex = 40;
-            this.lblSupportedSitesNote.Text = "* Only supported for some sites";
+            this.grpThreadStatus.Controls.Add(this.cboThreadStatus);
+            this.grpThreadStatus.Controls.Add(this.txtThreadStatusBoxThreshold);
+            this.grpThreadStatus.Location = new System.Drawing.Point(6, 114);
+            this.grpThreadStatus.Name = "grpThreadStatus";
+            this.grpThreadStatus.Size = new System.Drawing.Size(200, 52);
+            this.grpThreadStatus.TabIndex = 41;
+            this.grpThreadStatus.TabStop = false;
+            this.grpThreadStatus.Text = "Thread Status Format";
+            this.frmSettingsToolTip.SetToolTip(this.grpThreadStatus, resources.GetString("grpThreadStatus.ToolTip"));
+            // 
+            // cboThreadStatus
+            // 
+            this.cboThreadStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboThreadStatus.DropDownWidth = 95;
+            this.cboThreadStatus.FormattingEnabled = true;
+            this.cboThreadStatus.ItemHeight = 13;
+            this.cboThreadStatus.Items.AddRange(new object[] {
+            "Seconds (Default)",
+            "Minutes"});
+            this.cboThreadStatus.Location = new System.Drawing.Point(6, 19);
+            this.cboThreadStatus.Name = "cboThreadStatus";
+            this.cboThreadStatus.Size = new System.Drawing.Size(74, 21);
+            this.cboThreadStatus.TabIndex = 37;
+            this.frmSettingsToolTip.SetToolTip(this.cboThreadStatus, resources.GetString("cboThreadStatus.ToolTip"));
+            this.cboThreadStatus.SelectedIndexChanged += new System.EventHandler(this.cboThreadStatus_SelectedIndexChanged);
             // 
             // txtThreadStatusBoxThreshold
             // 
@@ -453,22 +471,6 @@
             this.txtThreadStatusBoxThreshold.TabIndex = 38;
             this.frmSettingsToolTip.SetToolTip(this.txtThreadStatusBoxThreshold, resources.GetString("txtThreadStatusBoxThreshold.ToolTip"));
             this.txtThreadStatusBoxThreshold.Leave += new System.EventHandler(this.txtThreadStatusBoxThreshold_Leave);
-            // 
-            // ThreadStatusBox
-            // 
-            this.ThreadStatusBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ThreadStatusBox.DropDownWidth = 95;
-            this.ThreadStatusBox.FormattingEnabled = true;
-            this.ThreadStatusBox.ItemHeight = 13;
-            this.ThreadStatusBox.Items.AddRange(new object[] {
-            "Seconds (Default)",
-            "Minutes"});
-            this.ThreadStatusBox.Location = new System.Drawing.Point(6, 19);
-            this.ThreadStatusBox.Name = "ThreadStatusBox";
-            this.ThreadStatusBox.Size = new System.Drawing.Size(74, 21);
-            this.ThreadStatusBox.TabIndex = 37;
-            this.frmSettingsToolTip.SetToolTip(this.ThreadStatusBox, resources.GetString("ThreadStatusBox.ToolTip"));
-            this.ThreadStatusBox.SelectedIndexChanged += new System.EventHandler(this.ThreadStatusBox_SelectedIndexChanged);
             // 
             // txtMaximumKilobytesPerSecond
             // 
@@ -528,6 +530,16 @@
             this.chkRecursiveAutoFollow.Text = "Recursively auto-follow child threads *";
             this.frmSettingsToolTip.SetToolTip(this.chkRecursiveAutoFollow, "Only supported for some sites");
             this.chkRecursiveAutoFollow.UseVisualStyleBackColor = true;
+            // 
+            // lblSupportedSitesNote
+            // 
+            this.lblSupportedSitesNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblSupportedSitesNote.AutoSize = true;
+            this.lblSupportedSitesNote.Location = new System.Drawing.Point(394, 390);
+            this.lblSupportedSitesNote.Name = "lblSupportedSitesNote";
+            this.lblSupportedSitesNote.Size = new System.Drawing.Size(152, 13);
+            this.lblSupportedSitesNote.TabIndex = 40;
+            this.lblSupportedSitesNote.Text = "* Only supported for some sites";
             // 
             // cboWindowTitle
             // 
@@ -691,18 +703,6 @@
             this.chkCompletedFolderRelative.UseVisualStyleBackColor = true;
             this.chkCompletedFolderRelative.CheckedChanged += new System.EventHandler(this.chkCompletedFolderRelative_CheckedChanged);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.ThreadStatusBox);
-            this.groupBox1.Controls.Add(this.txtThreadStatusBoxThreshold);
-            this.groupBox1.Location = new System.Drawing.Point(6, 114);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 52);
-            this.groupBox1.TabIndex = 41;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Thread Status Format";
-            this.frmSettingsToolTip.SetToolTip(this.groupBox1, resources.GetString("groupBox1.ToolTip"));
-            // 
             // frmSettings
             // 
             this.AcceptButton = this.btnOK;
@@ -748,6 +748,8 @@
             this.grpNamingStructure.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
+            this.grpThreadStatus.ResumeLayout(false);
+            this.grpThreadStatus.PerformLayout();
             this.pnlBackupEvery.ResumeLayout(false);
             this.pnlBackupEvery.PerformLayout();
             this.grpBackup.ResumeLayout(false);
@@ -755,8 +757,6 @@
             this.grpWindow.ResumeLayout(false);
             this.pnlWindowTitle.ResumeLayout(false);
             this.pnlWindowTitle.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -817,10 +817,10 @@
         private System.Windows.Forms.Button btnCompletedFolder;
         private System.Windows.Forms.CheckBox chkCompletedFolder;
         private System.Windows.Forms.CheckBox chkCompletedFolderRelative;
-        private System.Windows.Forms.ComboBox ThreadStatusBox;
+        private System.Windows.Forms.ComboBox cboThreadStatus;
         private System.Windows.Forms.Label lblSupportedSitesNote;
         private System.Windows.Forms.TextBox txtThreadStatusBoxThreshold;
         private System.Windows.Forms.ToolTip frmSettingsToolTip;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox grpThreadStatus;
     }
 }

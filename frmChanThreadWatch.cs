@@ -135,7 +135,7 @@ namespace JDP {
             lvThreads.Items.Add(new ListViewItem());
             _itemAreaY = lvThreads.GetItemRect(0).Y;
             lvThreads.Items.RemoveAt(0);
-            
+
             Thread thread = new Thread(() => {
                 LoadThreadList();
                 LoadBlacklist();
@@ -324,7 +324,7 @@ namespace JDP {
                 }
                 RemoveThreads(true, false,
                         (watcher) => {
-                            string destDir = Path.Combine(Settings.AbsoluteCompletedDirectory, 
+                            string destDir = Path.Combine(Settings.AbsoluteCompletedDirectory,
                                 General.GetRelativeDirectoryPath(watcher.ThreadDownloadDirectory, watcher.MainDownloadDirectory));
                             if (Directory.Exists(watcher.ThreadDownloadDirectory)) {
                                 if (Directory.Exists(destDir)) {
@@ -1124,14 +1124,14 @@ namespace JDP {
         private void SetWaitStatus(ThreadWatcher watcher) {
             var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
             var remainingMinutes = remainingSeconds / 60;
-            var threadStatusMatchesSettings = watcher.threadstatustype == Settings.ThreadStatusSimple;
+            var threadStatusMatchesSettings = watcher.ThreadStatusSimple == Settings.ThreadStatusSimple;
             var statusStringOut = Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold ? $"Waiting {remainingMinutes:D2} minutes" : $"Waiting {remainingSeconds} seconds";
             if (!threadStatusMatchesSettings) {
                 DisplayStatus(watcher, statusStringOut);
-                watcher.threadstatustype = Settings.ThreadStatusSimple;
+                watcher.ThreadStatusSimple = Settings.ThreadStatusSimple;
                 return;
             }
-            if (watcher.threadstatustype == true) {
+            if (watcher.ThreadStatusSimple == true) {
                 if (remainingSeconds % 60 != 0) { return; };
             }
             DisplayStatus(watcher, statusStringOut);
@@ -1455,7 +1455,7 @@ namespace JDP {
                 cboCategory.Items.Add(key);
             }
         }
-        
+
         private void FocusThread(string pageURL) {
             SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(pageURL)).Host);
             siteHelper.SetURL(pageURL);

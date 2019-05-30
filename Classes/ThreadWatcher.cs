@@ -28,7 +28,7 @@ namespace JDP {
         private bool _oneTimeDownload;
         private int _checkIntervalSeconds;
         private int _minCheckIntervalSeconds;
-        private bool? _threadstatustype = Settings.ThreadStatusSimple;
+        private bool? _threadStatusSimple = Settings.ThreadStatusSimple;
         private string _mainDownloadDirectory = Settings.AbsoluteDownloadDirectory;
         private string _threadDownloadDirectory;
         private long _nextCheckTicks;
@@ -117,9 +117,9 @@ namespace JDP {
             }
         }
 
-        public bool? threadstatustype {
-            get { lock (_settingsSync) { return _threadstatustype; } }
-            set { _threadstatustype = value; }
+        public bool? ThreadStatusSimple {
+            get { lock (_settingsSync) { return _threadStatusSimple; } }
+            set { _threadStatusSimple = value; }
         }
 
         public string MainDownloadDirectory {
@@ -365,7 +365,7 @@ namespace JDP {
                 List<ThumbnailInfo> thumbs = new List<ThumbnailInfo>();
                 List<ImageInfo> images = siteHelper.GetImages(pageInfo.ReplaceList, thumbs, true);
                 if (images.Count == 0) continue;
-                
+
                 Dictionary<string, DownloadInfo> completedImages = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
                 Dictionary<string, DownloadInfo> completedThumbs = new Dictionary<string, DownloadInfo>(StringComparer.OrdinalIgnoreCase);
 

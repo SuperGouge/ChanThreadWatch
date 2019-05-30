@@ -40,7 +40,7 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
-            ThreadStatusBox.SelectedIndex = Settings.ThreadStatusSimple == true ? 1 : 0;
+            cboThreadStatus.SelectedIndex = Settings.ThreadStatusSimple == true ? 1 : 0;
             txtThreadStatusBoxThreshold.Enabled = Settings.ThreadStatusSimple == true ? true : false;
             txtThreadStatusBoxThreshold.Text = (Settings.ThreadStatusThreshold ?? 10).ToString();
             chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
@@ -195,7 +195,7 @@ namespace JDP {
         private void btnBackupThreadList_Click(object sender, EventArgs e) {
             General.BackupThreadList();
         }
-        
+
         private void chkDownloadFolderRelative_CheckedChanged(object sender, EventArgs e) {
             SetDownloadFolderTextBox(txtDownloadFolder.Text.Trim());
         }
@@ -258,8 +258,8 @@ namespace JDP {
                 General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
         }
 
-        private void ThreadStatusBox_SelectedIndexChanged(object sender, EventArgs e) {
-            if (ThreadStatusBox.Text == "Minutes") {
+        private void cboThreadStatus_SelectedIndexChanged(object sender, EventArgs e) {
+            if (cboThreadStatus.Text == "Minutes") {
                 txtThreadStatusBoxThreshold.Enabled = true;
             }
             else {
@@ -268,9 +268,8 @@ namespace JDP {
         }
 
         private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
-            long tmpThreadStatusThreshold;
-            if (!Int64.TryParse(txtThreadStatusBoxThreshold.Text, out tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0 || tmpThreadStatusThreshold > Int64.MaxValue)
-            {
+            int tmpThreadStatusThreshold;
+            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0) {
                 txtThreadStatusBoxThreshold.Text = Settings.ThreadStatusThreshold.ToString();
             }
         }
