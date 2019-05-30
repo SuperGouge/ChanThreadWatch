@@ -40,8 +40,8 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
-            cboThreadStatus.SelectedIndex = Settings.ThreadStatusSimple == true ? 1 : 0;
-            txtThreadStatusBoxThreshold.Enabled = Settings.ThreadStatusSimple == true ? true : false;
+            chkThreadStatus.CheckState = Settings.ThreadStatusSimple == true ? CheckState.Checked : CheckState.Unchecked;
+            txtThreadStatusBoxThreshold.Enabled = Settings.ThreadStatusSimple == true;
             txtThreadStatusBoxThreshold.Text = (Settings.ThreadStatusThreshold ?? 10).ToString();
             chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
             chkBackupCheckSize.Checked = Settings.BackupCheckSize ?? false;
@@ -258,19 +258,19 @@ namespace JDP {
                 General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
         }
 
-        private void cboThreadStatus_SelectedIndexChanged(object sender, EventArgs e) {
-            if (cboThreadStatus.Text == "Minutes") {
-                txtThreadStatusBoxThreshold.Enabled = true;
-            }
-            else {
-                txtThreadStatusBoxThreshold.Enabled = false;
-            }
-        }
-
         private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
             int tmpThreadStatusThreshold;
             if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0) {
                 txtThreadStatusBoxThreshold.Text = Settings.ThreadStatusThreshold.ToString();
+            }
+        }
+
+        private void chkThreadStatus_CheckedChanged(object sender, EventArgs e) {
+            if (chkThreadStatus.Checked) {
+                txtThreadStatusBoxThreshold.Enabled = true;
+            }
+            else {
+                txtThreadStatusBoxThreshold.Enabled = false;
             }
         }
     }

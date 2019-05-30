@@ -123,7 +123,7 @@
   <metadata name="frmSettingsToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="cboThreadStatus.ToolTip" xml:space="preserve">
+  <data name="chkThreadStatus.ToolTip" xml:space="preserve">
     <value>Select the "Thread Status Threshold"
 The dropdown allows for always showing the number of seconds remaining in the thread status,
 or the number of minutes remaining, until a specified threshold, at which seconds begin to be shown again.

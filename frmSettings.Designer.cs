@@ -56,8 +56,8 @@
             this.pnlParentThreadDescriptionFormat = new System.Windows.Forms.Panel();
             this.grpNamingStructure = new System.Windows.Forms.GroupBox();
             this.grpGeneral = new System.Windows.Forms.GroupBox();
+            this.chkThreadStatus = new System.Windows.Forms.CheckBox();
             this.grpThreadStatus = new System.Windows.Forms.GroupBox();
-            this.cboThreadStatus = new System.Windows.Forms.ComboBox();
             this.txtThreadStatusBoxThreshold = new System.Windows.Forms.TextBox();
             this.txtMaximumKilobytesPerSecond = new System.Windows.Forms.TextBox();
             this.lblMaximumKilobytesPerSecond = new System.Windows.Forms.Label();
@@ -433,41 +433,37 @@
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
+            // chkThreadStatus
+            // 
+            this.chkThreadStatus.AutoSize = true;
+            this.chkThreadStatus.Location = new System.Drawing.Point(6, 19);
+            this.chkThreadStatus.Name = "chkThreadStatus";
+            this.chkThreadStatus.Size = new System.Drawing.Size(93, 17);
+            this.chkThreadStatus.TabIndex = 42;
+            this.chkThreadStatus.Text = "Show Minutes";
+            this.frmSettingsToolTip.SetToolTip(this.chkThreadStatus, resources.GetString("chkThreadStatus.ToolTip"));
+            this.chkThreadStatus.UseVisualStyleBackColor = true;
+            this.chkThreadStatus.CheckedChanged += new System.EventHandler(this.chkThreadStatus_CheckedChanged);
+            // 
             // grpThreadStatus
             // 
-            this.grpThreadStatus.Controls.Add(this.cboThreadStatus);
+            this.grpThreadStatus.Controls.Add(this.chkThreadStatus);
             this.grpThreadStatus.Controls.Add(this.txtThreadStatusBoxThreshold);
             this.grpThreadStatus.Location = new System.Drawing.Point(6, 114);
             this.grpThreadStatus.Name = "grpThreadStatus";
-            this.grpThreadStatus.Size = new System.Drawing.Size(200, 52);
+            this.grpThreadStatus.Size = new System.Drawing.Size(172, 52);
             this.grpThreadStatus.TabIndex = 41;
             this.grpThreadStatus.TabStop = false;
             this.grpThreadStatus.Text = "Thread Status Format";
             this.frmSettingsToolTip.SetToolTip(this.grpThreadStatus, resources.GetString("grpThreadStatus.ToolTip"));
             // 
-            // cboThreadStatus
-            // 
-            this.cboThreadStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboThreadStatus.DropDownWidth = 95;
-            this.cboThreadStatus.FormattingEnabled = true;
-            this.cboThreadStatus.ItemHeight = 13;
-            this.cboThreadStatus.Items.AddRange(new object[] {
-            "Seconds (Default)",
-            "Minutes"});
-            this.cboThreadStatus.Location = new System.Drawing.Point(6, 19);
-            this.cboThreadStatus.Name = "cboThreadStatus";
-            this.cboThreadStatus.Size = new System.Drawing.Size(74, 21);
-            this.cboThreadStatus.TabIndex = 37;
-            this.frmSettingsToolTip.SetToolTip(this.cboThreadStatus, resources.GetString("cboThreadStatus.ToolTip"));
-            this.cboThreadStatus.SelectedIndexChanged += new System.EventHandler(this.cboThreadStatus_SelectedIndexChanged);
-            // 
             // txtThreadStatusBoxThreshold
             // 
             this.txtThreadStatusBoxThreshold.AccessibleDescription = "";
-            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(86, 19);
+            this.txtThreadStatusBoxThreshold.Location = new System.Drawing.Point(105, 17);
             this.txtThreadStatusBoxThreshold.MaxLength = 4;
             this.txtThreadStatusBoxThreshold.Name = "txtThreadStatusBoxThreshold";
-            this.txtThreadStatusBoxThreshold.Size = new System.Drawing.Size(96, 20);
+            this.txtThreadStatusBoxThreshold.Size = new System.Drawing.Size(61, 20);
             this.txtThreadStatusBoxThreshold.TabIndex = 38;
             this.frmSettingsToolTip.SetToolTip(this.txtThreadStatusBoxThreshold, resources.GetString("txtThreadStatusBoxThreshold.ToolTip"));
             this.txtThreadStatusBoxThreshold.Leave += new System.EventHandler(this.txtThreadStatusBoxThreshold_Leave);
@@ -817,10 +813,10 @@
         private System.Windows.Forms.Button btnCompletedFolder;
         private System.Windows.Forms.CheckBox chkCompletedFolder;
         private System.Windows.Forms.CheckBox chkCompletedFolderRelative;
-        private System.Windows.Forms.ComboBox cboThreadStatus;
         private System.Windows.Forms.Label lblSupportedSitesNote;
         private System.Windows.Forms.TextBox txtThreadStatusBoxThreshold;
         private System.Windows.Forms.ToolTip frmSettingsToolTip;
         private System.Windows.Forms.GroupBox grpThreadStatus;
+        private System.Windows.Forms.CheckBox chkThreadStatus;
     }
 }
