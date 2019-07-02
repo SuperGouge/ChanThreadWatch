@@ -1125,15 +1125,15 @@ namespace JDP {
             var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
             var remainingMinutes = remainingSeconds / 60;
             var threadStatusMatchesSettings = ((watcher.ThreadStatusSimple == Settings.ThreadStatusSimple) && (watcher.ThreadStatusThreshold == Settings.ThreadStatusThreshold));
-            var statusStringOut = Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold ? $"Waiting {remainingMinutes:D2} minutes" : $"Waiting {remainingSeconds} seconds";
+            var statusStringOut = Settings.ThreadStatusSimple == true && remainingMinutes >= Settings.ThreadStatusThreshold ? $"Waiting {remainingMinutes} minute{(remainingMinutes == 1 ? "" : "s")}" : $"Waiting {remainingSeconds} seconds";
             if (!threadStatusMatchesSettings) {
                 DisplayStatus(watcher, statusStringOut);
                 watcher.ThreadStatusSimple = Settings.ThreadStatusSimple;
                 watcher.ThreadStatusThreshold = Settings.ThreadStatusThreshold;
                 return;
             }
-            if (watcher.ThreadStatusSimple == true) {
-                if (remainingMinutes > Settings.ThreadStatusThreshold && remainingSeconds % 60 != 0) { return; };
+            if (Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold && remainingSeconds % 60 != 0) {
+                return;
             }
             DisplayStatus(watcher, statusStringOut);
         }
