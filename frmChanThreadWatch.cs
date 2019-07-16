@@ -1123,19 +1123,39 @@ namespace JDP {
 
         private void SetWaitStatus(ThreadWatcher watcher) {
             var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
-            var remainingMinutes = remainingSeconds / 60;
             var threadStatusMatchesSettings = ((watcher.ThreadStatusSimple == Settings.ThreadStatusSimple) && (watcher.ThreadStatusThreshold == Settings.ThreadStatusThreshold));
-            var statusStringOut = Settings.ThreadStatusSimple == true && remainingMinutes >= Settings.ThreadStatusThreshold ? $"Waiting {remainingMinutes} minute{(remainingMinutes == 1 ? "" : "s")}" : $"Waiting {remainingSeconds} seconds";
+            SetWaitStatusString(remainingSeconds, out string statusStringOut);
             if (!threadStatusMatchesSettings) {
                 DisplayStatus(watcher, statusStringOut);
                 watcher.ThreadStatusSimple = Settings.ThreadStatusSimple;
                 watcher.ThreadStatusThreshold = Settings.ThreadStatusThreshold;
                 return;
             }
-            if (Settings.ThreadStatusSimple == true && remainingMinutes > Settings.ThreadStatusThreshold && remainingSeconds % 60 != 0) {
+            if (Settings.ThreadStatusSimple == true && (remainingSeconds / 60) >= Settings.ThreadStatusThreshold && remainingSeconds % 60 != (0 | 59)) {
                 return;
             }
             DisplayStatus(watcher, statusStringOut);
+        }
+        private static void SetWaitStatusString(int remainingSeconds, out string templateStatusStringOut) {
+            var outNum = remainingSeconds;
+            var outTimeScale = "Second";
+            templateStatusStringOut = @"Waiting {0} {1}{2}";
+            if (Settings.ThreadStatusSimple == true) {
+                var remainingMinutes = remainingSeconds / 60;
+                if ((remainingMinutes <= Settings.ThreadStatusThreshold) && Settings.ThreadStatusThreshold == 0) {
+                    templateStatusStringOut = "Less than 1 Minute";
+                    return;
+                }
+                else if (remainingMinutes >= Settings.ThreadStatusThreshold) {
+                    outNum = remainingSeconds / 60;
+                    outTimeScale = "Minute";
+                }
+                else {
+                    outNum = remainingSeconds;
+                }
+            }
+            var outPlural = outNum == 1 ? "" : "s";
+            templateStatusStringOut = string.Format(templateStatusStringOut, outNum, outTimeScale, outPlural);
         }
 
         private void SetStopStatus(ThreadWatcher watcher, StopReason stopReason) {

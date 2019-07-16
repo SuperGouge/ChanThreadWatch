@@ -128,7 +128,7 @@ When disabled/unchecked, threads will always show the number of seconds remainin
 
 Default: disabled
 Default limit when enabled: 10 minute threshold
-Acceptable values for text box: any number greater than 0</value>
+Acceptable values for text box: any number that is 0 or greater</value>
   </data>
   <data name="txtThreadStatusBoxThreshold.ToolTip" xml:space="preserve">
     <value>Select the "Thread Status Threshold"
@@ -138,7 +138,7 @@ When disabled/unchecked, threads will always show the number of seconds remainin
 
 Default: disabled
 Default limit when enabled: 10 minute threshold
-Acceptable values for text box: any number greater than 0</value>
+Acceptable values for text box: any number that is 0 or greater</value>
   </data>
   <data name="grpThreadStatus.ToolTip" xml:space="preserve">
     <value>Select the "Thread Status Threshold"
@@ -148,6 +148,6 @@ When disabled/unchecked, threads will always show the number of seconds remainin
 
 Default: disabled
 Default limit when enabled: 10 minute threshold
-Acceptable values for text box: any number greater than 0</value>
+Acceptable values for text box: any number that is 0 or greater</value>
   </data>
 </root>
