@@ -40,6 +40,9 @@ namespace JDP {
             chkBackupThreadList.Checked = Settings.BackupThreadList ?? false;
             pnlBackupEvery.Enabled = chkBackupThreadList.Checked;
             txtBackupEvery.Text = (Settings.BackupEvery ?? 1).ToString();
+            chkThreadStatus.CheckState = Settings.ThreadStatusSimple == true ? CheckState.Checked : CheckState.Unchecked;
+            txtThreadStatusBoxThreshold.Enabled = Settings.ThreadStatusSimple == true;
+            txtThreadStatusBoxThreshold.Text = (Settings.ThreadStatusThreshold ?? 10).ToString();
             chkBackupCheckSize.Enabled = chkBackupThreadList.Checked;
             chkBackupCheckSize.Checked = Settings.BackupCheckSize ?? false;
             txtMaximumKilobytesPerSecond.Text = ((Settings.MaximumBytesPerSecond ?? 0) / 1024).ToString();
@@ -146,6 +149,9 @@ namespace JDP {
                 Settings.MinimizeToTray = chkMinimizeToTray.Checked;
                 Settings.BackupThreadList = chkBackupThreadList.Checked;
                 Settings.BackupEvery = Int32.Parse(txtBackupEvery.Text);
+                Settings.ThreadStatusSimple = txtThreadStatusBoxThreshold.Enabled;
+                Int32.TryParse(txtThreadStatusBoxThreshold.Text, out int tmpThreadStatusThreshold);
+                Settings.ThreadStatusThreshold = tmpThreadStatusThreshold;
                 Settings.BackupCheckSize = chkBackupCheckSize.Checked;
                 Settings.MaximumBytesPerSecond = Int64.Parse(txtMaximumKilobytesPerSecond.Text) * 1024;
                 Settings.WindowTitle = txtWindowTitle.Text;
@@ -189,7 +195,7 @@ namespace JDP {
         private void btnBackupThreadList_Click(object sender, EventArgs e) {
             General.BackupThreadList();
         }
-        
+
         private void chkDownloadFolderRelative_CheckedChanged(object sender, EventArgs e) {
             SetDownloadFolderTextBox(txtDownloadFolder.Text.Trim());
         }
@@ -250,6 +256,21 @@ namespace JDP {
             txtCompletedFolder.Text = chkCompletedFolderRelative.Checked ?
                 General.GetRelativeDirectoryPath(path, Settings.ExeDirectory) :
                 General.GetAbsoluteDirectoryPath(path, Settings.ExeDirectory);
+        }
+
+        private void txtThreadStatusBoxThreshold_Leave(object sender, EventArgs e) {
+            if (!Int32.TryParse(txtThreadStatusBoxThreshold.Text, out int tmpThreadStatusThreshold) || tmpThreadStatusThreshold < 0) {
+                txtThreadStatusBoxThreshold.Text = Settings.ThreadStatusThreshold.ToString();
+            }
+        }
+
+        private void chkThreadStatus_CheckedChanged(object sender, EventArgs e) {
+            if (chkThreadStatus.Checked) {
+                txtThreadStatusBoxThreshold.Enabled = true;
+            }
+            else {
+                txtThreadStatusBoxThreshold.Enabled = false;
+            }
         }
     }
 }

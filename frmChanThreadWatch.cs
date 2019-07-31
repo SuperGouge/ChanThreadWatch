@@ -135,7 +135,7 @@ namespace JDP {
             lvThreads.Items.Add(new ListViewItem());
             _itemAreaY = lvThreads.GetItemRect(0).Y;
             lvThreads.Items.RemoveAt(0);
-            
+
             Thread thread = new Thread(() => {
                 LoadThreadList();
                 LoadBlacklist();
@@ -324,7 +324,7 @@ namespace JDP {
                 }
                 RemoveThreads(true, false,
                         (watcher) => {
-                            string destDir = Path.Combine(Settings.AbsoluteCompletedDirectory, 
+                            string destDir = Path.Combine(Settings.AbsoluteCompletedDirectory,
                                 General.GetRelativeDirectoryPath(watcher.ThreadDownloadDirectory, watcher.MainDownloadDirectory));
                             if (Directory.Exists(watcher.ThreadDownloadDirectory)) {
                                 if (Directory.Exists(destDir)) {
@@ -1116,14 +1116,47 @@ namespace JDP {
                 default:
                     return;
             }
+            int percComplete = ((completeCount * 100) / totalCount);
             string status = hideDetail ? "Downloading " + type :
-                String.Format("Downloading {0}: {1} of {2} completed", type, completeCount, totalCount);
+                String.Format("Downloading {0}: {1}% ({2} of {3} completed)", type, percComplete, completeCount, totalCount);
             DisplayStatus(watcher, status);
         }
 
         private void SetWaitStatus(ThreadWatcher watcher) {
-            int remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
-            DisplayStatus(watcher, String.Format("Waiting {0} seconds", remainingSeconds));
+            var remainingSeconds = (watcher.MillisecondsUntilNextCheck + 999) / 1000;
+            var threadStatusMatchesSettings = ((watcher.ThreadStatusSimple == Settings.ThreadStatusSimple) && (watcher.ThreadStatusThreshold == Settings.ThreadStatusThreshold));
+            SetWaitStatusString(remainingSeconds, out string statusStringOut);
+            if (!threadStatusMatchesSettings) {
+                DisplayStatus(watcher, statusStringOut);
+                watcher.ThreadStatusSimple = Settings.ThreadStatusSimple;
+                watcher.ThreadStatusThreshold = Settings.ThreadStatusThreshold;
+                return;
+            }
+            if (Settings.ThreadStatusSimple == true && (remainingSeconds / 60) >= Settings.ThreadStatusThreshold && remainingSeconds % 60 != (0 | 59)) {
+                return;
+            }
+            DisplayStatus(watcher, statusStringOut);
+        }
+        private static void SetWaitStatusString(int remainingSeconds, out string templateStatusStringOut) {
+            var outNum = remainingSeconds;
+            var outTimeScale = "Second";
+            templateStatusStringOut = @"Waiting {0} {1}{2}";
+            if (Settings.ThreadStatusSimple == true) {
+                var remainingMinutes = remainingSeconds / 60;
+                if ((remainingMinutes <= Settings.ThreadStatusThreshold) && Settings.ThreadStatusThreshold == 0) {
+                    templateStatusStringOut = "Less than 1 Minute";
+                    return;
+                }
+                else if (remainingMinutes >= Settings.ThreadStatusThreshold) {
+                    outNum = remainingSeconds / 60;
+                    outTimeScale = "Minute";
+                }
+                else {
+                    outNum = remainingSeconds;
+                }
+            }
+            var outPlural = outNum == 1 ? "" : "s";
+            templateStatusStringOut = string.Format(templateStatusStringOut, outNum, outTimeScale, outPlural);
         }
 
         private void SetStopStatus(ThreadWatcher watcher, StopReason stopReason) {
@@ -1444,7 +1477,7 @@ namespace JDP {
                 cboCategory.Items.Add(key);
             }
         }
-        
+
         private void FocusThread(string pageURL) {
             SiteHelper siteHelper = SiteHelpers.GetInstance((new Uri(pageURL)).Host);
             siteHelper.SetURL(pageURL);

@@ -199,6 +199,16 @@ namespace JDP {
             set { SetBool("BackupCheckSize", value); }
         }
 
+        public static int? ThreadStatusThreshold {
+            get { return GetInt("ThreadStatusThreshold"); }
+            set { SetInt("ThreadStatusThreshold", value); }
+        }
+
+        public static bool? ThreadStatusSimple {
+            get { return GetBool("ThreadStatusSimple"); }
+            set { SetBool("ThreadStatusSimple", value); }
+        }
+
         public static long? MaximumBytesPerSecond {
             get { return GetLong("MaximumBytesPerSecond"); }
             set { SetLong("MaximumBytesPerSecond", value); }
