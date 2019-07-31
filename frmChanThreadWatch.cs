@@ -1116,8 +1116,9 @@ namespace JDP {
                 default:
                     return;
             }
+            int percComplete = ((completeCount * 100) / totalCount);
             string status = hideDetail ? "Downloading " + type :
-                String.Format("Downloading {0}: {1} of {2} completed", type, completeCount, totalCount);
+                String.Format("Downloading {0}: {1}% ({2} of {3} completed)", type, percComplete, completeCount, totalCount);
             DisplayStatus(watcher, status);
         }
 

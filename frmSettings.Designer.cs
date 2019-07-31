@@ -409,7 +409,7 @@
             this.grpNamingStructure.Controls.Add(this.chkUseOriginalFileNames);
             this.grpNamingStructure.Location = new System.Drawing.Point(12, 90);
             this.grpNamingStructure.Name = "grpNamingStructure";
-            this.grpNamingStructure.Size = new System.Drawing.Size(379, 194);
+            this.grpNamingStructure.Size = new System.Drawing.Size(379, 204);
             this.grpNamingStructure.TabIndex = 25;
             this.grpNamingStructure.TabStop = false;
             this.grpNamingStructure.Text = "Naming and Structure";
@@ -607,7 +607,7 @@
             this.grpBackup.Controls.Add(this.chkBackupThreadList);
             this.grpBackup.Controls.Add(this.btnBackupThreadList);
             this.grpBackup.Controls.Add(this.pnlBackupEvery);
-            this.grpBackup.Location = new System.Drawing.Point(12, 290);
+            this.grpBackup.Location = new System.Drawing.Point(10, 301);
             this.grpBackup.Name = "grpBackup";
             this.grpBackup.Size = new System.Drawing.Size(379, 76);
             this.grpBackup.TabIndex = 26;
