@@ -125,6 +125,7 @@ namespace JDP {
             btnAdd.Enabled = false;
             btnAddFromClipboard.Enabled = false;
             btnRemoveCompleted.Enabled = false;
+            btnStopAll.Enabled = false;
             btnDownloads.Enabled = false;
             btnSettings.Enabled = false;
             btnAbout.Enabled = false;
@@ -145,6 +146,7 @@ namespace JDP {
                     btnAdd.Enabled = true;
                     btnAddFromClipboard.Enabled = true;
                     btnRemoveCompleted.Enabled = true;
+                    btnStopAll.Enabled = true;
                     btnDownloads.Enabled = true;
                     btnSettings.Enabled = true;
                     btnAbout.Enabled = true;
@@ -278,6 +280,14 @@ namespace JDP {
             txtPageURL.Clear();
             txtPageURL.Focus();
             _saveThreadList = true;
+        }
+
+        private void btnStopAll_Click(object sender, EventArgs e) {
+            foreach (ListViewItem item in lvThreads.Items)
+            {
+                var watcher = (ThreadWatcher)item.Tag;
+                watcher.Stop(StopReason.UserRequest);
+            }
         }
 
         private void btnAddFromClipboard_Click(object sender, EventArgs e) {

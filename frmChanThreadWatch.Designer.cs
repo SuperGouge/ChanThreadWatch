@@ -89,6 +89,7 @@
             this.miExit = new System.Windows.Forms.MenuItem();
             this.tmrMonitor = new System.Windows.Forms.Timer(this.components);
             this.tmrBackupThreadList = new System.Windows.Forms.Timer(this.components);
+            this.btnStopAll = new System.Windows.Forms.Button();
             this.grpAddThread.SuspendLayout();
             this.pnlCheckEvery.SuspendLayout();
             this.grpDoubleClick.SuspendLayout();
@@ -631,11 +632,23 @@
             this.tmrBackupThreadList.Interval = 60000;
             this.tmrBackupThreadList.Tick += new System.EventHandler(this.tmrBackupThreadList_Tick);
             // 
+            // btnStopAll
+            // 
+            this.btnStopAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStopAll.Location = new System.Drawing.Point(630, 369);
+            this.btnStopAll.Name = "btnStopAll";
+            this.btnStopAll.Size = new System.Drawing.Size(120, 23);
+            this.btnStopAll.TabIndex = 9;
+            this.btnStopAll.Text = "Stop All";
+            this.btnStopAll.UseVisualStyleBackColor = true;
+            this.btnStopAll.Click += new System.EventHandler(this.btnStopAll_Click);
+            // 
             // frmChanThreadWatch
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(760, 500);
+            this.Controls.Add(this.btnStopAll);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnDownloads);
             this.Controls.Add(this.btnAddFromClipboard);
@@ -732,5 +745,6 @@
         private System.Windows.Forms.MenuItem miSeparatorMonitorQuickLinks;
         private System.Windows.Forms.MenuItem miSeparatorQuickLinksExit;
         private System.Windows.Forms.Timer tmrBackupThreadList;
+        private System.Windows.Forms.Button btnStopAll;
     }
 }
